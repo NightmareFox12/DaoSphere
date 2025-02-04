@@ -1,0 +1,12 @@
+Cree el contract Fabric que despliega las Dao
+- El contract Fabric tiene testing de tres capas 
+alla
+
+cree registro de Dao (public, private)
+
+
+---- COSAS PARA STARK SCAFFOLD ----
+Elimine la dependencia de radix-icon (porque la pusieron?) 
+#Debo buscar en Scaffold a ver si viene ese error
+
+cree el comando deploy-full para compilar y desplegar de una vez
