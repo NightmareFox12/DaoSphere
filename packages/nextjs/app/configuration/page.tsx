@@ -3,7 +3,7 @@ import { useReadContract } from '@starknet-react/core';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useAccount } from '~~/hooks/useAccount';
-
+import { motion } from 'motion/react';
 import {
   DAO_ADDRESS_LOCALSTORAGE_KEY,
   DAO_SPHERE_CONTRACT_ABI,
@@ -11,6 +11,7 @@ import {
 import ModalAdmin from './_components/ModalAdmin';
 import TableUser from './_components/UserTable';
 import { PlusIcon } from '@heroicons/react/20/solid';
+import ModalAddUser from './_components/ModalAddUser';
 
 const Configuration: NextPage = () => {
   //states
@@ -42,6 +43,7 @@ const Configuration: NextPage = () => {
   return (
     <>
       {!isAdmin && <ModalAdmin />}
+      {showAddUserModal && <ModalAddUser />}
 
       <section className={`${!isAdmin ? 'blur-md' : ''}`}>
         <article className='flex items-center w-full justify-center m-5 gap-5'>
@@ -59,9 +61,16 @@ const Configuration: NextPage = () => {
           <>
             <TableUser addressParsed={addressParsed} />
 
-            <button className='btn btn-circle absolute md:bottom-8 md:right-8 scale-110'>
-              <PlusIcon className='w-8 h-8' />
-            </button>
+            <motion.div
+              whileHover={{ scale: 1.2 }}
+              onClick={() => setShowAddUserModal(!showAddUserModal)}
+              className='tooltip tooltip-left tooltip-primary absolute md:bottom-8 md:right-8 scale-110'
+              data-tip='add user'
+            >
+              <button className='btn btn-circle '>
+                <PlusIcon className='w-8 h-8' />
+              </button>
+            </motion.div>
           </>
         )}
       </section>

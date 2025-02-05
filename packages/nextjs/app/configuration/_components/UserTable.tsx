@@ -33,7 +33,7 @@ const UserTable: NextPage<UserTableProps> = ({ addressParsed }) => {
   return (
     <>
       <h3 className='text-center text-2xl font-bold'>Users</h3>
-      <div className='overflow-x-auto'>
+      <div className='overflow-x-auto lg:w-11/12 mx-auto'>
         <table className='table'>
           <thead>
             <tr>
