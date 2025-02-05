@@ -16,6 +16,7 @@ import { useReadContract } from '@starknet-react/core';
 
 import { getChecksumAddress } from 'starknet';
 import { feltToHex } from '~~/utils/scaffold-stark/common';
+import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -82,7 +83,10 @@ const Login: NextPage = () => {
           <ArrowLeftIcon className='w-6 h-6' />
         </motion.button>
 
-        <SwitchTheme />
+        <div className='flex justify-center items-center gap-2'>
+          <CustomConnectButton />
+          <SwitchTheme />
+        </div>
       </div>
 
       <article className='flex grow flex-col gap-5 mt-10 lg:mx-10 w-full justify-center overflow-auto max-h-dvh lg:w-10/12'>

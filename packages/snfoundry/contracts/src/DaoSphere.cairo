@@ -61,7 +61,7 @@ mod DaoSphere {
         proposal_count: u64,
         proposal: Proposal,
         proposal_options: Map<(u64, u64), OptionProposal>,
-        user: Map<u64, ContractAddress>,
+        users: Map<u64, ContractAddress>,
         #[substorage(v0)]
         accesscontrol: AccessControlComponent::Storage,
         #[substorage(v0)]
@@ -71,10 +71,17 @@ mod DaoSphere {
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
+        User: User,
         #[flat]
         AccessControlEvent: AccessControlComponent::Event,
         #[flat]
         SRC5Event: SRC5Component::Event,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct User {
+        id: u64,
+        address: ContractAddress,
     }
 
     #[constructor]

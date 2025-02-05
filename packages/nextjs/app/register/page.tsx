@@ -9,18 +9,14 @@ import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 import { InputBase } from '~~/components/scaffold-stark';
 import { SwitchTheme } from '~~/components/SwitchTheme';
 import { AnimatePresence, motion } from 'motion/react';
-import {
-  ArrowLeftIcon,
-  ArrowPathIcon,
-  InformationCircleIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
 
 const Register: NextPage = () => {
   const router = useRouter();
 
   //states
   const [nameDao, setNameDao] = useState<string>('');
-  // const [isPublic, setIsPublic] = useState<boolean>(true);
   const [enableButton, setEnableButton] = useState<boolean>(false);
 
   const [loaderCreateDao, setLoaderCreateDao] = useState<boolean>(false);
@@ -83,7 +79,10 @@ const Register: NextPage = () => {
           <ArrowLeftIcon className='w-6 h-6' />
         </motion.button>
 
-        <SwitchTheme />
+        <div className='flex justify-center items-center gap-2'>
+          <CustomConnectButton />
+          <SwitchTheme />
+        </div>
       </div>
 
       <article className='flex flex-col gap-5 mx-10 w-7/12 lg:w-5/12'>

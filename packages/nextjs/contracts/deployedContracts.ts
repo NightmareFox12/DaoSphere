@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x61b44a28f66d879c27a07ad68ef38939972ca5ce4b83ef4214df987e648ae12",
+        "0x7c1f624caf9458b9c9f4adbc627df7662aa64643fc417e5dbde7fa60eee6156",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x37f02268a581fe75c98c6cc506e90e1e93e5422aa7ff05c0f434c6a168fa3c5",
+        "0x78ac2bc4d80d857dd26cdfb4f6f059e9e7aff53d25b046fa3c585b6df948d38",
     },
     DaoSphere: {
       address:
-        "0x6f39bc3fd522de48a6194dba09fad356c0db8f52f70cb0d40a602ad6288107b",
+        "0x3b5b6718e5f5487eadf8934520044dd645d2d4938a1be5b6a4530453b6febfc",
       abi: [
         {
           type: "impl",
@@ -324,6 +324,23 @@ const deployedContracts = {
         },
         {
           type: "event",
+          name: "contracts::DaoSphere::DaoSphere::User",
+          kind: "struct",
+          members: [
+            {
+              name: "id",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+            {
+              name: "address",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
           name: "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleGranted",
           kind: "struct",
           members: [
@@ -422,6 +439,11 @@ const deployedContracts = {
           kind: "enum",
           variants: [
             {
+              name: "User",
+              type: "contracts::DaoSphere::DaoSphere::User",
+              kind: "nested",
+            },
+            {
               name: "AccessControlEvent",
               type: "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::Event",
               kind: "flat",
@@ -435,7 +457,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x3d3e487d8de1fbecd2d761469e7e9f57f8abe3672ae3ec217d5b7b757fcd31f",
+        "0x470cbcf0b52fbd45d7ca22f7cc6a9524bbc339d6b637c6043f9b20112e32401",
     },
   },
 } as const;

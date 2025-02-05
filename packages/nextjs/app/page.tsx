@@ -29,7 +29,7 @@ const Home: NextPage = () => {
       {!isLogin && (
         <>
           <motion.div
-            className='mt-24'
+            className='mt-24 flex items-center flex-col'
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
