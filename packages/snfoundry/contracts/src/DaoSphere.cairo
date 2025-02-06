@@ -4,14 +4,16 @@ use starknet::ContractAddress;
 trait IDaoSphere<TContractState> {
     fn address_exist(self: @TContractState) -> bool;
     fn create_proposal(ref self: TContractState, description: ByteArray, end_time: u64);
-
     fn is_admin(self: @TContractState, caller: ContractAddress) -> bool;
+    fn create_user(ref self: TContractState, caller: ContractAddress, userAddress: ContractAddress);
 }
 
 const USER_ROLE: felt252 = selector!("USER_ROLE");
 
 #[starknet::contract]
 mod DaoSphere {
+    use starknet::event::EventEmitter;
+    use starknet::storage::StoragePathEntry;
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
     // use starknet::storage::StoragePathEntry;
@@ -61,6 +63,7 @@ mod DaoSphere {
         proposal_count: u64,
         proposal: Proposal,
         proposal_options: Map<(u64, u64), OptionProposal>,
+        user_count: u64,
         users: Map<u64, ContractAddress>,
         #[substorage(v0)]
         accesscontrol: AccessControlComponent::Storage,
@@ -71,7 +74,7 @@ mod DaoSphere {
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
-        User: User,
+        CreatedUser: CreatedUser,
         #[flat]
         AccessControlEvent: AccessControlComponent::Event,
         #[flat]
@@ -79,7 +82,7 @@ mod DaoSphere {
     }
 
     #[derive(Drop, starknet::Event)]
-    struct User {
+    struct CreatedUser {
         id: u64,
         address: ContractAddress,
     }
@@ -139,6 +142,22 @@ mod DaoSphere {
             let isAdmin = self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller);
 
             isAdmin
+        }
+
+        fn create_user(
+            ref self: ContractState, caller: ContractAddress, userAddress: ContractAddress,
+        ) {
+            assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
+            assert(userAddress.is_non_zero(), 'Invalid user address');
+            assert(!self.accesscontrol.hasRole(USER_ROLE, userAddress), 'User already exists');
+
+            self.accesscontrol.grantRole(USER_ROLE, userAddress);
+
+            let user_id = self.user_count.read();
+            self.users.entry(user_id).write(userAddress);
+
+            self.emit(CreatedUser { id: user_id, address: userAddress });
+            self.user_count.write(user_id + 1);
         }
     }
 }

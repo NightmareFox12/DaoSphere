@@ -14,8 +14,9 @@ pub mod DaoSphereFabric {
     use starknet::syscalls::{deploy_syscall};
     use starknet::class_hash::{class_hash_const, ClassHash};
 
-    const DAO_SPHERE_CLASS_HASH: felt252 = 0x470cbcf0b52fbd45d7ca22f7cc6a9524bbc339d6b637c6043f9b20112e32401;
+    const DAO_SPHERE_CLASS_HASH: felt252 = 0x5bcf0a57a01c2fe2295ac4d03cc2b0e1ea7eb67b8f489052618737f75d86f6e;
 
+    
     #[derive(Drop, Serde, starknet::Store)]
     pub struct Dao {
         dao_address: ContractAddress,

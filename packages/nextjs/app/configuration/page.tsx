@@ -3,7 +3,7 @@ import { useReadContract } from '@starknet-react/core';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useAccount } from '~~/hooks/useAccount';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import {
   DAO_ADDRESS_LOCALSTORAGE_KEY,
   DAO_SPHERE_CONTRACT_ABI,
@@ -12,15 +12,11 @@ import ModalAdmin from './_components/ModalAdmin';
 import TableUser from './_components/UserTable';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import ModalAddUser from './_components/ModalAddUser';
-import { AddressInput } from '~~/components/scaffold-stark';
 
 const Configuration: NextPage = () => {
   //states
-  
   const [addressParsed, setAddressParsed] = useState<`0x${string}`>('0x0');
   const [showAddUserModal, setShowAddUserModal] = useState<boolean>(false);
-  const [newUserAddress, setNewUserAddress] = useState<string>('');
-
   const [option, setOption] = useState(0);
 
   //smart contract
@@ -41,10 +37,6 @@ const Configuration: NextPage = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (isAdmin) return;
-  }, [isAdmin]);
-
   return (
     <>
       {!isAdmin && <ModalAdmin />}
@@ -52,18 +44,14 @@ const Configuration: NextPage = () => {
       <section className={`${!isAdmin ? 'blur-md' : ''}`}>
         {showAddUserModal && (
           <ModalAddUser
-            newUserAddress={newUserAddress}
-            setNewUserAddress={setNewUserAddress}
+          contractAddress={addressParsed}
+          abi={DAO_SPHERE_CONTRACT_ABI}
+          userAddress={account?.address}
             setShowAddUserModal={setShowAddUserModal}
           />
         )}
         <article className='flex items-center w-full justify-center m-5 gap-5'>
-          <AddressInput
-            value={newUserAddress}
-            onChange={(e) => console.log(e)}
-            placeholder='User Address'
-          />
-          <select
+          {/* <select
             className='select select-secondary w-full max-w-xs'
             name='fritos'
           >
@@ -72,8 +60,15 @@ const Configuration: NextPage = () => {
             </option>
             <option value='All'>All</option>
             <option value='admin'>Only Admin</option>
-          </select>
-          <button className='btn'>Select</button>
+          </select> */}
+          <button
+            className='btn'
+            onClick={() => {
+              // console.log(quien);
+            }}
+          >
+            Select
+          </button>
         </article>
 
         {isAdmin && (

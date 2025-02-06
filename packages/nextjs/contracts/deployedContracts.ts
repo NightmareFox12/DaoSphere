@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0xf4ecfdb65d978f845709c0bcb0172ddc57dd8ad64cbdeabe180eb057acf4cb",
+        "0x2e3591c41e54a3696a696358dc18d8cc5e32cad0f540be1a33a33eb22c3564a",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x78ac2bc4d80d857dd26cdfb4f6f059e9e7aff53d25b046fa3c585b6df948d38",
+        "0x2a6f1445b2f7594f164d5953fedf1afbe7f07c1bdcc5736001f385f4f787838",
     },
     DaoSphere: {
       address:
-        "0x1b6eb69a536972962c6618ef0bb5eb54d03f82ff4694202673bda7277d62a66",
+        "0x322fe856f4078cf9957006899aca61304c2a4870b4602f29d5947e4aac92e42",
       abi: [
         {
           type: "impl",
@@ -186,6 +186,22 @@ const deployedContracts = {
                 },
               ],
               state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "create_user",
+              inputs: [
+                {
+                  name: "caller",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+                {
+                  name: "userAddress",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
             },
           ],
         },
@@ -324,7 +340,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::DaoSphere::DaoSphere::User",
+          name: "contracts::DaoSphere::DaoSphere::CreatedUser",
           kind: "struct",
           members: [
             {
@@ -439,8 +455,8 @@ const deployedContracts = {
           kind: "enum",
           variants: [
             {
-              name: "User",
-              type: "contracts::DaoSphere::DaoSphere::User",
+              name: "CreatedUser",
+              type: "contracts::DaoSphere::DaoSphere::CreatedUser",
               kind: "nested",
             },
             {
@@ -457,7 +473,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x470cbcf0b52fbd45d7ca22f7cc6a9524bbc339d6b637c6043f9b20112e32401",
+        "0x5bcf0a57a01c2fe2295ac4d03cc2b0e1ea7eb67b8f489052618737f75d86f6e",
     },
   },
 } as const;

@@ -23,12 +23,13 @@ export const AddressInput = ({
     (newValue: Address) => {
       const sanitizedValue = newValue.toLowerCase();
 
-      if (sanitizedValue === "0x") {
-        onChange("0x0" as Address);
-        return;
-      }
+      // if (sanitizedValue === "0x") {
+      //   onChange("0x0" as Address);
+      //   return;
+      // }
 
-      const isValid = /^0x[a-f0-9]{1,64}$/.test(sanitizedValue);
+      // const isValid = /^0x[a-f0-9]{1,64}$/.test(sanitizedValue);
+      const isValid = /^[a-zA-Z0-9\s,.-]*$/.test(sanitizedValue);
       if (!isValid) {
         return;
       }
@@ -51,7 +52,7 @@ export const AddressInput = ({
         value && (
           <Image
             alt=""
-            className="!rounded-full"
+            className="!rounded-full w-12 h-12"
             src={blo(value as `0x${string}`)}
             width="35"
             height="35"
