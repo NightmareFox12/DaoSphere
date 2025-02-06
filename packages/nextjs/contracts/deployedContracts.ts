@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x2e3591c41e54a3696a696358dc18d8cc5e32cad0f540be1a33a33eb22c3564a",
+        "0x3ff2f27c0969ef88da9efc4e19a81957a5ea96d567bb5391518bc39496d7970",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x2a6f1445b2f7594f164d5953fedf1afbe7f07c1bdcc5736001f385f4f787838",
+        "0x2199f1d10498e3af583bb906a3065c2984bf68ad881e6e157245f4db137592c",
     },
     DaoSphere: {
       address:
-        "0x322fe856f4078cf9957006899aca61304c2a4870b4602f29d5947e4aac92e42",
+        "0x4e231d5df6cf56a8806e037e4f8b764b56aa85448ab45da060f9c6a4b201dcb",
       abi: [
         {
           type: "impl",
@@ -191,10 +191,6 @@ const deployedContracts = {
               type: "function",
               name: "create_user",
               inputs: [
-                {
-                  name: "caller",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
                 {
                   name: "userAddress",
                   type: "core::starknet::contract_address::ContractAddress",
@@ -473,7 +469,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x5bcf0a57a01c2fe2295ac4d03cc2b0e1ea7eb67b8f489052618737f75d86f6e",
+        "0x65d2d1ba382f4189bf56cc2616bd93cd627a9e07894612d39d956cc9f275c07",
     },
   },
 } as const;

@@ -1,25 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
-import { useInterval } from "usehooks-ts";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
-import scaffoldConfig from "~~/scaffold.config";
-import { replacer } from "~~/utils/scaffold-stark/common";
+import { useEffect, useMemo, useState } from 'react';
+import { useTargetNetwork } from './useTargetNetwork';
+import { useInterval } from 'usehooks-ts';
+import { useDeployedContractInfo } from '~~/hooks/scaffold-stark';
+import scaffoldConfig from '~~/scaffold.config';
+import { replacer } from '~~/utils/scaffold-stark/common';
 import {
   Abi,
   ExtractAbiEvent,
   ExtractAbiEventNames,
-} from "abi-wan-kanabi/dist/kanabi";
+} from 'abi-wan-kanabi/dist/kanabi';
 import {
   ContractAbi,
   ContractName,
   UseScaffoldEventHistoryConfig,
-} from "~~/utils/scaffold-stark/contract";
-import { devnet } from "@starknet-react/chains";
-import { useProvider } from "@starknet-react/core";
-import { hash, RpcProvider } from "starknet";
-import { events as starknetEvents, CallData } from "starknet";
-import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
-import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
+} from '~~/utils/scaffold-stark/contract';
+import { devnet } from '@starknet-react/chains';
+import { useProvider } from '@starknet-react/core';
+import { hash, RpcProvider } from 'starknet';
+import { events as starknetEvents, CallData } from 'starknet';
+import { parseEventData } from '~~/utils/scaffold-stark/eventsData';
+import { composeEventFilterKeys } from '~~/utils/scaffold-stark/eventKeyFilter';
 
 const MAX_KEYS_COUNT = 16;
 /**
@@ -49,6 +49,7 @@ export const useScaffoldEventHistory = <
   blockData,
   transactionData,
   receiptData,
+  contractAddress,
   watch,
   format = true,
   enabled = true,
@@ -79,15 +80,15 @@ export const useScaffoldEventHistory = <
     setIsLoading(true);
     try {
       if (!deployedContractData) {
-        throw new Error("Contract not found");
+        throw new Error('Contract not found');
       }
 
       if (!enabled) {
-        throw new Error("Hook disabled");
+        throw new Error('Hook disabled');
       }
 
       const event = (deployedContractData.abi as Abi).find(
-        (part) => part.type === "event" && part.name === eventName,
+        (part) => part.type === 'event' && part.name === eventName
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
@@ -98,18 +99,18 @@ export const useScaffoldEventHistory = <
         blockNumber >= fromBlockUpdated
       ) {
         let keys: string[][] = [
-          [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
+          [hash.getSelectorFromName(event.name.split('::').slice(-1)[0])],
         ];
         if (filters) {
           keys = keys.concat(
-            composeEventFilterKeys(filters, event, deployedContractData.abi),
+            composeEventFilterKeys(filters, event, deployedContractData.abi)
           );
         }
         keys = keys.slice(0, MAX_KEYS_COUNT);
         const rawEventResp = await publicClient.getEvents({
           chunk_size: 100,
           keys,
-          address: deployedContractData?.address,
+          address: contractAddress || deployedContractData?.address,
           from_block: { block_number: Number(fromBlock || fromBlockUpdated) },
           to_block: { block_number: blockNumber },
         });
@@ -131,18 +132,18 @@ export const useScaffoldEventHistory = <
             transaction:
               transactionData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
+                    logs[i].transaction_hash
                   )
                 : null,
             receipt:
               receiptData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
+                    logs[i].transaction_hash
                   )
                 : null,
           });
         }
-        if (events && typeof fromBlock === "undefined") {
+        if (events && typeof fromBlock === 'undefined') {
           setEvents([...newEvents, ...events]);
         } else {
           setEvents(newEvents);
@@ -199,7 +200,7 @@ export const useScaffoldEventHistory = <
       ? targetNetwork.id !== devnet.id
         ? scaffoldConfig.pollingInterval
         : 4_000
-      : null,
+      : null
   );
 
   const eventHistoryData = useMemo(() => {
@@ -210,7 +211,7 @@ export const useScaffoldEventHistory = <
           logs,
           starknetEvents.getAbiEvents(deployedContractData.abi),
           CallData.getAbiStruct(deployedContractData.abi),
-          CallData.getAbiEnum(deployedContractData.abi),
+          CallData.getAbiEnum(deployedContractData.abi)
         );
         const args = parsed.length ? parsed[0][eventName] : {};
         const { event: rawEvent, ...rest } = event;

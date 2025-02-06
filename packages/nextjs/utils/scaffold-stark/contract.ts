@@ -187,8 +187,10 @@ export type UseScaffoldWriteConfig<
     ContractAbi<TContractName>,
     "external"
   >,
+  address,
 > = {
   contractName: TContractName;
+  address?: `0x${string}`;
 } & IsContractDeclarationMissing<
   Partial<UseSendTransactionProps> & {
     functionName: string;
@@ -374,6 +376,7 @@ export type UseScaffoldEventHistoryConfig<
   blockData?: TBlockData;
   transactionData?: TTransactionData;
   receiptData?: TReceiptData;
+  contractAddress?: `0x${string}`;
   watch?: boolean;
   format?: boolean;
   enabled?: boolean;

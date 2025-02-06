@@ -46,7 +46,7 @@ const Configuration: NextPage = () => {
           <ModalAddUser
           contractAddress={addressParsed}
           abi={DAO_SPHERE_CONTRACT_ABI}
-          userAddress={account?.address}
+          adminAddress={account?.address}
             setShowAddUserModal={setShowAddUserModal}
           />
         )}

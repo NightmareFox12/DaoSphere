@@ -2,37 +2,53 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { NextPage } from 'next';
 import { AddressInput } from '~~/components/scaffold-stark';
 import { XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
-import { useAccount } from '~~/hooks/useAccount';
-import { useCall, useContract } from '@starknet-react/core';
+import { useContract, useSendTransaction } from '@starknet-react/core';
+import type { Abi } from 'starknet';
+import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 
 type ModalAddUserProps = {
   contractAddress: `0x${string}`;
   abi: any;
-  userAddress: string | undefined;
+  adminAddress: string | undefined;
   setShowAddUserModal: Dispatch<SetStateAction<boolean>>;
 };
 
 const ModalAddUser: NextPage<ModalAddUserProps> = ({
   contractAddress,
   abi,
-  userAddress,
+  adminAddress,
   setShowAddUserModal,
 }) => {
   //states
   const [newUserAddress, setNewUserAddress] = useState<string>('');
 
-  // const {data} = use({
+  //contract
+
+  const { sendAsync } = useScaffoldWriteContract({
+    contractName: 'DaoSphere',
+    functionName: 'create_user',
+    args: [newUserAddress.toString()],
+    address: contractAddress,
+  });
+
+  // const abiContract = abi satisfies Abi;
+  // const { contract } = useContract({
+  //   abi,
   //   address: contractAddress,
-  //   abi: abi,
-  //   functionName: 'add_user',
-  //   args: [userAddress!!, newUserAddress],
   // });
 
-  const {contract} = useContract(abi)
+  // const { sendAsync, error } = useSendTransaction({
+  //   calls:
+  //     contract && adminAddress
+  //       ? [contract.populate('create_user', [newUserAddress.toString()])]
+  //       : undefined,
+  // });
+
   const handleAddUser = async () => {
+    const nose = await sendAsync();
+    console.log(nose);
   };
 
-  //? COLOR EL CREAR USUARIO Y MOSTRAR EL EVENTO
   return (
     <dialog className='modal' open>
       <div className='flex flex-col gap-5 bg-base-300 p-10 rounded-lg border border-primary md:w-7/12 lg:w-8/12'>

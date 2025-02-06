@@ -5,7 +5,7 @@ trait IDaoSphere<TContractState> {
     fn address_exist(self: @TContractState) -> bool;
     fn create_proposal(ref self: TContractState, description: ByteArray, end_time: u64);
     fn is_admin(self: @TContractState, caller: ContractAddress) -> bool;
-    fn create_user(ref self: TContractState, caller: ContractAddress, userAddress: ContractAddress);
+    fn create_user(ref self: TContractState, userAddress: ContractAddress);
 }
 
 const USER_ROLE: felt252 = selector!("USER_ROLE");
@@ -144,9 +144,8 @@ mod DaoSphere {
             isAdmin
         }
 
-        fn create_user(
-            ref self: ContractState, caller: ContractAddress, userAddress: ContractAddress,
-        ) {
+        fn create_user(ref self: ContractState, userAddress: ContractAddress) {
+            let caller = get_caller_address();
             assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
             assert(userAddress.is_non_zero(), 'Invalid user address');
             assert(!self.accesscontrol.hasRole(USER_ROLE, userAddress), 'User already exists');
