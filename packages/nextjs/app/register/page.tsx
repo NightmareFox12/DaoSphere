@@ -22,7 +22,7 @@ const Register: NextPage = () => {
   const [loaderCreateDao, setLoaderCreateDao] = useState<boolean>(false);
 
   //smart contract
-  const { data, isLoading, error } = useScaffoldEventHistory({
+  const { data } = useScaffoldEventHistory({
     contractName: 'DaoSphereFabric',
     eventName: 'contracts::DaoSphereFabric::DaoSphereFabric::DaoCreated',
     fromBlock: BigInt(0),
@@ -120,27 +120,6 @@ const Register: NextPage = () => {
             )}
           </AnimatePresence>
         </div>
-
-        {/* <div className='form-control'>
-          <label className='label cursor-pointer'>
-            <span className='label-text flex items-center justify-center gap-2 font-bold'>
-              <div
-                className='tooltip tooltip-left flex justify-center items-center font-bold tooltip-primary'
-                data-tip='By making a DAO public, any user can join and actively participate in community decisions and projects.'
-              >
-                <InformationCircleIcon className='w-6 h-6' />
-              </div>
-              DAO Public
-            </span>
-
-            <input
-              checked={isPublic}
-              type='checkbox'
-              className='toggle'
-              onChange={(e) => setIsPublic(e.target.checked)}
-            />
-          </label>
-        </div> */}
 
         <button
           className='btn btn-primary mx-10'

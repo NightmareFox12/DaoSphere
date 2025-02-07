@@ -321,6 +321,7 @@ export type UseScaffoldReadConfig<
   >,
 > = {
   contractName: TContractName;
+  contractAddress?: `0x${string}`;
 } & IsContractDeclarationMissing<
   Partial<UseReadContractProps<TAbi, TFunctionName>>,
   {

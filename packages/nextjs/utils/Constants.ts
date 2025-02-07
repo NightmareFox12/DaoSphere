@@ -286,7 +286,3 @@ export {
 
 //DaoSphere constants
 export const DAO_ADDRESS_LOCALSTORAGE_KEY = 'Address';
-
-//abi
-import x from '~~/contracts/deployedContracts';
-export const DAO_SPHERE_CONTRACT_ABI = x.devnet.DaoSphere.abi;

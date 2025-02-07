@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x3ff2f27c0969ef88da9efc4e19a81957a5ea96d567bb5391518bc39496d7970",
+        "0x4ce6c8b216839a0763cb93b83e04f1d3a62a3d0b707042074f23167bb96acd6",
       abi: [
         {
           type: "impl",
@@ -97,30 +97,16 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x2199f1d10498e3af583bb906a3065c2984bf68ad881e6e157245f4db137592c",
+        "0x33b5076efbd26d4faa7219b160e3193ff9e42af45ed2ccb2036d60c009c245a",
     },
     DaoSphere: {
       address:
-        "0x4e231d5df6cf56a8806e037e4f8b764b56aa85448ab45da060f9c6a4b201dcb",
+        "0x357d33dfda666e926e1baee331271a86f6140825e99041da292a0b9b05e76b4",
       abi: [
         {
           type: "impl",
           name: "DaoSphere",
           interface_name: "contracts::DaoSphere::IDaoSphere",
-        },
-        {
-          type: "enum",
-          name: "core::bool",
-          variants: [
-            {
-              name: "False",
-              type: "()",
-            },
-            {
-              name: "True",
-              type: "()",
-            },
-          ],
         },
         {
           type: "struct",
@@ -141,20 +127,41 @@ const deployedContracts = {
           ],
         },
         {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::models::DaoSphereModel::User",
+          members: [
+            {
+              name: "user_id",
+              type: "core::integer::u64",
+            },
+            {
+              name: "address",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "unlock",
+              type: "core::bool",
+            },
+          ],
+        },
+        {
           type: "interface",
           name: "contracts::DaoSphere::IDaoSphere",
           items: [
-            {
-              type: "function",
-              name: "address_exist",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::bool",
-                },
-              ],
-              state_mutability: "view",
-            },
             {
               type: "function",
               name: "create_proposal",
@@ -194,6 +201,45 @@ const deployedContracts = {
                 {
                   name: "userAddress",
                   type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "user_exist",
+              inputs: [
+                {
+                  name: "address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_users",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::array::Array::<contracts::models::DaoSphereModel::User>",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "modify_user",
+              inputs: [
+                {
+                  name: "user_id",
+                  type: "core::integer::u64",
                 },
               ],
               outputs: [],
@@ -469,7 +515,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x65d2d1ba382f4189bf56cc2616bd93cd627a9e07894612d39d956cc9f275c07",
+        "0x5b453a14e8d3b21208f0e1a518db2b6eb06435b54e0e8f89b7697824bbb4d01",
     },
   },
 } as const;

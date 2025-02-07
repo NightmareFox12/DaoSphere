@@ -1,11 +1,16 @@
 use starknet::ContractAddress;
+use super::models::DaoSphereModel;
 
 #[starknet::interface]
 trait IDaoSphere<TContractState> {
-    fn address_exist(self: @TContractState) -> bool;
     fn create_proposal(ref self: TContractState, description: ByteArray, end_time: u64);
     fn is_admin(self: @TContractState, caller: ContractAddress) -> bool;
+
+    // handle user
     fn create_user(ref self: TContractState, userAddress: ContractAddress);
+    fn user_exist(self: @TContractState, address: ContractAddress) -> bool;
+    fn get_users(self: @TContractState) -> Array<DaoSphereModel::User>;
+    fn modify_user(ref self: TContractState, user_id: u64);
 }
 
 const USER_ROLE: felt252 = selector!("USER_ROLE");
@@ -16,7 +21,6 @@ mod DaoSphere {
     use starknet::storage::StoragePathEntry;
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
-    // use starknet::storage::StoragePathEntry;
     use AccessControlComponent::InternalTrait;
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
     use openzeppelin_introspection::src5::SRC5Component;
@@ -24,6 +28,7 @@ mod DaoSphere {
     use starknet::storage::{Map};
     use starknet::syscalls::call_contract_syscall;
     use super::{USER_ROLE};
+    use super::DaoSphereModel::{User};
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -64,7 +69,7 @@ mod DaoSphere {
         proposal: Proposal,
         proposal_options: Map<(u64, u64), OptionProposal>,
         user_count: u64,
-        users: Map<u64, ContractAddress>,
+        users: Map<u64, User>,
         #[substorage(v0)]
         accesscontrol: AccessControlComponent::Storage,
         #[substorage(v0)]
@@ -130,33 +135,65 @@ mod DaoSphere {
 
         }
 
-        fn address_exist(self: @ContractState) -> bool {
-            let roles = array![DEFAULT_ADMIN_ROLE, USER_ROLE];
-            let address_exist = has_any_role(self, get_caller_address(), roles);
-
-            address_exist
-        }
 
         fn is_admin(self: @ContractState, caller: ContractAddress) -> bool {
-            assert(caller.is_non_zero(), 'ey la cagaste');
+            assert(caller.is_non_zero(), 'admin address is not valid');
             let isAdmin = self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller);
 
             isAdmin
         }
 
+        //handle user
         fn create_user(ref self: ContractState, userAddress: ContractAddress) {
             let caller = get_caller_address();
             assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
             assert(userAddress.is_non_zero(), 'Invalid user address');
             assert(!self.accesscontrol.hasRole(USER_ROLE, userAddress), 'User already exists');
 
+            assert(userAddress != caller, 'Admin cannot be a user');
+
             self.accesscontrol.grantRole(USER_ROLE, userAddress);
 
             let user_id = self.user_count.read();
-            self.users.entry(user_id).write(userAddress);
+            self
+                .users
+                .entry(user_id)
+                .write(User { user_id: user_id, address: userAddress, unlock: true });
 
             self.emit(CreatedUser { id: user_id, address: userAddress });
             self.user_count.write(user_id + 1);
+        }
+
+        fn user_exist(self: @ContractState, address: ContractAddress) -> bool {
+            let isUser = self.accesscontrol.hasRole(USER_ROLE, address);
+
+            isUser
+        }
+
+        fn get_users(self: @ContractState) -> Array<User> {
+            let mut user_arr: Array<User> = ArrayTrait::<User>::new();
+
+            let limit: u64 = self.user_count.read();
+            let mut i: u64 = 0;
+
+            loop {
+                if i == limit {
+                    break;
+                }
+                user_arr.append(self.users.entry(i).read());
+                i += 1;
+            };
+
+            user_arr
+        }
+
+        fn modify_user(ref self: ContractState, user_id: u64) {
+            let caller = get_caller_address();
+            assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
+
+            let mut user = self.users.entry(user_id).read();
+            user.unlock = !user.unlock;
+            self.users.entry(user_id).write(user);
         }
     }
 }

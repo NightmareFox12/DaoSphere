@@ -1,32 +1,40 @@
 'use client';
-import { useReadContract } from '@starknet-react/core';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useAccount } from '~~/hooks/useAccount';
 import { motion } from 'motion/react';
-import {
-  DAO_ADDRESS_LOCALSTORAGE_KEY,
-  DAO_SPHERE_CONTRACT_ABI,
-} from '~~/utils/Constants';
+import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 import ModalAdmin from './_components/ModalAdmin';
 import TableUser from './_components/UserTable';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import ModalAddUser from './_components/ModalAddUser';
+import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
+import { User } from '~~/types/User';
+import ModalHandleUser from './_components/ModalHandleUser';
 
 const Configuration: NextPage = () => {
+  const { account } = useAccount();
+
   //states
   const [addressParsed, setAddressParsed] = useState<`0x${string}`>('0x0');
   const [showAddUserModal, setShowAddUserModal] = useState<boolean>(false);
+  const [userSelected, setUserSelected] = useState<User | undefined>(
+    undefined
+  );
+
   const [option, setOption] = useState(0);
 
-  //smart contract
-  const { account } = useAccount();
-
-  const { data: isAdmin, error } = useReadContract({
-    address: addressParsed,
-    abi: DAO_SPHERE_CONTRACT_ABI,
+  const { data: isAdmin } = useScaffoldReadContract({
+    contractName: 'DaoSphere',
+    contractAddress: addressParsed,
     functionName: 'is_admin',
-    args: [`${account?.address}`],
+    args: [account?.address],
+  });
+
+  const { data: users } = useScaffoldReadContract({
+    contractName: 'DaoSphere',
+    contractAddress: addressParsed,
+    functionName: 'get_users',
   });
 
   useEffect(() => {
@@ -44,36 +52,43 @@ const Configuration: NextPage = () => {
       <section className={`${!isAdmin ? 'blur-md' : ''}`}>
         {showAddUserModal && (
           <ModalAddUser
-          contractAddress={addressParsed}
-          abi={DAO_SPHERE_CONTRACT_ABI}
-          adminAddress={account?.address}
+            contractAddress={addressParsed}
+            adminAddress={account?.address}
             setShowAddUserModal={setShowAddUserModal}
           />
         )}
-        <article className='flex items-center w-full justify-center m-5 gap-5'>
-          {/* <select
-            className='select select-secondary w-full max-w-xs'
-            name='fritos'
-          >
-            <option disabled selected value={'all si'}>
-              quien puede crear votaciones?
-            </option>
-            <option value='All'>All</option>
-            <option value='admin'>Only Admin</option>
-          </select> */}
-          <button
-            className='btn'
-            onClick={() => {
-              // console.log(quien);
-            }}
-          >
-            Select
-          </button>
+        {userSelected !== undefined && (
+          <ModalHandleUser
+            contractAddress={addressParsed}
+            userSelected={userSelected}
+            setUserSelected={setUserSelected}
+          />
+        )}
+
+        <article className='flex items-center w-full justify-center gap-5'>
         </article>
 
         {isAdmin && (
           <>
-            <TableUser addressParsed={addressParsed} />
+            {users !== undefined && users.length > 0 ? (
+              <TableUser
+                users={users as unknown as User[]}
+                setUserSelected={setUserSelected}
+              />
+            ) : (
+              <div className='w-full flex items-center justify-center flex-col'>
+                <h1 className='text-2xl font-bold text-center'>
+                  No users registered
+                </h1>
+                <motion.button
+                  className='btn btn-primary px-10'
+                  whileHover={{ scale: 1.1 }}
+                  onClick={() => setShowAddUserModal(!showAddUserModal)}
+                >
+                  Add User
+                </motion.button>
+              </div>
+            )}
 
             <motion.div
               whileHover={{ scale: 1.2 }}

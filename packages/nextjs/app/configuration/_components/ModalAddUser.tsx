@@ -1,53 +1,65 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { AddressInput } from '~~/components/scaffold-stark';
 import { XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
-import { useContract, useSendTransaction } from '@starknet-react/core';
-import type { Abi } from 'starknet';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
+import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
+import { feltToHex } from '~~/utils/scaffold-stark/common';
+import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
 
 type ModalAddUserProps = {
   contractAddress: `0x${string}`;
-  abi: any;
   adminAddress: string | undefined;
   setShowAddUserModal: Dispatch<SetStateAction<boolean>>;
 };
 
 const ModalAddUser: NextPage<ModalAddUserProps> = ({
   contractAddress,
-  abi,
   adminAddress,
   setShowAddUserModal,
 }) => {
   //states
-  const [newUserAddress, setNewUserAddress] = useState<string>('');
+  const [userAddress, setUserAddress] = useState<string>('');
+  const [isMatchAddress, setIsMatchAddress] = useState<boolean>(false);
 
-  //contract
-
+  //smart contract
   const { sendAsync } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
     functionName: 'create_user',
-    args: [newUserAddress.toString()],
+    args: [userAddress],
     address: contractAddress,
   });
 
-  // const abiContract = abi satisfies Abi;
-  // const { contract } = useContract({
-  //   abi,
-  //   address: contractAddress,
-  // });
+  const { data: isAdmin } = useScaffoldReadContract({
+    contractName: 'DaoSphere',
+    contractAddress: contractAddress,
+    functionName: 'is_admin',
+    args: [userAddress],
+  });
 
-  // const { sendAsync, error } = useSendTransaction({
-  //   calls:
-  //     contract && adminAddress
-  //       ? [contract.populate('create_user', [newUserAddress.toString()])]
-  //       : undefined,
-  // });
+  const { data: isUser } = useScaffoldReadContract({
+    contractName: 'DaoSphere',
+    contractAddress: contractAddress,
+    functionName: 'user_exist',
+    args: [userAddress],
+  });
 
   const handleAddUser = async () => {
-    const nose = await sendAsync();
-    console.log(nose);
+    try {
+      await sendAsync();
+      setUserAddress('');
+    } catch (err) {
+      console.log(err);
+    } finally {
+    }
   };
+
+  useEffect(() => {
+    if (isUser !== undefined) {
+      console.log(isUser);
+      setIsMatchAddress(Boolean(isUser));
+    }
+  }, [isUser, userAddress]);
 
   return (
     <dialog className='modal' open>
@@ -62,23 +74,38 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
 
         <div>
           <AddressInput
-            value={newUserAddress}
-            onChange={setNewUserAddress}
+            value={userAddress}
+            onChange={setUserAddress}
             placeholder='Input address of the user'
           />
 
-          {!newUserAddress.includes('0x') && newUserAddress.length > 0 && (
-            <span className='text-red-500 font-semibold ps-1'>
-              Address must start with 0x
-            </span>
-          )}
+          {userAddress.length > 0 &&
+            (!userAddress.includes('0x') ? (
+              <span className='text-red-500 font-semibold ps-1'>
+                Address must start with 0x
+              </span>
+            ) : isMatchAddress ? (
+              <span className='text-red-500 font-semibold ps-1'>
+                Address is already registered
+              </span>
+            ) : (
+              isAdmin && (
+                <span className='text-red-500 font-semibold ps-1'>
+                  Admin cannot be a user
+                </span>
+              )
+            ))}
         </div>
 
         <div className='flex justify-center'>
           <button
             className='btn btn-primary px-10'
             onClick={() => handleAddUser()}
-            disabled={!newUserAddress.includes('0x')}
+            disabled={
+              !userAddress.includes('0x') ||
+              userAddress.length === 0 ||
+              isAdmin?.toString() === 'true'
+            }
           >
             <UserIcon className='w-4 h-4' />
             Create User

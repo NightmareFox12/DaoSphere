@@ -1,3 +1,5 @@
+use super::models::DaoSphereFabricModel::Dao;
+
 #[starknet::interface]
 pub trait IDaoSphereFabric<TContractState> {
     fn create_dao(ref self: TContractState, name_dao: ByteArray);
@@ -13,15 +15,10 @@ pub mod DaoSphereFabric {
     use starknet::{get_caller_address, ContractAddress};
     use starknet::syscalls::{deploy_syscall};
     use starknet::class_hash::{class_hash_const, ClassHash};
+    use super::Dao;
 
-    const DAO_SPHERE_CLASS_HASH: felt252 = 0x65d2d1ba382f4189bf56cc2616bd93cd627a9e07894612d39d956cc9f275c07;
-
-    
-    #[derive(Drop, Serde, starknet::Store)]
-    pub struct Dao {
-        dao_address: ContractAddress,
-        name_dao: ByteArray,
-    }
+    const DAO_SPHERE_CLASS_HASH: felt252 =
+    0x5b453a14e8d3b21208f0e1a518db2b6eb06435b54e0e8f89b7697824bbb4d01;
 
     #[storage]
     struct Storage {
@@ -86,7 +83,6 @@ pub mod DaoSphereFabric {
             self.emit(DaoCreated { dao_id, name_dao: stored_dao.name_dao, dao_address });
 
             self.dao_id.write(dao_id + 1);
-            // dao_address
         }
 
         fn dao_id(self: @ContractState) -> u64 {
