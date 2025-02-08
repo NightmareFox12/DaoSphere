@@ -40,10 +40,10 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
     args: [userAddress],
   });
 
-  const { data: isSupervisor } = useScaffoldReadContract({
+  const { data: isAdvisor } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     contractAddress: contractAddress,
-    functionName: 'is_supervisor',
+    functionName: 'is_advisor',
     args: [userAddress],
   });
 
@@ -58,10 +58,10 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
   };
 
   useEffect(() => {
-    if (isUser !== undefined && isSupervisor !== undefined) {
-      setIsMatchAddress(Boolean(isUser || isSupervisor));
+    if (isUser !== undefined && isAdvisor !== undefined) {
+      setIsMatchAddress(Boolean(isUser || isAdvisor));
     }
-  }, [isSupervisor, isUser, userAddress]);
+  }, [isAdvisor, isUser, userAddress]);
 
   return (
     <dialog className='modal' open>

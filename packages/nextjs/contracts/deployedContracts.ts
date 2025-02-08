@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0xf26aee53b08b0b4eddaf03490aa5f6ee1f1fa43bf9082f953c9a8d6066e5f9",
+        "0x5bbdeda9c453d8a88488420cf61357fcd58bd41f4167c35ea26d1ba06a93226",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x20ac874f5f3479a10265490755dac2cd1ab7b72736eee28623bdecbab89604d",
+        "0x1f63c0f9da195977961831fe19081f0ac57e1f65e59f4e1c29fb7efbd631e0f",
     },
     DaoSphere: {
       address:
-        "0x7408c39e84f8bdf819e55c6077d96107ee4f0d54775f741c921fe4d97c8d088",
+        "0x463d7079a0b5519c30d7cb6c400b379fe8fa32da1808b8986008aba4094030c",
       abi: [
         {
           type: "impl",
@@ -123,6 +123,24 @@ const deployedContracts = {
             {
               name: "pending_word_len",
               type: "core::integer::u32",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "contracts::models::DaoSphereModel::VoteCreationAccess",
+          variants: [
+            {
+              name: "Admin",
+              type: "()",
+            },
+            {
+              name: "AdminOrAdvisor",
+              type: "()",
+            },
+            {
+              name: "All",
+              type: "()",
             },
           ],
         },
@@ -164,10 +182,10 @@ const deployedContracts = {
         },
         {
           type: "struct",
-          name: "contracts::models::DaoSphereModel::Supervisor",
+          name: "contracts::models::DaoSphereModel::Advisor",
           members: [
             {
-              name: "supervisor_id",
+              name: "advisor_id",
               type: "core::integer::u64",
             },
             {
@@ -206,6 +224,29 @@ const deployedContracts = {
             },
             {
               type: "function",
+              name: "modify_vote_creation_access",
+              inputs: [
+                {
+                  name: "vote_creation_access",
+                  type: "contracts::models::DaoSphereModel::VoteCreationAccess",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_vote_creation_access",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::models::DaoSphereModel::VoteCreationAccess",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
               name: "is_admin",
               inputs: [
                 {
@@ -222,7 +263,7 @@ const deployedContracts = {
             },
             {
               type: "function",
-              name: "is_supervisor",
+              name: "is_advisor",
               inputs: [
                 {
                   name: "caller",
@@ -289,10 +330,26 @@ const deployedContracts = {
             },
             {
               type: "function",
-              name: "create_supervisor",
+              name: "get_user",
               inputs: [
                 {
-                  name: "supervisorAddress",
+                  name: "userAddress",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::models::DaoSphereModel::User",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "create_advisor",
+              inputs: [
+                {
+                  name: "advisorAddress",
                   type: "core::starknet::contract_address::ContractAddress",
                 },
               ],
@@ -301,26 +358,42 @@ const deployedContracts = {
             },
             {
               type: "function",
-              name: "get_supervisors",
+              name: "get_advisors",
               inputs: [],
               outputs: [
                 {
-                  type: "core::array::Array::<contracts::models::DaoSphereModel::Supervisor>",
+                  type: "core::array::Array::<contracts::models::DaoSphereModel::Advisor>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "modify_supervisor",
+              name: "modify_advisor",
               inputs: [
                 {
-                  name: "supervisor_id",
+                  name: "advisor_id",
                   type: "core::integer::u64",
                 },
               ],
               outputs: [],
               state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_advisor",
+              inputs: [
+                {
+                  name: "advisorAddress",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::models::DaoSphereModel::Advisor",
+                },
+              ],
+              state_mutability: "view",
             },
           ],
         },
@@ -476,11 +549,11 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::DaoSphere::DaoSphere::CreatedSupervisor",
+          name: "contracts::DaoSphere::DaoSphere::CreatedAdvisor",
           kind: "struct",
           members: [
             {
-              name: "supervisor_id",
+              name: "advisor_id",
               type: "core::integer::u64",
               kind: "data",
             },
@@ -596,8 +669,8 @@ const deployedContracts = {
               kind: "nested",
             },
             {
-              name: "CreatedSupervisor",
-              type: "contracts::DaoSphere::DaoSphere::CreatedSupervisor",
+              name: "CreatedAdvisor",
+              type: "contracts::DaoSphere::DaoSphere::CreatedAdvisor",
               kind: "nested",
             },
             {
@@ -614,7 +687,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x28627bce067f62260d088fae0ec0b8146b3a197fb373ecb301ffd4a523019cf",
+        "0x689dbd44b9ccba4f4231371602112efac66c38b1142255ba28d9c5322bae66",
     },
   },
 } as const;

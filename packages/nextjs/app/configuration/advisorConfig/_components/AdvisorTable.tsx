@@ -4,20 +4,20 @@ import { Address } from '~~/components/scaffold-stark';
 import { feltToHex } from '~~/utils/scaffold-stark/common';
 import { LockOpenIcon } from '@heroicons/react/20/solid';
 import { Dispatch, SetStateAction } from 'react';
-import { Supervisor } from '~~/types/Supervisor';
+import { Advisor } from '~~/types/Advisor';
 
-type SupervisorTableProps = {
-  supervisors: Supervisor[];
-  setSupervisorSelected: Dispatch<SetStateAction<Supervisor | undefined>>;
+type AdvisorTableProps = {
+  advisors: Advisor[];
+  setAdvisorSelected: Dispatch<SetStateAction<Advisor | undefined>>;
 };
 
-const SupervisorTable: NextPage<SupervisorTableProps> = ({
-  supervisors,
-  setSupervisorSelected,
+const AdvisorTable: NextPage<AdvisorTableProps> = ({
+  advisors,
+  setAdvisorSelected,
 }) => {
   return (
     <>
-      <h3 className='text-center text-2xl font-bold'>Supervisors</h3>
+      <h3 className='text-center text-2xl font-bold'>Advisors</h3>
 
       <div className='overflow-x-auto lg:w-11/12 mx-auto'>
         <table className='table'>
@@ -29,7 +29,7 @@ const SupervisorTable: NextPage<SupervisorTableProps> = ({
             </tr>
           </thead>
           <tbody className='text-center'>
-            {supervisors.map((x, y) => (
+            {advisors.map((x, y) => (
               <tr
                 key={y}
                 className='hover:bg-secondary/5 transition-all delay-[50ms]'
@@ -45,7 +45,7 @@ const SupervisorTable: NextPage<SupervisorTableProps> = ({
                 <td>
                   <button
                     className={`${x.unlock ? 'btn-error' : 'btn-success'} btn btn-outline  hover:scale-110 transition-all delay-75`}
-                    onClick={() => setSupervisorSelected(x)}
+                    onClick={() => setAdvisorSelected(x)}
                   >
                     {x.unlock ? (
                       <NoSymbolIcon className='size-4 stroke-red-500 stroke-10' />
@@ -64,4 +64,4 @@ const SupervisorTable: NextPage<SupervisorTableProps> = ({
   );
 };
 
-export default SupervisorTable;
+export default AdvisorTable;

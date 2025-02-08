@@ -9,9 +9,17 @@ pub struct User {
 }
 
 #[derive(Drop, Serde, starknet::Store)]
-pub struct Supervisor {
-    pub supervisor_id: u64,
+pub struct Advisor {
+    pub advisor_id: u64,
     pub address: ContractAddress,
     pub unlock: bool,
     pub date: u64,
+}
+
+#[derive(Copy, Drop, Serde, starknet::Store)]
+pub enum VoteCreationAccess {
+    #[default]
+    Admin,
+    AdminOrAdvisor,
+    All,
 }

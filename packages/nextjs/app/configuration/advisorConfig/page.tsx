@@ -2,51 +2,48 @@ import { NextPage } from 'next';
 import { motion } from 'motion/react';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { AccountInterface } from 'starknet';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
-import ModalAddSupervisor from './_components/ModalAddSupervisor';
-import ModalHandleSupervisor from './_components/ModalHandleSupervisor';
-import { Supervisor } from '~~/types/Supervisor';
-import SupervisorTable from './_components/SupervisorTable';
+import { Advisor } from '~~/types/Advisor';
+import ModalAddAdvisor from './_components/ModalAddAdvisor';
+import ModalHandleAdvisor from './_components/ModalHandleAdvisor';
+import AdvisorTable from './_components/AdvisorTable';
 
-type SupervisorConfigProps = {
+type AdvisorConfigProps = {
   addressParsed: `0x${string}`;
-  account: AccountInterface | undefined;
   setOption: Dispatch<SetStateAction<number | undefined>>;
 };
 
-const SupervisorConfig: NextPage<SupervisorConfigProps> = ({
+const AdvisorConfig: NextPage<AdvisorConfigProps> = ({
   addressParsed,
-  account,
   setOption,
 }) => {
-  const [showAddSupervisorModal, setShowAddSupervisorModal] =
+  const [showAddAdvisorModal, setShowAddAdvisorModal] =
     useState<boolean>(false);
-  const [supervisorSelected, setSupervisorSelected] = useState<
-    Supervisor | undefined
-  >(undefined);
+  const [advisorSelected, setAdvisorSelected] = useState<Advisor | undefined>(
+    undefined
+  );
 
   //smart contract
-  const { data: supervisors } = useScaffoldReadContract({
+  const { data: advisors } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     contractAddress: addressParsed,
-    functionName: 'get_supervisors',
+    functionName: 'get_advisors',
   });
 
   return (
     <>
-      {showAddSupervisorModal && (
-        <ModalAddSupervisor
+      {showAddAdvisorModal && (
+        <ModalAddAdvisor
           contractAddress={addressParsed}
-          setShowAddSupervisorModal={setShowAddSupervisorModal}
+          setShowAddAdvisorModal={setShowAddAdvisorModal}
         />
       )}
 
-      {supervisorSelected !== undefined && (
-        <ModalHandleSupervisor
+      {advisorSelected !== undefined && (
+        <ModalHandleAdvisor
           contractAddress={addressParsed}
-          supervisorSelected={supervisorSelected}
-          setSupervisorSelected={setSupervisorSelected}
+          advisorSelected={advisorSelected}
+          setAdvisorSelected={setAdvisorSelected}
         />
       )}
 
@@ -59,31 +56,31 @@ const SupervisorConfig: NextPage<SupervisorConfigProps> = ({
         </button>
       </div>
 
-      {supervisors !== undefined && supervisors.length > 0 ? (
-        <SupervisorTable
-          supervisors={supervisors as unknown as Supervisor[]}
-          setSupervisorSelected={setSupervisorSelected}
+      {advisors !== undefined && advisors.length > 0 ? (
+        <AdvisorTable
+          advisors={advisors as unknown as Advisor[]}
+          setAdvisorSelected={setAdvisorSelected}
         />
       ) : (
         <div className='w-full flex items-center justify-center flex-col'>
           <h1 className='text-2xl font-bold text-center'>
-            No supervisors registered
+            No advisors registered
           </h1>
           <motion.button
             className='btn btn-primary px-10'
             whileHover={{ scale: 1.1 }}
-            onClick={() => setShowAddSupervisorModal(!showAddSupervisorModal)}
+            onClick={() => setShowAddAdvisorModal(!showAddAdvisorModal)}
           >
-            Add Supervisor
+            Add Advisor
           </motion.button>
         </div>
       )}
 
       <motion.div
         whileHover={{ scale: 1.2 }}
-        onClick={() => setShowAddSupervisorModal(!showAddSupervisorModal)}
+        onClick={() => setShowAddAdvisorModal(!showAddAdvisorModal)}
         className='tooltip tooltip-left tooltip-primary absolute md:bottom-8 md:right-8 scale-110'
-        data-tip='add supervisor'
+        data-tip='add advisor'
       >
         <button className='btn btn-circle '>
           <PlusIcon className='w-8 h-8' />
@@ -93,4 +90,4 @@ const SupervisorConfig: NextPage<SupervisorConfigProps> = ({
   );
 };
 
-export default SupervisorConfig;
+export default AdvisorConfig;

@@ -7,16 +7,16 @@ import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldRead
 import CardOptions from './_components/CardOptions';
 import UserConfig from './userConfig/page';
 import ModalAdminOrSupervisor from './_components/ModalAdminOrSupervisor';
-import SupervisorConfig from './supervisorConfig/page';
+import SupervisorConfig from './advisorConfig/page';
 
 const Configuration: NextPage = () => {
   const { account } = useAccount();
 
   //states
   const [addressParsed, setAddressParsed] = useState<`0x${string}`>('0x0');
-
   const [option, setOption] = useState<number | undefined>(undefined);
 
+  //smart contract
   const { data: isAdmin } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     contractAddress: addressParsed,
@@ -24,10 +24,10 @@ const Configuration: NextPage = () => {
     args: [account?.address],
   });
 
-  const { data: isSupervisor } = useScaffoldReadContract({
+  const { data: isAdvisor } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     contractAddress: addressParsed,
-    functionName: 'is_supervisor',
+    functionName: 'is_advisor',
     args: [account?.address],
   });
 
@@ -39,12 +39,18 @@ const Configuration: NextPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (account?.address !== undefined) {
+      setOption(isAdvisor && option === 2 ? undefined : option);
+    }
+  }, [account?.address, isAdvisor, option]);
+
   return (
     <>
-      {!isAdmin && !isSupervisor && <ModalAdminOrSupervisor />}
+      {!isAdmin && !isAdvisor && <ModalAdminOrSupervisor />}
 
       {/* TODO: VERIFICAR SI ES ADMIN O SUPERVISOR */}
-      <section className={`${!isAdmin && !isSupervisor ? 'blur-md' : ''}`}>
+      <section className={`${!isAdmin && !isAdvisor ? 'blur-md' : ''}`}>
         {option === undefined && (
           <CardOptions
             setOption={setOption}
@@ -63,7 +69,6 @@ const Configuration: NextPage = () => {
         {option === 2 && (
           <SupervisorConfig
             addressParsed={addressParsed}
-            account={account}
             setOption={setOption}
           />
         )}

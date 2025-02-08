@@ -5,24 +5,24 @@ import { XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 
-type ModalAddSupervisorProps = {
+type ModalAddAdvisorProps = {
   contractAddress: `0x${string}`;
-  setShowAddSupervisorModal: Dispatch<SetStateAction<boolean>>;
+  setShowAddAdvisorModal: Dispatch<SetStateAction<boolean>>;
 };
 
-const ModalAddSupervisor: NextPage<ModalAddSupervisorProps> = ({
+const ModalAddAdvisor: NextPage<ModalAddAdvisorProps> = ({
   contractAddress,
-  setShowAddSupervisorModal,
+  setShowAddAdvisorModal,
 }) => {
   //states
-  const [supervisorAddress, setSupervisorAddress] = useState<string>('');
+  const [advisorAddress, setAdvisorAddress] = useState<string>('');
   const [isMatchAddress, setIsMatchAddress] = useState<boolean>(false);
 
   //smart contract
   const { sendAsync } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
-    functionName: 'create_supervisor',
-    args: [supervisorAddress],
+    functionName: 'create_advisor',
+    args: [advisorAddress],
     address: contractAddress,
   });
 
@@ -30,20 +30,27 @@ const ModalAddSupervisor: NextPage<ModalAddSupervisorProps> = ({
     contractName: 'DaoSphere',
     contractAddress: contractAddress,
     functionName: 'is_admin',
-    args: [supervisorAddress],
+    args: [advisorAddress],
   });
 
-  const { data: isSupervisor } = useScaffoldReadContract({
+  const { data: isAdvisor } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     contractAddress: contractAddress,
-    functionName: 'is_supervisor',
-    args: [supervisorAddress],
+    functionName: 'is_advisor',
+    args: [advisorAddress],
+  });
+
+  const { data: isUser } = useScaffoldReadContract({
+    contractName: 'DaoSphere',
+    contractAddress: contractAddress,
+    functionName: 'is_user',
+    args: [advisorAddress],
   });
 
   const handleAddUser = async () => {
     try {
       await sendAsync();
-      setSupervisorAddress('');
+      setAdvisorAddress('');
     } catch (err) {
       console.log(err);
     } finally {
@@ -51,11 +58,10 @@ const ModalAddSupervisor: NextPage<ModalAddSupervisorProps> = ({
   };
 
   useEffect(() => {
-    if (isSupervisor !== undefined) {
-      console.log(isSupervisor);
-      setIsMatchAddress(Boolean(isSupervisor));
+    if (isAdvisor !== undefined && isUser !== undefined) {
+      setIsMatchAddress(Boolean(isAdvisor || isUser));
     }
-  }, [isSupervisor, supervisorAddress]);
+  }, [isAdvisor, isUser, advisorAddress]);
 
   return (
     <dialog className='modal' open>
@@ -64,19 +70,19 @@ const ModalAddSupervisor: NextPage<ModalAddSupervisorProps> = ({
           <h3 className='font-bold text-xl'>Add user</h3>
           <XMarkIcon
             className='w-6 h-6 cursor-pointer hover:scale-110 transition-all delay-75 ease-in-out'
-            onClick={() => setShowAddSupervisorModal(false)}
+            onClick={() => setShowAddAdvisorModal(false)}
           />
         </div>
 
         <div>
           <AddressInput
-            value={supervisorAddress}
-            onChange={setSupervisorAddress}
-            placeholder='Input address of the supervisor'
+            value={advisorAddress}
+            onChange={setAdvisorAddress}
+            placeholder='Input address of the advisor'
           />
 
-          {supervisorAddress.length > 0 &&
-            (!supervisorAddress.includes('0x') ? (
+          {advisorAddress.length > 0 &&
+            (!advisorAddress.includes('0x') ? (
               <span className='text-red-500 font-semibold ps-1'>
                 Address must start with 0x
               </span>
@@ -98,8 +104,8 @@ const ModalAddSupervisor: NextPage<ModalAddSupervisorProps> = ({
             className='btn btn-primary px-10'
             onClick={() => handleAddUser()}
             disabled={
-              !supervisorAddress.includes('0x') ||
-              supervisorAddress.length === 0 ||
+              !advisorAddress.includes('0x') ||
+              advisorAddress.length === 0 ||
               isAdmin?.toString() === 'true'
             }
           >
@@ -112,4 +118,4 @@ const ModalAddSupervisor: NextPage<ModalAddSupervisorProps> = ({
   );
 };
 
-export default ModalAddSupervisor;
+export default ModalAddAdvisor;

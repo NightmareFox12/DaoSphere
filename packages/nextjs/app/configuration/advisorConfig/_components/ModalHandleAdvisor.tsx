@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { NextPage } from 'next';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
-import { Supervisor } from '~~/types/Supervisor';
+import { Advisor } from '~~/types/Advisor';
 import {
   ArrowLeftIcon,
   LockOpenIcon,
@@ -9,29 +9,29 @@ import {
   XMarkIcon,
 } from '@heroicons/react/20/solid';
 
-type ModalHandleSupervisorProps = {
+type ModalHandleAdvisorProps = {
   contractAddress: `0x${string}`;
-  supervisorSelected: Supervisor;
-  setSupervisorSelected: Dispatch<SetStateAction<Supervisor | undefined>>;
+  advisorSelected: Advisor;
+  setAdvisorSelected: Dispatch<SetStateAction<Advisor | undefined>>;
 };
 
-const ModalHandleSupervisor: NextPage<ModalHandleSupervisorProps> = ({
+const ModalHandleAdvisor: NextPage<ModalHandleAdvisorProps> = ({
   contractAddress,
-  setSupervisorSelected,
-  supervisorSelected,
+  setAdvisorSelected,
+  advisorSelected,
 }) => {
   //smart contract
   const { sendAsync } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
-    functionName: 'modify_supervisor',
-    args: [supervisorSelected.supervisor_id],
+    functionName: 'modify_advisor',
+    args: [advisorSelected.advisor_id],
     address: contractAddress,
   });
 
   const handleAddUser = async () => {
     try {
       await sendAsync();
-      setSupervisorSelected(undefined);
+      setAdvisorSelected(undefined);
     } catch (err) {
       console.log(err);
     } finally {
@@ -45,33 +45,33 @@ const ModalHandleSupervisor: NextPage<ModalHandleSupervisorProps> = ({
           <h3 className='font-bold text-xl'>Confirmation</h3>
           <XMarkIcon
             className='w-6 h-6 cursor-pointer hover:scale-110 transition-all delay-75 ease-in-out'
-            onClick={() => setSupervisorSelected(undefined)}
+            onClick={() => setAdvisorSelected(undefined)}
           />
         </div>
         <p className='text-center text-lg break-words font-semibold'>
-          Are you sure you want to{' '}
-          {supervisorSelected.unlock ? 'block' : 'unlock'} the supervisor?
+          Are you sure you want to {advisorSelected.unlock ? 'block' : 'unlock'}{' '}
+          the advisor?
         </p>
 
         <div className='flex justify-center gap-5'>
           <button
             className='btn btn-outline btn-base-300 px-10'
-            onClick={() => setSupervisorSelected(undefined)}
+            onClick={() => setAdvisorSelected(undefined)}
           >
             <ArrowLeftIcon className='size-5' />
             Cancel
           </button>
 
           <button
-            className={`${supervisorSelected.unlock ? 'btn-error' : 'btn-success'} btn btn-outline px-10   hover:scale-110 transition-all delay-75`}
+            className={`${advisorSelected.unlock ? 'btn-error' : 'btn-success'} btn btn-outline px-10   hover:scale-110 transition-all delay-75`}
             onClick={() => handleAddUser()}
           >
-            {supervisorSelected.unlock ? (
+            {advisorSelected.unlock ? (
               <NoSymbolIcon className='size-4 stroke-red-500 stroke-10' />
             ) : (
               <LockOpenIcon className='size-4 stroke-green-500 stroke-10' />
             )}
-            {supervisorSelected.unlock ? 'Block' : 'Unlock'}
+            {advisorSelected.unlock ? 'Block' : 'Unlock'}
           </button>
         </div>
       </div>
@@ -79,4 +79,4 @@ const ModalHandleSupervisor: NextPage<ModalHandleSupervisorProps> = ({
   );
 };
 
-export default ModalHandleSupervisor;
+export default ModalHandleAdvisor;
