@@ -5,15 +5,22 @@ use super::models::DaoSphereModel;
 trait IDaoSphere<TContractState> {
     fn create_proposal(ref self: TContractState, description: ByteArray, end_time: u64);
     fn is_admin(self: @TContractState, caller: ContractAddress) -> bool;
+    fn is_supervisor(self: @TContractState, caller: ContractAddress) -> bool;
+    fn is_user(self: @TContractState, caller: ContractAddress) -> bool;
 
     // handle user
     fn create_user(ref self: TContractState, userAddress: ContractAddress);
-    fn user_exist(self: @TContractState, address: ContractAddress) -> bool;
     fn get_users(self: @TContractState) -> Array<DaoSphereModel::User>;
     fn modify_user(ref self: TContractState, user_id: u64);
+
+    // handle supervisor
+    fn create_supervisor(ref self: TContractState, supervisorAddress: ContractAddress);
+    fn get_supervisors(self: @TContractState) -> Array<DaoSphereModel::Supervisor>;
+    fn modify_supervisor(ref self: TContractState, supervisor_id: u64);
 }
 
 const USER_ROLE: felt252 = selector!("USER_ROLE");
+const SUPERVISOR_ROLE: felt252 = selector!("SUPERVISOR_ROLE");
 
 #[starknet::contract]
 mod DaoSphere {
@@ -24,11 +31,11 @@ mod DaoSphere {
     use AccessControlComponent::InternalTrait;
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
     use openzeppelin_introspection::src5::SRC5Component;
-    use starknet::{get_caller_address, ContractAddress};
+    use starknet::{get_caller_address, ContractAddress, get_block_timestamp};
     use starknet::storage::{Map};
     use starknet::syscalls::call_contract_syscall;
-    use super::{USER_ROLE};
-    use super::DaoSphereModel::{User};
+    use super::{USER_ROLE, SUPERVISOR_ROLE};
+    use super::DaoSphereModel::{User, Supervisor};
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -46,30 +53,31 @@ mod DaoSphere {
     //!LA IDEA QUE TENGO A FUTURO ES CREAR PROPUESTAS BASICAS CON 2 OPCIONES Y PROPUESTAS AVANZADAS
     //!QUE TENDRAN MUCHAS OPCIONES
 
-    #[derive(Drop, Serde, starknet::Store)]
-    struct Proposal {
-        proposal_id: u64,
-        creator_address: ContractAddress,
-        description: ByteArray,
-        start_time: u64,
-        end_time: u64,
-    }
+    // #[derive(Drop, Serde, starknet::Store)]
+    // struct Proposal {
+    //     proposal_id: u64,
+    //     creator_address: ContractAddress,
+    //     description: ByteArray,
+    //     start_time: u64,
+    //     end_time: u64,
+    // }
 
-    #[derive(Drop, Serde, starknet::Store)]
-    struct OptionProposal {
-        description: ByteArray,
-        votes: u64,
-    }
-
+    // #[derive(Drop, Serde, starknet::Store)]
+    // struct OptionProposal {
+    //     description: ByteArray,
+    //     votes: u64,
+    // }
 
     #[storage]
     struct Storage {
         admin: ContractAddress,
         proposal_count: u64,
-        proposal: Proposal,
-        proposal_options: Map<(u64, u64), OptionProposal>,
+        // proposal: Proposal,
+        // proposal_options: Map<(u64, u64), OptionProposal>,
         user_count: u64,
         users: Map<u64, User>,
+        supervisor_count: u64,
+        supervisors: Map<u64, Supervisor>,
         #[substorage(v0)]
         accesscontrol: AccessControlComponent::Storage,
         #[substorage(v0)]
@@ -80,6 +88,7 @@ mod DaoSphere {
     #[derive(Drop, starknet::Event)]
     enum Event {
         CreatedUser: CreatedUser,
+        CreatedSupervisor: CreatedSupervisor,
         #[flat]
         AccessControlEvent: AccessControlComponent::Event,
         #[flat]
@@ -88,7 +97,13 @@ mod DaoSphere {
 
     #[derive(Drop, starknet::Event)]
     struct CreatedUser {
-        id: u64,
+        user_id: u64,
+        address: ContractAddress,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct CreatedSupervisor {
+        supervisor_id: u64,
         address: ContractAddress,
     }
 
@@ -132,7 +147,6 @@ mod DaoSphere {
 
             // let res = *juan2.at(0);
         // println!("juan2 {:?}", res);
-
         }
 
 
@@ -143,31 +157,52 @@ mod DaoSphere {
             isAdmin
         }
 
+        fn is_supervisor(self: @ContractState, caller: ContractAddress) -> bool {
+            let isSupervisor = self.accesscontrol.hasRole(SUPERVISOR_ROLE, caller);
+
+            isSupervisor
+        }
+
+        fn is_user(self: @ContractState, caller: ContractAddress) -> bool {
+            let isUser = self.accesscontrol.hasRole(USER_ROLE, caller);
+
+            isUser
+        }
+
         //handle user
         fn create_user(ref self: ContractState, userAddress: ContractAddress) {
             let caller = get_caller_address();
-            assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
+            assert(
+                self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller)
+                    || self.accesscontrol.hasRole(SUPERVISOR_ROLE, caller),
+                'Caller not admin or supervisor',
+            );
+
             assert(userAddress.is_non_zero(), 'Invalid user address');
             assert(!self.accesscontrol.hasRole(USER_ROLE, userAddress), 'User already exists');
-
+            assert(
+                !self.accesscontrol.hasRole(SUPERVISOR_ROLE, userAddress),
+                'Supervisor cannot be a user',
+            );
             assert(userAddress != caller, 'Admin cannot be a user');
 
             self.accesscontrol.grantRole(USER_ROLE, userAddress);
-
             let user_id = self.user_count.read();
+
             self
                 .users
                 .entry(user_id)
-                .write(User { user_id: user_id, address: userAddress, unlock: true });
+                .write(
+                    User {
+                        user_id: user_id,
+                        address: userAddress,
+                        unlock: true,
+                        date: get_block_timestamp(),
+                    },
+                );
 
-            self.emit(CreatedUser { id: user_id, address: userAddress });
+            self.emit(CreatedUser { user_id: user_id, address: userAddress });
             self.user_count.write(user_id + 1);
-        }
-
-        fn user_exist(self: @ContractState, address: ContractAddress) -> bool {
-            let isUser = self.accesscontrol.hasRole(USER_ROLE, address);
-
-            isUser
         }
 
         fn get_users(self: @ContractState) -> Array<User> {
@@ -189,11 +224,98 @@ mod DaoSphere {
 
         fn modify_user(ref self: ContractState, user_id: u64) {
             let caller = get_caller_address();
-            assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
+            assert(
+                self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller)
+                    || self.accesscontrol.hasRole(SUPERVISOR_ROLE, caller),
+                'Caller not admin or supervisor',
+            );
+
+            if self.accesscontrol.hasRole(SUPERVISOR_ROLE, caller) {
+                let limit: u64 = self.supervisor_count.read();
+                let mut i: u64 = 0;
+
+                let supervisor_exist: Supervisor = loop {
+                    if i == limit {
+                        break Supervisor {
+                            supervisor_id: 0, address: 0.try_into().unwrap(), unlock: true, date: 0,
+                        };
+                    }
+                    if self.supervisors.entry(i).read().address == caller {
+                        break self.supervisors.entry(i).read();
+                    }
+                    i += 1;
+                };
+
+                assert(supervisor_exist.unlock == true, 'Supervisor blocked');
+            }
 
             let mut user = self.users.entry(user_id).read();
             user.unlock = !user.unlock;
             self.users.entry(user_id).write(user);
+        }
+
+        // handle supervisor
+        fn create_supervisor(ref self: ContractState, supervisorAddress: ContractAddress) {
+            let caller = get_caller_address();
+
+            assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
+            assert(supervisorAddress.is_non_zero(), 'Invalid supervisor address');
+            assert(supervisorAddress != caller, 'Admin cannot be a supervisor');
+            assert(
+                !self.accesscontrol.hasRole(SUPERVISOR_ROLE, supervisorAddress),
+                'Supervisor already exists',
+            );
+            assert(
+                !self.accesscontrol.hasRole(USER_ROLE, supervisorAddress),
+                'Supervisor cannot be a user',
+            );
+
+            self.accesscontrol.grantRole(SUPERVISOR_ROLE, supervisorAddress);
+
+            let supervisor_id = self.supervisor_count.read();
+            self
+                .supervisors
+                .entry(supervisor_id)
+                .write(
+                    Supervisor {
+                        supervisor_id: supervisor_id,
+                        address: supervisorAddress,
+                        unlock: true,
+                        date: get_block_timestamp(),
+                    },
+                );
+
+            self
+                .emit(
+                    CreatedSupervisor { supervisor_id: supervisor_id, address: supervisorAddress },
+                );
+            self.supervisor_count.write(supervisor_id + 1);
+        }
+
+        fn get_supervisors(self: @ContractState) -> Array<Supervisor> {
+            let mut supervisor_arr: Array<Supervisor> = ArrayTrait::<Supervisor>::new();
+
+            let limit: u64 = self.supervisor_count.read();
+            let mut i: u64 = 0;
+
+            loop {
+                if i == limit {
+                    break;
+                }
+                supervisor_arr.append(self.supervisors.entry(i).read());
+                i += 1;
+            };
+
+            supervisor_arr
+        }
+
+        fn modify_supervisor(ref self: ContractState, supervisor_id: u64) {
+            let caller = get_caller_address();
+            assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
+
+            let mut supervisor = self.supervisors.entry(supervisor_id).read();
+            supervisor.unlock = !supervisor.unlock;
+            self.supervisors.entry(supervisor_id).write(supervisor);
         }
     }
 }

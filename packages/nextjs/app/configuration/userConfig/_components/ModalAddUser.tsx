@@ -4,18 +4,14 @@ import { AddressInput } from '~~/components/scaffold-stark';
 import { XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
-import { feltToHex } from '~~/utils/scaffold-stark/common';
-import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
 
 type ModalAddUserProps = {
   contractAddress: `0x${string}`;
-  adminAddress: string | undefined;
   setShowAddUserModal: Dispatch<SetStateAction<boolean>>;
 };
 
 const ModalAddUser: NextPage<ModalAddUserProps> = ({
   contractAddress,
-  adminAddress,
   setShowAddUserModal,
 }) => {
   //states
@@ -40,7 +36,14 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
   const { data: isUser } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     contractAddress: contractAddress,
-    functionName: 'user_exist',
+    functionName: 'is_user',
+    args: [userAddress],
+  });
+
+  const { data: isSupervisor } = useScaffoldReadContract({
+    contractName: 'DaoSphere',
+    contractAddress: contractAddress,
+    functionName: 'is_supervisor',
     args: [userAddress],
   });
 
@@ -55,11 +58,10 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
   };
 
   useEffect(() => {
-    if (isUser !== undefined) {
-      console.log(isUser);
-      setIsMatchAddress(Boolean(isUser));
+    if (isUser !== undefined && isSupervisor !== undefined) {
+      setIsMatchAddress(Boolean(isUser || isSupervisor));
     }
-  }, [isUser, userAddress]);
+  }, [isSupervisor, isUser, userAddress]);
 
   return (
     <dialog className='modal' open>

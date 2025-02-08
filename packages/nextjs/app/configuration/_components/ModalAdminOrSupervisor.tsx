@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
-const ModalAdmin: NextPage = () => {
+const ModalAdminOrSupervisor: NextPage = () => {
   const router = useRouter();
 
   return (
@@ -20,7 +20,7 @@ const ModalAdmin: NextPage = () => {
       <div className='bg-base-300 p-10 rounded-lg border border-primary'>
         <h3 className='font-bold text-2xl'>Restricted Access 🚫</h3>
         <p className='py-4 font-semibold text-lg'>
-          For DAO administrators only. 🤚
+          For DAO administrators or supervisors only. 🤚
         </p>
 
         <div className='flex justify-center'>
@@ -34,4 +34,4 @@ const ModalAdmin: NextPage = () => {
   );
 };
 
-export default ModalAdmin;
+export default ModalAdminOrSupervisor;

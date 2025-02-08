@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x4ce6c8b216839a0763cb93b83e04f1d3a62a3d0b707042074f23167bb96acd6",
+        "0xf26aee53b08b0b4eddaf03490aa5f6ee1f1fa43bf9082f953c9a8d6066e5f9",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x33b5076efbd26d4faa7219b160e3193ff9e42af45ed2ccb2036d60c009c245a",
+        "0x20ac874f5f3479a10265490755dac2cd1ab7b72736eee28623bdecbab89604d",
     },
     DaoSphere: {
       address:
-        "0x357d33dfda666e926e1baee331271a86f6140825e99041da292a0b9b05e76b4",
+        "0x7408c39e84f8bdf819e55c6077d96107ee4f0d54775f741c921fe4d97c8d088",
       abi: [
         {
           type: "impl",
@@ -156,6 +156,32 @@ const deployedContracts = {
               name: "unlock",
               type: "core::bool",
             },
+            {
+              name: "date",
+              type: "core::integer::u64",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::models::DaoSphereModel::Supervisor",
+          members: [
+            {
+              name: "supervisor_id",
+              type: "core::integer::u64",
+            },
+            {
+              name: "address",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "unlock",
+              type: "core::bool",
+            },
+            {
+              name: "date",
+              type: "core::integer::u64",
+            },
           ],
         },
         {
@@ -196,22 +222,10 @@ const deployedContracts = {
             },
             {
               type: "function",
-              name: "create_user",
+              name: "is_supervisor",
               inputs: [
                 {
-                  name: "userAddress",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "user_exist",
-              inputs: [
-                {
-                  name: "address",
+                  name: "caller",
                   type: "core::starknet::contract_address::ContractAddress",
                 },
               ],
@@ -221,6 +235,34 @@ const deployedContracts = {
                 },
               ],
               state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "is_user",
+              inputs: [
+                {
+                  name: "caller",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "create_user",
+              inputs: [
+                {
+                  name: "userAddress",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
             },
             {
               type: "function",
@@ -239,6 +281,41 @@ const deployedContracts = {
               inputs: [
                 {
                   name: "user_id",
+                  type: "core::integer::u64",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "create_supervisor",
+              inputs: [
+                {
+                  name: "supervisorAddress",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_supervisors",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::array::Array::<contracts::models::DaoSphereModel::Supervisor>",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "modify_supervisor",
+              inputs: [
+                {
+                  name: "supervisor_id",
                   type: "core::integer::u64",
                 },
               ],
@@ -386,7 +463,24 @@ const deployedContracts = {
           kind: "struct",
           members: [
             {
-              name: "id",
+              name: "user_id",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+            {
+              name: "address",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::DaoSphere::DaoSphere::CreatedSupervisor",
+          kind: "struct",
+          members: [
+            {
+              name: "supervisor_id",
               type: "core::integer::u64",
               kind: "data",
             },
@@ -502,6 +596,11 @@ const deployedContracts = {
               kind: "nested",
             },
             {
+              name: "CreatedSupervisor",
+              type: "contracts::DaoSphere::DaoSphere::CreatedSupervisor",
+              kind: "nested",
+            },
+            {
               name: "AccessControlEvent",
               type: "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::Event",
               kind: "flat",
@@ -515,7 +614,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x5b453a14e8d3b21208f0e1a518db2b6eb06435b54e0e8f89b7697824bbb4d01",
+        "0x28627bce067f62260d088fae0ec0b8146b3a197fb373ecb301ffd4a523019cf",
     },
   },
 } as const;

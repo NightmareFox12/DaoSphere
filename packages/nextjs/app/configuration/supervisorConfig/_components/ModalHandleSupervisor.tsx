@@ -1,37 +1,37 @@
 import { Dispatch, SetStateAction } from 'react';
 import { NextPage } from 'next';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
+import { Supervisor } from '~~/types/Supervisor';
 import {
   ArrowLeftIcon,
   LockOpenIcon,
   NoSymbolIcon,
   XMarkIcon,
 } from '@heroicons/react/20/solid';
-import { User } from '~~/types/User';
 
-type ModalHandleUserProps = {
+type ModalHandleSupervisorProps = {
   contractAddress: `0x${string}`;
-  userSelected: User;
-  setUserSelected: Dispatch<SetStateAction<User | undefined>>;
+  supervisorSelected: Supervisor;
+  setSupervisorSelected: Dispatch<SetStateAction<Supervisor | undefined>>;
 };
 
-const ModalHandleUser: NextPage<ModalHandleUserProps> = ({
+const ModalHandleSupervisor: NextPage<ModalHandleSupervisorProps> = ({
   contractAddress,
-  setUserSelected,
-  userSelected,
+  setSupervisorSelected,
+  supervisorSelected,
 }) => {
   //smart contract
   const { sendAsync } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
-    functionName: 'modify_user',
-    args: [userSelected.user_id],
+    functionName: 'modify_supervisor',
+    args: [supervisorSelected.supervisor_id],
     address: contractAddress,
   });
 
   const handleAddUser = async () => {
     try {
       await sendAsync();
-      setUserSelected(undefined);
+      setSupervisorSelected(undefined);
     } catch (err) {
       console.log(err);
     } finally {
@@ -45,32 +45,33 @@ const ModalHandleUser: NextPage<ModalHandleUserProps> = ({
           <h3 className='font-bold text-xl'>Confirmation</h3>
           <XMarkIcon
             className='w-6 h-6 cursor-pointer hover:scale-110 transition-all delay-75 ease-in-out'
-            onClick={() => setUserSelected(undefined)}
+            onClick={() => setSupervisorSelected(undefined)}
           />
         </div>
-        <p className='break-words font-semibold'>
-          Are you sure you want to {userSelected.unlock ? 'block' : 'unlock'} the user?
+        <p className='text-center text-lg break-words font-semibold'>
+          Are you sure you want to{' '}
+          {supervisorSelected.unlock ? 'block' : 'unlock'} the supervisor?
         </p>
 
         <div className='flex justify-center gap-5'>
           <button
             className='btn btn-outline btn-base-300 px-10'
-            onClick={() => setUserSelected(undefined)}
+            onClick={() => setSupervisorSelected(undefined)}
           >
             <ArrowLeftIcon className='size-5' />
             Cancel
           </button>
 
           <button
-            className={`${userSelected.unlock ? 'btn-error' : 'btn-success'} btn btn-outline px-10   hover:scale-110 transition-all delay-75`}
+            className={`${supervisorSelected.unlock ? 'btn-error' : 'btn-success'} btn btn-outline px-10   hover:scale-110 transition-all delay-75`}
             onClick={() => handleAddUser()}
           >
-            {userSelected.unlock ? (
+            {supervisorSelected.unlock ? (
               <NoSymbolIcon className='size-4 stroke-red-500 stroke-10' />
             ) : (
               <LockOpenIcon className='size-4 stroke-green-500 stroke-10' />
             )}
-            {userSelected.unlock ? 'Block' : 'Unlock'}
+            {supervisorSelected.unlock ? 'Block' : 'Unlock'}
           </button>
         </div>
       </div>
@@ -78,4 +79,4 @@ const ModalHandleUser: NextPage<ModalHandleUserProps> = ({
   );
 };
 
-export default ModalHandleUser;
+export default ModalHandleSupervisor;
