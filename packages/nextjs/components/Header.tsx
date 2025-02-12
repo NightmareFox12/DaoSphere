@@ -12,7 +12,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { useOutsideClick } from '~~/hooks/scaffold-stark';
 import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
-import { useTheme } from 'next-themes';
 import { useTargetNetwork } from '~~/hooks/scaffold-stark/useTargetNetwork';
 import { devnet } from '@starknet-react/chains';
 import { SwitchTheme } from './SwitchTheme';
@@ -48,12 +47,6 @@ export const menuLinks: HeaderMenuLink[] = [
 
 export const HeaderMenuLinks = () => {
   const pathname = usePathname();
-  // const { theme } = useTheme();
-  // const [isDark, setIsDark] = useState(false);
-
-  // useEffect(() => {
-  //   setIsDark(theme === 'dark');
-  // }, [theme]);
   return (
     <>
       {menuLinks.map(({ label, href, icon }) => {
@@ -164,12 +157,13 @@ export const Header = () => {
           passHref
           className='hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0'
         >
-          <div className='flex relative w-10 h-10'>
+          <div className='flex relative w-10 h-10 bg-transparent'>
             <Image
               alt='SE2 logo'
-              className='cursor-pointer'
-              fill
-              src='/logo.svg'
+              className='cursor-pointer object-contain'
+              width={100}
+              height={100}
+              src='/logo.png'
             />
           </div>
           <div className='flex flex-col'>

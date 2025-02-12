@@ -9,12 +9,12 @@ import ModalHandleAdvisor from './_components/ModalHandleAdvisor';
 import AdvisorTable from './_components/AdvisorTable';
 
 type AdvisorConfigProps = {
-  addressParsed: `0x${string}`;
+  contractAddress: `0x${string}`;
   setOption: Dispatch<SetStateAction<number | undefined>>;
 };
 
 const AdvisorConfig: NextPage<AdvisorConfigProps> = ({
-  addressParsed,
+  contractAddress,
   setOption,
 }) => {
   const [showAddAdvisorModal, setShowAddAdvisorModal] =
@@ -26,7 +26,7 @@ const AdvisorConfig: NextPage<AdvisorConfigProps> = ({
   //smart contract
   const { data: advisors } = useScaffoldReadContract({
     contractName: 'DaoSphere',
-    contractAddress: addressParsed,
+    contractAddress: contractAddress,
     functionName: 'get_advisors',
   });
 
@@ -34,14 +34,14 @@ const AdvisorConfig: NextPage<AdvisorConfigProps> = ({
     <>
       {showAddAdvisorModal && (
         <ModalAddAdvisor
-          contractAddress={addressParsed}
+          contractAddress={contractAddress}
           setShowAddAdvisorModal={setShowAddAdvisorModal}
         />
       )}
 
       {advisorSelected !== undefined && (
         <ModalHandleAdvisor
-          contractAddress={addressParsed}
+          contractAddress={contractAddress}
           advisorSelected={advisorSelected}
           setAdvisorSelected={setAdvisorSelected}
         />

@@ -6,8 +6,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 import { useLoginContext } from '~~/context/LoginContext';
+import Image from 'next/image';
+import Typewriter from './Typewriter';
+import { useAccount } from '~~/hooks/useAccount';
 
 const Home: NextPage = () => {
+  const { isConnected } = useAccount();
   const router = useRouter();
 
   //context
@@ -20,7 +24,7 @@ const Home: NextPage = () => {
     const daoAddress = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
     setIsLogin(daoAddress !== null && daoAddress !== undefined);
     setDaoAddress2(daoAddress);
-  }, [, isLogin]);
+  }, [isLogin, setIsLogin]);
 
   return (
     <main>
@@ -30,24 +34,35 @@ const Home: NextPage = () => {
         <>
           <motion.div
             className='mt-24 flex items-center flex-col'
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ scale: 0 }}
+            animate={{
+              scale: [1, 1.1, 1],
+            }}
             transition={{
-              duration: 0.8,
-              scale: { type: 'spring', visualDuration: 0.4, bounce: 0.5 },
+              duration: 5,
+              ease: 'easeInOut',
+              times: [0, 0.5, 1],
+              repeat: Infinity,
             }}
           >
-            <h1 className='text-center font-bold text-6xl'>DaoSphere</h1>
+            <Image
+              alt='DS logo'
+              className='object-fill w-4/2 h-4/2'
+              width={300}
+              height={300}
+              src='/logo.png'
+            />
           </motion.div>
 
-          <div className='w-6/12 mx-auto text-center font-semibold mt-10'>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          {isConnected && (
+            <Typewriter
+              text='Lorem ipsum dolor sit amet consectetur adipisicing elit.
               Distinctio at doloremque qui eos doloribus sapiente, sint expedita
               maxime porro magnam nam explicabo? Ut reiciendis sed quis nihil
-              ipsa, commodi iste.
-            </p>
-          </div>
+              ipsa, commodi iste.'
+              delay={75}
+            />
+          )}
 
           <section className='flex w-8/12 mx-auto justify-center items-center my-10 gap-10 select-none'>
             <article className='card w-96 shadow-xl border border-gradient transition-transform delay-75 hover:scale-105'>

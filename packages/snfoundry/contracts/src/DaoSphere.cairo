@@ -4,9 +4,7 @@ use super::models::DaoSphereModel;
 #[starknet::interface]
 trait IDaoSphere<TContractState> {
     fn create_proposal(ref self: TContractState, description: ByteArray, end_time: u64);
-    fn modify_vote_creation_access(
-        ref self: TContractState, vote_creation_access: DaoSphereModel::VoteCreationAccess,
-    );
+    fn modify_vote_creation_access( ref self: TContractState);
     fn get_vote_creation_access(self: @TContractState) -> DaoSphereModel::VoteCreationAccess;
 
     fn is_admin(self: @TContractState, caller: ContractAddress) -> bool;
@@ -121,7 +119,7 @@ mod DaoSphere {
     fn constructor(ref self: ContractState, admin: ContractAddress) {
         self.accesscontrol.initializer();
         self.accesscontrol._grant_role(DEFAULT_ADMIN_ROLE, admin);
-        self.vote_creation_access.write(VoteCreationAccess::All);
+        self.vote_creation_access.write(VoteCreationAccess::All(true));
     }
 
     fn has_any_role(self: @ContractState, caller: ContractAddress, roles: Array<felt252>) -> bool {
@@ -194,12 +192,25 @@ mod DaoSphere {
         }
 
         fn modify_vote_creation_access(
-            ref self: ContractState, vote_creation_access: VoteCreationAccess,
+            ref self: ContractState,
         ) {
             let caller = get_caller_address();
             assert(self.is_admin(caller), 'Caller is not admin');
 
-            self.vote_creation_access.write(vote_creation_access);
+            self.vote_creation_access.write(VoteCreationAccess::Admin(true));
+            self.vote_creation_access.write(VoteCreationAccess::AdminOrAdvisor(true));
+            self.vote_creation_access.write(VoteCreationAccess::All(true));
+
+            // if vote_creation_access == selector!("Admin") {
+            //     self.vote_creation_access.write(VoteCreationAccess::Admin(true));
+            // } else if vote_creation_access == selector!("AdminOrAdvisor") {
+            //     self.vote_creation_access.write(VoteCreationAccess::AdminOrAdvisor(true));
+            // } else if vote_creation_access == selector!("All") {
+            //     self.vote_creation_access.write(VoteCreationAccess::All(true));
+            // }
+            //TODO: MI MISION AQUI ES HACER QUE EL ADMIN PUEDA MODIFICAR EL VOTE CREATION ACCESS
+            //TODO: EN LA DOCS VI ALGO DE MATCH, ESTO SERA DIFICIL.
+            // self.vote_creation_access.write(vote_creation_access);
         }
 
         fn get_vote_creation_access(self: @ContractState) -> VoteCreationAccess {

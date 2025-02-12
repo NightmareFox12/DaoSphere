@@ -18,7 +18,7 @@ pub mod DaoSphereFabric {
     use super::Dao;
 
     const DAO_SPHERE_CLASS_HASH: felt252 =
-    0x689dbd44b9ccba4f4231371602112efac66c38b1142255ba28d9c5322bae66;
+    0x2502d01a976e3b9b460f5a92238dc9477a30cd84e11cc130c38e4ae2732b784;
 
     #[storage]
     struct Storage {

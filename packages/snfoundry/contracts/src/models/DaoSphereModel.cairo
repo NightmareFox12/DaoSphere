@@ -19,7 +19,7 @@ pub struct Advisor {
 #[derive(Copy, Drop, Serde, starknet::Store)]
 pub enum VoteCreationAccess {
     #[default]
-    Admin,
-    AdminOrAdvisor,
-    All,
+    Admin: bool,
+    AdminOrAdvisor: bool,
+    All: bool,
 }

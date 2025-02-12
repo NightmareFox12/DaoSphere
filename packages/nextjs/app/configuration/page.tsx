@@ -8,25 +8,26 @@ import CardOptions from './_components/CardOptions';
 import UserConfig from './userConfig/page';
 import ModalAdminOrSupervisor from './_components/ModalAdminOrSupervisor';
 import SupervisorConfig from './advisorConfig/page';
+import DataConfig from './dataConfig/page';
 
 const Configuration: NextPage = () => {
   const { account } = useAccount();
 
   //states
-  const [addressParsed, setAddressParsed] = useState<`0x${string}`>('0x0');
+  const [contractAddress, setContractAddress] = useState<`0x${string}`>('0x0');
   const [option, setOption] = useState<number | undefined>(undefined);
 
   //smart contract
   const { data: isAdmin } = useScaffoldReadContract({
     contractName: 'DaoSphere',
-    contractAddress: addressParsed,
+    contractAddress: contractAddress,
     functionName: 'is_admin',
     args: [account?.address],
   });
 
   const { data: isAdvisor } = useScaffoldReadContract({
     contractName: 'DaoSphere',
-    contractAddress: addressParsed,
+    contractAddress: contractAddress,
     functionName: 'is_advisor',
     args: [account?.address],
   });
@@ -34,8 +35,8 @@ const Configuration: NextPage = () => {
   useEffect(() => {
     const address = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
     if (address !== null) {
-      const addressParsed: `0x${string}` = `0x${address.slice(2)}`;
-      setAddressParsed(addressParsed);
+      const contractAddress: `0x${string}` = `0x${address.slice(2)}`;
+      setContractAddress(contractAddress);
     }
   }, []);
 
@@ -49,7 +50,6 @@ const Configuration: NextPage = () => {
     <>
       {!isAdmin && !isAdvisor && <ModalAdminOrSupervisor />}
 
-      {/* TODO: VERIFICAR SI ES ADMIN O SUPERVISOR */}
       <section className={`${!isAdmin && !isAdvisor ? 'blur-md' : ''}`}>
         {option === undefined && (
           <CardOptions
@@ -60,15 +60,21 @@ const Configuration: NextPage = () => {
 
         {option === 1 && (
           <UserConfig
-            addressParsed={addressParsed}
-            account={account}
+            contractAddress={contractAddress}
             setOption={setOption}
           />
         )}
 
         {option === 2 && (
           <SupervisorConfig
-            addressParsed={addressParsed}
+            contractAddress={contractAddress}
+            setOption={setOption}
+          />
+        )}
+
+        {option === 3 && (
+          <DataConfig
+            contractAddress={contractAddress}
             setOption={setOption}
           />
         )}

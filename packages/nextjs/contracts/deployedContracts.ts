@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x5bbdeda9c453d8a88488420cf61357fcd58bd41f4167c35ea26d1ba06a93226",
+        "0x45b4c9b9088ba1bbe9a824d99a1096801bffa0f12900aa9b76b9436dc37851c",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x1f63c0f9da195977961831fe19081f0ac57e1f65e59f4e1c29fb7efbd631e0f",
+        "0x49b24cb8824a75bc8a7fc2bf35db27823c2f5ddc23cfb6371177e9b1310cfb3",
     },
     DaoSphere: {
       address:
-        "0x463d7079a0b5519c30d7cb6c400b379fe8fa32da1808b8986008aba4094030c",
+        "0x2b644775b73fa681ec4fe0bbfc002c7725100efd086488b5b9544885f873b1f",
       abi: [
         {
           type: "impl",
@@ -128,24 +128,6 @@ const deployedContracts = {
         },
         {
           type: "enum",
-          name: "contracts::models::DaoSphereModel::VoteCreationAccess",
-          variants: [
-            {
-              name: "Admin",
-              type: "()",
-            },
-            {
-              name: "AdminOrAdvisor",
-              type: "()",
-            },
-            {
-              name: "All",
-              type: "()",
-            },
-          ],
-        },
-        {
-          type: "enum",
           name: "core::bool",
           variants: [
             {
@@ -155,6 +137,24 @@ const deployedContracts = {
             {
               name: "True",
               type: "()",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "contracts::models::DaoSphereModel::VoteCreationAccess",
+          variants: [
+            {
+              name: "Admin",
+              type: "core::bool",
+            },
+            {
+              name: "AdminOrAdvisor",
+              type: "core::bool",
+            },
+            {
+              name: "All",
+              type: "core::bool",
             },
           ],
         },
@@ -225,12 +225,7 @@ const deployedContracts = {
             {
               type: "function",
               name: "modify_vote_creation_access",
-              inputs: [
-                {
-                  name: "vote_creation_access",
-                  type: "contracts::models::DaoSphereModel::VoteCreationAccess",
-                },
-              ],
+              inputs: [],
               outputs: [],
               state_mutability: "external",
             },
@@ -687,7 +682,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x689dbd44b9ccba4f4231371602112efac66c38b1142255ba28d9c5322bae66",
+        "0xeae4dc7b59443c5cf4fd494cc17ff3f611df8177f78c8ee0711eade8f5b31c",
     },
   },
 } as const;

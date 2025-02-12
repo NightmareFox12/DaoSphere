@@ -27,9 +27,9 @@ const CardOptions: NextPage<CardOptionsProps> = ({ setOption, isAdmin }) => {
               onClick={() => setOption(2)}
             >
               <div className='card-body'>
-                <h2 className='card-title'>Supervisors</h2>
+                <h2 className='card-title'>Advisors</h2>
                 <p className='font-light'>
-                  Manage supervisors and permissions.
+                  Manage advisor and permissions.
                 </p>
               </div>
             </article>
@@ -40,9 +40,7 @@ const CardOptions: NextPage<CardOptionsProps> = ({ setOption, isAdmin }) => {
             >
               <div className='card-body'>
                 <h2 className='card-title'>Data</h2>
-                <p className='font-light'>
-                  Manage data and permissions.
-                </p>
+                <p className='font-light'>Manage data and permissions.</p>
               </div>
             </article>
           </>
