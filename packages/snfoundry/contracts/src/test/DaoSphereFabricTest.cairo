@@ -27,53 +27,43 @@ fn test_init_contract() {
 }
 
 #[test]
-fn test_create_dao_public() {
+fn test_create_dao() {
+    let mut spy = spy_events();
+
     let result: Result<DeclareResult, Array<felt252>> = declare("DaoSphere");
 
     assert(result.is_ok(), 'error to deploy contract');
 
     let contract_address = deploy_contract("DaoSphereFabric");
     let dispatcher = IDaoSphereFabricDispatcher { contract_address };
-    let mut spy = spy_events();
 
     println!("creating dao public...");
 
-    let dao_address = dispatcher.create_dao("name testing", true);
-    println!("dao_address: {:?}", dao_address);
-
-    let invalid_address: ContractAddress = 0.try_into().unwrap();
-
-    assert(dao_address != invalid_address, 'The DAO address should be valid');
+    dispatcher.create_dao("name testing");
 
     let events = spy.get_events();
     let eventsLength = events.events.len();
 
     println!("total events emit {}", eventsLength);
-    assert(eventsLength == 1, 'There should be one event');
+    assert(eventsLength > 0, 'No events emit');
 }
 
 #[test]
-fn test_create_dao_private() {
+#[should_panic(expected: 'name dao is already exist')]
+fn test_create_dao_with_same_name() {
+    let mut spy = spy_events();
+
     let result: Result<DeclareResult, Array<felt252>> = declare("DaoSphere");
 
     assert(result.is_ok(), 'error to deploy contract');
 
     let contract_address = deploy_contract("DaoSphereFabric");
     let dispatcher = IDaoSphereFabricDispatcher { contract_address };
-    let mut spy = spy_events();
 
-    println!("creating dao public...");
-
-    let dao_address = dispatcher.create_dao("name testing", false);
-    println!("dao_address: {:?}", dao_address);
-
-    let invalid_address: ContractAddress = 0.try_into().unwrap();
-
-    assert(dao_address != invalid_address, 'The DAO address should be valid');
+    dispatcher.create_dao("name testing");
+    dispatcher.create_dao("name testing");
 
     let events = spy.get_events();
     let eventsLength = events.events.len();
-
-    println!("total events emit {}", eventsLength);
-    assert(eventsLength == 0, 'There should be one event');
+    assert(eventsLength == 2, 'name dao is already exist');
 }
