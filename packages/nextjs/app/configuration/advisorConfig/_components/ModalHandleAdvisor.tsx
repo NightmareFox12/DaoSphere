@@ -25,7 +25,7 @@ const ModalHandleAdvisor: NextPage<ModalHandleAdvisorProps> = ({
     contractName: 'DaoSphere',
     functionName: 'modify_advisor',
     args: [advisorSelected.advisor_id],
-    address: contractAddress,
+    contractAddress: contractAddress,
   });
 
   const handleAddUser = async () => {

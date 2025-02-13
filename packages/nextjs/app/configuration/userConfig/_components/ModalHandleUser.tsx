@@ -25,7 +25,7 @@ const ModalHandleUser: NextPage<ModalHandleUserProps> = ({
     contractName: 'DaoSphere',
     functionName: 'modify_user',
     args: [userSelected.user_id],
-    address: contractAddress,
+    contractAddress: contractAddress,
   });
 
   const handleAddUser = async () => {

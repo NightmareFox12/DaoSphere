@@ -27,7 +27,10 @@ const UserTable: NextPage<UserTableProps> = ({ users, setUserSelected }) => {
           </thead>
           <tbody className='text-center'>
             {users.map((x, y) => (
-              <tr key={y} className='hover:bg-secondary/5 transition-all delay-[50ms]'>
+              <tr
+                key={y}
+                className='hover:bg-secondary/5 transition-all delay-[50ms]'
+              >
                 <th>{y + 1}</th>
                 <td className='flex justify-center p-5'>
                   <Address
