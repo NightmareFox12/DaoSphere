@@ -23,7 +23,7 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
     contractName: 'DaoSphere',
     functionName: 'create_user',
     args: [userAddress],
-    address: contractAddress,
+    contractAddress: contractAddress,
   });
 
   const { data: isAdmin } = useScaffoldReadContract({

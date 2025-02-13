@@ -106,44 +106,78 @@ const DataConfig: NextPage<DataConfigProps> = ({
 
       <article className='w-full h-full flex gap-5 bg-dark-900 p-4 rounded-lg'>
         {users !== undefined &&
-          advisors !== undefined &&
-          (users.length > 0 || advisors.length > 0) && (
-            <StyledEngineProvider injectFirst>
-              <PieChart
-                series={[
-                  {
-                    data: [
-                      { value: users.length, color: 'orange', label: 'users' },
-                      {
-                        value: advisors.length,
-                        color: 'green',
-                        label: 'advisors',
-                      },
-                    ],
-                  },
-                ]}
-                width={250}
-                height={250}
-              />
+        advisors !== undefined &&
+        (users.length > 0 || advisors.length > 0) ? (
+          <section className='w-9/12 flex items-center justify-between mx-auto mt-16'>
+            <article>
+              <h3 className='text-center text-lg font-bold'>
+                Users and Advisors
+              </h3>
 
-              <PieChart
-                series={[
-                  {
-                    data: [
-                      { value: users.length, color: 'orange', label: 'users' },
-                      {
-                        value: advisors.length,
-                        color: 'green',
-                        label: 'advisors',
-                      },
-                    ],
-                  },
-                ]}
-                width={250}
-                height={250}
-              />
-            </StyledEngineProvider>
-          )}
+              <StyledEngineProvider injectFirst>
+                <PieChart
+                  series={[
+                    {
+                      data: [
+                        {
+                          id: 0,
+                          value: users.length,
+                          color: '#34EEB6',
+                          label: 'users',
+                        },
+                        {
+                          id: 1,
+                          value: advisors.length,
+                          color: '#5368B4',
+                          label: 'advisors',
+                        },
+                      ],
+                    },
+                  ]}
+                  slotProps={{ legend: { hidden: true } }}
+                  height={250}
+                  width={250}
+                />
+              </StyledEngineProvider>
+            </article>
+
+            <article>
+              <h3 className='text-center text-lg font-bold'>
+                Users and Advisors Blocked
+              </h3>
+
+              <StyledEngineProvider injectFirst>
+                <PieChart
+                  series={[
+                    {
+                      data: [
+                        {
+                          value: users.filter((x: any) => !x.unlock).length,
+                          color: '#34EEB6',
+                          label: 'users',
+                        },
+                        {
+                          value: advisors.filter((x: any) => !x.unlock).length,
+                          color: '#5368B4',
+                          label: 'advisors',
+                        },
+                      ],
+                    },
+                  ]}
+                  slotProps={{ legend: { hidden: true } }}
+                  height={250}
+                  width={250}
+                />
+              </StyledEngineProvider>
+            </article>
+          </section>
+        ) : (
+          <div className='w-full h-full mt-36 flex justify-center items-center'>
+            <p className='text-center text-2xl font-bold'>
+              No users or advisors
+            </p>
+          </div>
+        )}
       </article>
     </>
   );

@@ -23,7 +23,7 @@ const ModalAddAdvisor: NextPage<ModalAddAdvisorProps> = ({
     contractName: 'DaoSphere',
     functionName: 'create_advisor',
     args: [advisorAddress],
-    address: contractAddress,
+    contractAddress: contractAddress,
   });
 
   const { data: isAdmin } = useScaffoldReadContract({
