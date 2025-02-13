@@ -9,6 +9,8 @@ import {
   BugAntIcon,
   ArrowLeftStartOnRectangleIcon,
   Cog8ToothIcon,
+  HomeIcon,
+  PencilSquareIcon,
 } from '@heroicons/react/24/outline';
 import { useOutsideClick } from '~~/hooks/scaffold-stark';
 import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
@@ -27,6 +29,12 @@ export const menuLinks: HeaderMenuLink[] = [
   {
     label: 'Home',
     href: '/',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+  {
+    label: 'Proposal',
+    href: '/proposal',
+    icon: <PencilSquareIcon className='h-4 w-4' />,
   },
   {
     label: 'Configuration',
