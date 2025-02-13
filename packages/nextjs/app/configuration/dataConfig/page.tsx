@@ -141,35 +141,42 @@ const DataConfig: NextPage<DataConfigProps> = ({
               </StyledEngineProvider>
             </article>
 
-            <article>
-              <h3 className='text-center text-lg font-bold'>
-                Users and Advisors Blocked
-              </h3>
-
-              <StyledEngineProvider injectFirst>
-                <PieChart
-                  series={[
-                    {
-                      data: [
-                        {
-                          value: users.filter((x: any) => !x.unlock).length,
-                          color: '#34EEB6',
-                          label: 'users',
-                        },
-                        {
-                          value: advisors.filter((x: any) => !x.unlock).length,
-                          color: '#5368B4',
-                          label: 'advisors',
-                        },
-                      ],
-                    },
-                  ]}
-                  slotProps={{ legend: { hidden: true } }}
-                  height={250}
-                  width={250}
-                />
-              </StyledEngineProvider>
-            </article>
+            {users.filter((x: any) => !x.unlock).length > 0 &&
+            advisors.filter((x: any) => !x.unlock).length > 0 ? (
+              <article>
+                <h3 className='text-center text-lg font-bold'>
+                  Users and Advisors Blocked
+                </h3>
+                <StyledEngineProvider injectFirst>
+                  <PieChart
+                    series={[
+                      {
+                        data: [
+                          {
+                            value: users.filter((x: any) => !x.unlock).length,
+                            color: '#34EEB6',
+                            label: 'users',
+                          },
+                          {
+                            value: advisors.filter((x: any) => !x.unlock)
+                              .length,
+                            color: '#5368B4',
+                            label: 'advisors',
+                          },
+                        ],
+                      },
+                    ]}
+                    slotProps={{ legend: { hidden: true } }}
+                    height={250}
+                    width={250}
+                  />
+                </StyledEngineProvider>
+              </article>
+            ) : (
+              <p className='text-center text-lg font-bold'>
+                No users or advisors blocked
+              </p>
+            )}
           </section>
         ) : (
           <div className='w-full h-full mt-36 flex justify-center items-center'>

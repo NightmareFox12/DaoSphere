@@ -76,9 +76,9 @@ pub mod DaoSphereFabric {
                 .expect('error deploy failed');
 
             let new_dao: Dao = Dao { dao_address, name_dao: name_dao };
-            self.daos.entry(dao_id).write(new_dao);
+            self.daos.write(dao_id,new_dao);
 
-            let stored_dao = self.daos.entry(dao_id).read();
+            let stored_dao = self.daos.read(dao_id);
 
             self.emit(DaoCreated { dao_id, name_dao: stored_dao.name_dao, dao_address });
 
