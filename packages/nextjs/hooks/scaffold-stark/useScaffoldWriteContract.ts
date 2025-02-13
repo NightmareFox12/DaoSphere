@@ -26,7 +26,7 @@ export const useScaffoldWriteContract = <
   contractName,
   functionName,
   args,
-  address,
+  contractAddress,
 }: UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName, address>) => {
   const { data: deployedContractData } = useDeployedContractInfo(contractName);
   const { chain } = useNetwork();
@@ -69,7 +69,7 @@ export const useScaffoldWriteContract = <
       // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
       const contractInstance = new StarknetJsContract(
         deployedContractData.abi,
-        address || deployedContractData.address
+        contractAddress || deployedContractData.address
       );
 
       const newCalls = deployedContractData
@@ -95,7 +95,7 @@ export const useScaffoldWriteContract = <
     [
       args,
       chain?.id,
-      address,
+      contractAddress,
       deployedContractData,
       functionName,
       sendTransactionInstance,

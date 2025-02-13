@@ -45,19 +45,23 @@ const DataConfig: NextPage<DataConfigProps> = ({
   const { sendAsync } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
     functionName: 'modify_vote_creation_access',
+    args: ['id'],
+    contractAddress: contractAddress,
   });
 
   useEffect(() => {
-    console.log(voteCreationData);
     if (voteCreationData === undefined) return;
     const voteCreationAccessParsed =
       voteCreationData as unknown as VoteCreationAccess;
     setVoteCreationAccess(voteCreationAccessParsed);
+
+    console.log(voteCreationAccessParsed);
+
   }, [voteCreationData]);
 
   const handleVoteCreationAccess = async (value: string) => {
     try {
-      await sendAsync();
+      await sendAsync({ args: [value] });
     } catch (err) {
       console.log(err);
     }
@@ -85,11 +89,11 @@ const DataConfig: NextPage<DataConfigProps> = ({
               }}
             >
               <option disabled>Select who can create votes</option>
-              <option selected={voteCreationAccess.variant.Admin}>Admin</option>
-              <option selected={voteCreationAccess.variant.AdminOrAdvisor}>
+              <option selected={voteCreationAccess.admin}>Admin</option>
+              <option selected={voteCreationAccess.admin_or_advisor}>
                 Admin and Advisors
               </option>
-              <option selected={voteCreationAccess.variant.All}>All</option>
+              <option selected={voteCreationAccess.all}>All</option>
             </select>
           </div>
         )}

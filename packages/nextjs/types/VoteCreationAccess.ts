@@ -1,9 +1,5 @@
 export default interface VoteCreationAccess {
-  variant: variant;
+  admin_or_advisor: boolean | undefined;
+  admin: boolean | undefined;
+  all: boolean | undefined;
 }
-
-type variant = {
-  Admin: undefined | boolean;
-  AdminOrAdvisor: undefined | boolean;
-  All: undefined | boolean;
-};

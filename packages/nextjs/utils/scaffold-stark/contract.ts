@@ -187,10 +187,10 @@ export type UseScaffoldWriteConfig<
     ContractAbi<TContractName>,
     "external"
   >,
-  address,
+  contractAddress,
 > = {
   contractName: TContractName;
-  address?: `0x${string}`;
+  contractAddress?: `0x${string}`;
 } & IsContractDeclarationMissing<
   Partial<UseSendTransactionProps> & {
     functionName: string;

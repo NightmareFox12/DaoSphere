@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x45b4c9b9088ba1bbe9a824d99a1096801bffa0f12900aa9b76b9436dc37851c",
+        "0x38a34ad22d45658347d3241f9bbfaf195e3c6d2369e58f86c91fb2321b560c7",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x49b24cb8824a75bc8a7fc2bf35db27823c2f5ddc23cfb6371177e9b1310cfb3",
+        "0x6db581c69c9332d9cec42a7553bc287b43d5041e5c3ee145042c04bcbbbe787",
     },
     DaoSphere: {
       address:
-        "0x2b644775b73fa681ec4fe0bbfc002c7725100efd086488b5b9544885f873b1f",
+        "0x59884e178a00e29458611ee8df9e02833ba4c0a45a89e2a9a23fd055b2573f8",
       abi: [
         {
           type: "impl",
@@ -141,19 +141,19 @@ const deployedContracts = {
           ],
         },
         {
-          type: "enum",
+          type: "struct",
           name: "contracts::models::DaoSphereModel::VoteCreationAccess",
-          variants: [
+          members: [
             {
-              name: "Admin",
+              name: "admin",
               type: "core::bool",
             },
             {
-              name: "AdminOrAdvisor",
+              name: "admin_or_advisor",
               type: "core::bool",
             },
             {
-              name: "All",
+              name: "all",
               type: "core::bool",
             },
           ],
@@ -225,7 +225,12 @@ const deployedContracts = {
             {
               type: "function",
               name: "modify_vote_creation_access",
-              inputs: [],
+              inputs: [
+                {
+                  name: "new_access",
+                  type: "core::byte_array::ByteArray",
+                },
+              ],
               outputs: [],
               state_mutability: "external",
             },
@@ -682,7 +687,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0xeae4dc7b59443c5cf4fd494cc17ff3f611df8177f78c8ee0711eade8f5b31c",
+        "0x49463a96ff0d5cb379359e34b4e26af8a217dddac1657bb8c44dafa88807126",
     },
   },
 } as const;
