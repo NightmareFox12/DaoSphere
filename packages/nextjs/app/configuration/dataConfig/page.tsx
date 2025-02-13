@@ -45,7 +45,7 @@ const DataConfig: NextPage<DataConfigProps> = ({
   const { sendAsync } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
     functionName: 'modify_vote_creation_access',
-    args: ['id'],
+    args: [''],
     contractAddress: contractAddress,
   });
 
@@ -54,11 +54,9 @@ const DataConfig: NextPage<DataConfigProps> = ({
     const voteCreationAccessParsed =
       voteCreationData as unknown as VoteCreationAccess;
     setVoteCreationAccess(voteCreationAccessParsed);
-
-    console.log(voteCreationAccessParsed);
-
   }, [voteCreationData]);
 
+  //functions
   const handleVoteCreationAccess = async (value: string) => {
     try {
       await sendAsync({ args: [value] });
@@ -89,54 +87,63 @@ const DataConfig: NextPage<DataConfigProps> = ({
               }}
             >
               <option disabled>Select who can create votes</option>
-              <option selected={voteCreationAccess.admin}>Admin</option>
-              <option selected={voteCreationAccess.admin_or_advisor}>
+              <option selected={voteCreationAccess.variant.Admin} value='Admin'>
+                Admin
+              </option>
+              <option
+                selected={voteCreationAccess.variant.AdminOrAdvisor}
+                value='AdminOrAdvisor'
+              >
                 Admin and Advisors
               </option>
-              <option selected={voteCreationAccess.all}>All</option>
+              <option selected={voteCreationAccess.variant.All} value='All'>
+                All
+              </option>
             </select>
           </div>
         )}
       </AnimatePresence>
 
       <article className='w-full h-full flex gap-5 bg-dark-900 p-4 rounded-lg'>
-        {/* {users !== undefined && advisors !== undefined && (users.length > 0 || advisors.length > 0) && (
-          <StyledEngineProvider injectFirst>
-            <PieChart
-              series={[
-                {
-                  data: [
-                    { value: users.length, color: 'orange', label: 'users' },
-                    {
-                      value: advisors.length,
-                      color: 'green',
-                      label: 'advisors',
-                    },
-                  ],
-                },
-              ]}
-              width={250}
-              height={250}
-            />
+        {users !== undefined &&
+          advisors !== undefined &&
+          (users.length > 0 || advisors.length > 0) && (
+            <StyledEngineProvider injectFirst>
+              <PieChart
+                series={[
+                  {
+                    data: [
+                      { value: users.length, color: 'orange', label: 'users' },
+                      {
+                        value: advisors.length,
+                        color: 'green',
+                        label: 'advisors',
+                      },
+                    ],
+                  },
+                ]}
+                width={250}
+                height={250}
+              />
 
-            <PieChart
-              series={[
-                {
-                  data: [
-                    { value: users.length, color: 'orange', label: 'users' },
-                    {
-                      value: advisors.length,
-                      color: 'green',
-                      label: 'advisors',
-                    },
-                  ],
-                },
-              ]}
-              width={250}
-              height={250}
-            />
-          </StyledEngineProvider>
-        )} */}
+              <PieChart
+                series={[
+                  {
+                    data: [
+                      { value: users.length, color: 'orange', label: 'users' },
+                      {
+                        value: advisors.length,
+                        color: 'green',
+                        label: 'advisors',
+                      },
+                    ],
+                  },
+                ]}
+                width={250}
+                height={250}
+              />
+            </StyledEngineProvider>
+          )}
       </article>
     </>
   );

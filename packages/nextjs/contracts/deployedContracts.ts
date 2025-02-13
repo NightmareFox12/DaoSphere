@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x38a34ad22d45658347d3241f9bbfaf195e3c6d2369e58f86c91fb2321b560c7",
+        "0x3deeb850490f46492aea822adec5902419cb92a86b577b3d0d6fae163a1ed7b",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x6db581c69c9332d9cec42a7553bc287b43d5041e5c3ee145042c04bcbbbe787",
+        "0x27fcf48bef54d239c6e7964f7cf6a2f6ff63c8467e91242ce4670d42f8dbfd4",
     },
     DaoSphere: {
       address:
-        "0x59884e178a00e29458611ee8df9e02833ba4c0a45a89e2a9a23fd055b2573f8",
+        "0x65d78bf6d934f941e6ac8daf844f31272ef149dc5b13615f2eed2b4342eed81",
       abi: [
         {
           type: "impl",
@@ -141,19 +141,19 @@ const deployedContracts = {
           ],
         },
         {
-          type: "struct",
+          type: "enum",
           name: "contracts::models::DaoSphereModel::VoteCreationAccess",
-          members: [
+          variants: [
             {
-              name: "admin",
+              name: "Admin",
               type: "core::bool",
             },
             {
-              name: "admin_or_advisor",
+              name: "AdminOrAdvisor",
               type: "core::bool",
             },
             {
-              name: "all",
+              name: "All",
               type: "core::bool",
             },
           ],
@@ -687,7 +687,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x49463a96ff0d5cb379359e34b4e26af8a217dddac1657bb8c44dafa88807126",
+        "0x567379c4be8ab6f8344147fa4112365578af769b9970e298982f9ee87514d04",
     },
   },
 } as const;
