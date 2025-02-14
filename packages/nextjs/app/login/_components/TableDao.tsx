@@ -1,8 +1,9 @@
 import { NextPage } from 'next';
+import { Dao } from '~~/types/Dao';
 
 type TableDaoPublicProps = {
-  daoData: any[];
-  handleEnterDao: (daoAddress: bigint) => void;
+  daoData: Dao[];
+  handleEnterDao: (daoAddress: bigint, deployBlock: bigint) => void;
 };
 
 const TableDaoPublic: NextPage<TableDaoPublicProps> = ({
@@ -26,7 +27,9 @@ const TableDaoPublic: NextPage<TableDaoPublicProps> = ({
             <td className='text-center'>
               <button
                 className='btn btn-base px-10'
-                onClick={() => handleEnterDao(x.args.dao_address)}
+                onClick={() =>
+                  handleEnterDao(x.args.dao_address, x.args.deploy_block)
+                }
               >
                 Enter
               </button>

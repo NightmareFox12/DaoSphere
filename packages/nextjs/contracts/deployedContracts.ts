@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x3a7be15f9f73ba4aad2b2a89c4154110b5e36b1de79868fe3b33efe9d5225dc",
+        "0x469c6379b3dbc8fed8e99ca712292713af65aefa15217b259853e9f47115490",
       abi: [
         {
           type: "impl",
@@ -97,11 +97,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x48168c5da5e87fa364d34bf19c610e4ba71dd0620ee46a76a96eaed456715ee",
+        "0x52b0f7d0b41b82122aafafc979ad2a0fdce76a9e2c9c89dbd4a174d23cf543a",
     },
     DaoSphere: {
       address:
-        "0x62aa9bc76c365270924e16db076eb2dcf84a8267e7b683350984db07bf8c54b",
+        "0x44bd804be1d62136d5ca983b2a2a6dffb50cb9a34c7258f1e6fef570890f6c",
       abi: [
         {
           type: "impl",
@@ -206,22 +206,6 @@ const deployedContracts = {
           type: "interface",
           name: "contracts::DaoSphere::IDaoSphere",
           items: [
-            {
-              type: "function",
-              name: "create_proposal",
-              inputs: [
-                {
-                  name: "description",
-                  type: "core::byte_array::ByteArray",
-                },
-                {
-                  name: "end_time",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
             {
               type: "function",
               name: "modify_vote_creation_access",
@@ -394,6 +378,26 @@ const deployedContracts = {
                 },
               ],
               state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "create_proposal",
+              inputs: [
+                {
+                  name: "title",
+                  type: "core::byte_array::ByteArray",
+                },
+                {
+                  name: "description",
+                  type: "core::byte_array::ByteArray",
+                },
+                {
+                  name: "end_time",
+                  type: "core::integer::u64",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
             },
           ],
         },
@@ -687,7 +691,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x567379c4be8ab6f8344147fa4112365578af769b9970e298982f9ee87514d04",
+        "0x2a1960018d49f6af134a70a84c83409daf8e8b99cfee5a374cc75d2851f716c",
     },
   },
 } as const;

@@ -15,7 +15,6 @@ const Proposal: NextPage = () => {
   //states
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [isYesNoVote, setIsYesNoVote] = useState<boolean>(false);
   const [nextId, setNextId] = useState(1);
@@ -103,17 +102,6 @@ const Proposal: NextPage = () => {
               Title <span className='text-error font-bold'>*</span>
             </p>
             <InputBase placeholder='Title' value={title} onChange={setTitle} />
-          </div>
-
-          <div className='flex flex-col'>
-            <p className='text-lg m-1 font-bold'>
-              Description <span className='text-sm'>(optional)</span>
-            </p>
-            <InputBase
-              placeholder='Description'
-              value={description}
-              onChange={setDescription}
-            />
           </div>
 
           <div>

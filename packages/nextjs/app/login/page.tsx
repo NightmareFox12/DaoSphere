@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
-import {DAO_ADDRESS_LOCALSTORAGE_KEY} from '~~/utils/Constants';
+import { DAO_ADDRESS_LOCALSTORAGE_KEY, DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 import { InputBase } from '~~/components/scaffold-stark';
 import { SwitchTheme } from '~~/components/SwitchTheme';
 import { AnimatePresence, motion } from 'motion/react';
@@ -34,11 +34,15 @@ const Login: NextPage = () => {
   });
 
   //functions
-  const handleEnterDao = (daoAddress: bigint) => {
+  const handleEnterDao = (daoAddress: bigint, deployBlock: bigint) => {
     const addressParsed = getChecksumAddress(feltToHex(daoAddress));
     localStorage.setItem(
       DAO_ADDRESS_LOCALSTORAGE_KEY,
       addressParsed.toString()
+    );
+    localStorage.setItem(
+      DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY,
+      deployBlock.toString()
     );
     router.push('/');
   };

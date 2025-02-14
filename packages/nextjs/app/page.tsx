@@ -50,6 +50,7 @@ const Home: NextPage = () => {
               className='object-fill w-4/2 h-4/2'
               width={300}
               height={300}
+              priority={true}
               src='/logo.png'
             />
           </motion.div>

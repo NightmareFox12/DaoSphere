@@ -20,16 +20,16 @@ const Configuration: NextPage = () => {
   //smart contract
   const { data: isAdmin } = useScaffoldReadContract({
     contractName: 'DaoSphere',
-    contractAddress: contractAddress,
     functionName: 'is_admin',
     args: [account?.address],
+    contractAddress: contractAddress,
   });
 
   const { data: isAdvisor } = useScaffoldReadContract({
     contractName: 'DaoSphere',
-    contractAddress: contractAddress,
     functionName: 'is_advisor',
     args: [account?.address],
+    contractAddress: contractAddress,
   });
 
   useEffect(() => {

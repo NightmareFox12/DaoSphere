@@ -50,6 +50,16 @@ const UserConfig: NextPage<UserConfigProps> = ({
         >
           <ArrowLeftIcon className='w-8 h-8' />
         </button>
+        <motion.div
+          whileHover={{ scale: 1.2 }}
+          onClick={() => setShowAddUserModal(!showAddUserModal)}
+          className='tooltip tooltip-left tooltip-primary absolute md:bottom-8 md:right-8 scale-110'
+          data-tip='add user'
+        >
+          <button className='btn btn-circle btn-accent'>
+            <PlusIcon className='w-8 h-8' />
+          </button>
+        </motion.div>
       </div>
 
       <article className='flex items-center w-full justify-center gap-5'></article>
@@ -75,16 +85,7 @@ const UserConfig: NextPage<UserConfigProps> = ({
           </div>
         )}
 
-        <motion.div
-          whileHover={{ scale: 1.2 }}
-          onClick={() => setShowAddUserModal(!showAddUserModal)}
-          className='tooltip tooltip-left tooltip-primary absolute md:bottom-8 md:right-8 scale-110'
-          data-tip='add user'
-        >
-          <button className='btn btn-circle '>
-            <PlusIcon className='w-8 h-8' />
-          </button>
-        </motion.div>
+    
       </>
     </>
   );

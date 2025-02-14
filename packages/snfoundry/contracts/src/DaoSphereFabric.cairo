@@ -9,16 +9,16 @@ pub trait IDaoSphereFabric<TContractState> {
 
 #[starknet::contract]
 pub mod DaoSphereFabric {
+    use starknet::{get_caller_address, ContractAddress, get_block_number};
     use starknet::event::{EventEmitter};
-    use core::num::traits::Zero;
     use starknet::storage::{StoragePathEntry, Map};
-    use starknet::{get_caller_address, ContractAddress};
     use starknet::syscalls::{deploy_syscall};
     use starknet::class_hash::{class_hash_const, ClassHash};
+    use core::num::traits::Zero;
     use super::Dao;
 
     const DAO_SPHERE_CLASS_HASH: felt252 =
-    0x567379c4be8ab6f8344147fa4112365578af769b9970e298982f9ee87514d04;
+    0x2a1960018d49f6af134a70a84c83409daf8e8b99cfee5a374cc75d2851f716c;
 
     #[storage]
     struct Storage {
@@ -60,6 +60,7 @@ pub mod DaoSphereFabric {
     pub impl DaoSphereFabric of super::IDaoSphereFabric<ContractState> {
         fn create_dao(ref self: ContractState, name_dao: ByteArray) {
             let caller: ContractAddress = get_caller_address();
+
             assert(caller.is_non_zero(), 'caller is zero');
             assert(name_dao.len() > 2, 'the DAO name is too short');
 
@@ -75,8 +76,11 @@ pub mod DaoSphereFabric {
             )
                 .expect('error deploy failed');
 
-            let new_dao: Dao = Dao { dao_address, name_dao: name_dao };
-            self.daos.write(dao_id,new_dao);
+            let new_dao: Dao = Dao {
+                dao_address, name_dao: name_dao, deploy_block: get_block_number(),
+            };
+
+            self.daos.write(dao_id, new_dao);
 
             let stored_dao = self.daos.read(dao_id);
 

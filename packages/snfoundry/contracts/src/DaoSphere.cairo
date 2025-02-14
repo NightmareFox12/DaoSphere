@@ -6,6 +6,7 @@ trait IDaoSphere<TContractState> {
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
     fn get_vote_creation_access(self: @TContractState) -> DaoSphereModel::VoteCreationAccess;
 
+    //
     fn is_admin(self: @TContractState, caller: ContractAddress) -> bool;
     fn is_advisor(self: @TContractState, caller: ContractAddress) -> bool;
     fn is_user(self: @TContractState, caller: ContractAddress) -> bool;
@@ -36,15 +37,15 @@ const ADVISOR_ROLE: felt252 = selector!("ADVISOR_ROLE");
 #[starknet::contract]
 mod DaoSphere {
     use starknet::event::EventEmitter;
-    use starknet::storage::StoragePathEntry;
+    use starknet::storage::{StoragePathEntry, Map};
+    use starknet::{get_caller_address, ContractAddress, get_block_timestamp};
+
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
     use AccessControlComponent::InternalTrait;
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
     use openzeppelin_introspection::src5::SRC5Component;
-    use starknet::{get_caller_address, ContractAddress, get_block_timestamp};
-    use starknet::storage::{Map};
-    use starknet::syscalls::call_contract_syscall;
+
     use super::{USER_ROLE, ADVISOR_ROLE};
     use super::DaoSphereModel::{User, Advisor, VoteCreationAccess, Proposal, OptionProposal};
 
@@ -111,22 +112,6 @@ mod DaoSphere {
         self.vote_selected_access.write(VoteCreationAccess::AdminOrAdvisor(true));
     }
 
-    fn has_any_role(self: @ContractState, caller: ContractAddress, roles: Array<felt252>) -> bool {
-        let mut i: u32 = 0;
-        // let len = roles.len();
-
-        let res = loop {
-            // if len == i {
-            //     break false;
-            // }
-            if self.accesscontrol.hasRole(*roles.at(i), caller) {
-                break true;
-            }
-            i += 1;
-        };
-        res
-    }
-
     #[abi(embed_v0)]
     impl DaoSphere of super::IDaoSphere<ContractState> {
         fn is_admin(self: @ContractState, caller: ContractAddress) -> bool {
@@ -190,8 +175,8 @@ mod DaoSphere {
 
             self
                 .users
-                .entry(user_id)
                 .write(
+                    user_id,
                     User {
                         user_id: user_id,
                         address: userAddress,
@@ -350,7 +335,7 @@ mod DaoSphere {
             advisor
         }
 
-        // handle proposal  
+        // handle proposal
         fn create_proposal(
             ref self: ContractState, title: ByteArray, description: ByteArray, end_time: u64,
         ) {
@@ -359,10 +344,8 @@ mod DaoSphere {
             assert(title.len() > 3, 'Title is too short');
             assert(description.len() > 3, 'Description is too short');
             assert(end_time > get_block_timestamp(), 'End time is in the past');
-
-
             //Decidir si coloco la descripcion obligatoria o la elimino de la faz de la tierra
-            
+
         }
     }
 }
