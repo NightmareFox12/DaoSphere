@@ -1,18 +1,67 @@
 'use client';
-import { BellAlertIcon, BellIcon } from '@heroicons/react/24/outline';
+import {
+  BellAlertIcon,
+  BellIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
 import { useState } from 'react';
 import { InputBase } from '~~/components/scaffold-stark';
+import { VoteOptions } from '~~/types/VoteOptions';
 
 const Proposal: NextPage = () => {
+  //states
+  const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [isNotification, setIsNotification] = useState<boolean>(false);
+  const [endDate, setEndDate] = useState<string>('');
+  const [isYesNoVote, setIsYesNoVote] = useState<boolean>(false);
+  const [nextId, setNextId] = useState(1);
+  const [options, setOptions] = useState<VoteOptions[]>([]);
+
+  //functions
+  const handleAddOption = () => {
+    setOptions([
+      ...options,
+      {
+        id: nextId,
+        description: '',
+      },
+    ]);
+    setNextId(nextId + 1);
+  };
+
+  const handleEditOption = (id: number, description: string) => {
+    setOptions(
+      options.map((option) => {
+        if (option.id === id) {
+          return { ...option, description };
+        }
+        return option;
+      })
+    );
+  };
+
+  const handleDeleteOption = (id: number) => {
+    setOptions(options.filter((option) => option.id !== id));
+  };
+
+  const oneMonthFromNow = (): string => {
+    const date = new Date();
+
+    const nextMonth = new Date(date.setMonth(date.getMonth() + 1));
+    const nextMonthLocalDate = nextMonth.toLocaleDateString('sv-SE');
+
+    return nextMonthLocalDate;
+  };
 
   return (
     <section className='w-full h-full flex flex-1 justify-center items-center'>
-      <article className='flex flex-col bg-base-300 border border-gradient rounded-xl p-5 lg:w-7/12'>
+      <article
+        className={`${options.length > 0 && 'mt-10'} flex flex-col bg-base-300 border border-gradient rounded-xl p-5 lg:w-7/12`}
+      >
         <div className='flex justify-between items-center'>
           <div className='flex flex-1 items-center justify-center'>
             <p className='text-center text-2xl font-bold mb-5'>Proposal 1</p>
@@ -58,7 +107,7 @@ const Proposal: NextPage = () => {
 
           <div className='flex flex-col'>
             <p className='text-lg m-1 font-bold'>
-              Description <span className='text-error font-bold'>*</span>
+              Description <span className='text-sm'>(optional)</span>
             </p>
             <InputBase
               placeholder='Description'
@@ -66,19 +115,85 @@ const Proposal: NextPage = () => {
               onChange={setDescription}
             />
           </div>
-          {/*
-          verificar en la pagina si se puede crear una votacion usuario, solo admin o admin y advisor z
-          TODO: agregar un checkbox para elegir si es respuesta de si o no, o es de opciones personalizadas
-          
-          si es de opciones personalizadas, agregar un input para agregar las opciones
-          agrgar el tiempo de duracion de la votacion
 
-          tambien agregar evento y mostrarselo al usuario owner nadamas
+          <div>
+            <p className='text-lg m-1 font-bold'>
+              End Date <span className='text-error font-bold'>*</span>
+            </p>
+            <label className='input input-bordered flex items-center gap-2'>
+              <input
+                type='date'
+                min={new Date().toLocaleDateString('sv-SE')}
+                max={oneMonthFromNow()}
+                className='grow'
+                placeholder='End Date'
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </label>
+          </div>
 
-          
-          */}
+          <div className='join w-full flex justify-center gap-1'>
+            <button
+              className={`${isYesNoVote && 'btn-active'} join-item btn btn-outline px-10`}
+              onClick={() => setIsYesNoVote(true)}
+            >
+              Yes/No Vote
+            </button>
+            <button
+              className={`${!isYesNoVote && 'btn-active'} join-item btn btn-outline`}
+              onClick={() => setIsYesNoVote(false)}
+            >
+              Multiple Choice Vote
+            </button>
+          </div>
+
+          {!isYesNoVote && (
+            <article className='flex flex-col justify-center items-center gap-3'>
+              <p className='text-xl m-1 font-bold'>Options</p>
+
+              {options.map((option, y) => (
+                <div
+                  className='collapse collapse-arrow bg-base-200 p-1'
+                  key={y}
+                >
+                  <input type='checkbox' />
+                  <div className='collapse-title text-lg font-medium'>
+                    {option.description === ''
+                      ? 'Click to show/hide option 😉'
+                      : option.description}
+                  </div>
+                  <div className='collapse-content flex gap-5'>
+                    <div className='flex-1'>
+                      <InputBase
+                        placeholder='Option'
+                        value={option.description}
+                        onChange={(e) => handleEditOption(option.id, e)}
+                      />
+                    </div>
+
+                    <div className='flex-2'>
+                      <button
+                        className='btn btn-circle btn-error btn-outline'
+                        onClick={() => handleDeleteOption(option.id)}
+                      >
+                        <TrashIcon className='w-6 h-6' />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <button
+                className='mt-2 btn btn-accent btn-circle'
+                onClick={handleAddOption}
+              >
+                <PlusIcon className='w-6 h-6' />
+              </button>
+            </article>
+          )}
         </div>
-        <button className='btn btn-accent mx-auto px-16'>Create</button>
+        <button className='mt-5 btn btn-accent mx-auto px-16'>Create</button>
       </article>
     </section>
   );

@@ -23,3 +23,22 @@ pub enum VoteCreationAccess {
     AdminOrAdvisor: bool,
     All: bool,
 }
+
+
+#[derive(Drop, Serde, starknet::Store)]
+pub struct Proposal {
+    pub proposal_id: u64,
+    pub creator_address: ContractAddress,
+    pub title: ByteArray,
+    pub description: ByteArray,
+    pub start_time: u64,
+    pub end_time: u64,
+}
+
+
+#[derive(Drop, Serde, starknet::Store)]
+pub struct OptionProposal {
+    pub option_id: u64,
+    pub description: ByteArray,
+    pub votes: u64,
+}

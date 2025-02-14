@@ -3,7 +3,6 @@ use super::models::DaoSphereModel;
 
 #[starknet::interface]
 trait IDaoSphere<TContractState> {
-    fn create_proposal(ref self: TContractState, description: ByteArray, end_time: u64);
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
     fn get_vote_creation_access(self: @TContractState) -> DaoSphereModel::VoteCreationAccess;
 
@@ -24,6 +23,11 @@ trait IDaoSphere<TContractState> {
     fn get_advisor(
         self: @TContractState, advisorAddress: ContractAddress,
     ) -> DaoSphereModel::Advisor;
+
+    // handle proposal
+    fn create_proposal(
+        ref self: TContractState, title: ByteArray, description: ByteArray, end_time: u64,
+    );
 }
 
 const USER_ROLE: felt252 = selector!("USER_ROLE");
@@ -42,7 +46,7 @@ mod DaoSphere {
     use starknet::storage::{Map};
     use starknet::syscalls::call_contract_syscall;
     use super::{USER_ROLE, ADVISOR_ROLE};
-    use super::DaoSphereModel::{User, Advisor, VoteCreationAccess};
+    use super::DaoSphereModel::{User, Advisor, VoteCreationAccess, Proposal, OptionProposal};
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -60,27 +64,12 @@ mod DaoSphere {
     //!LA IDEA QUE TENGO A FUTURO ES CREAR PROPUESTAS BASICAS CON 2 OPCIONES Y PROPUESTAS AVANZADAS
     //!QUE TENDRAN MUCHAS OPCIONES
 
-    // #[derive(Drop, Serde, starknet::Store)]
-    // struct Proposal {
-    //     proposal_id: u64,
-    //     creator_address: ContractAddress,
-    //     description: ByteArray,
-    //     start_time: u64,
-    //     end_time: u64,
-    // }
-
-    // #[derive(Drop, Serde, starknet::Store)]
-    // struct OptionProposal {
-    //     description: ByteArray,
-    //     votes: u64,
-    // }
-
     #[storage]
     struct Storage {
         admin: ContractAddress,
         proposal_count: u64,
-        // proposal: Proposal,
-        // proposal_options: Map<(u64, u64), OptionProposal>,
+        proposal: Proposal,
+        proposal_options: Map<u64, OptionProposal>,
         vote_selected_access: VoteCreationAccess,
         user_count: u64,
         users: Map<u64, User>,
@@ -140,38 +129,6 @@ mod DaoSphere {
 
     #[abi(embed_v0)]
     impl DaoSphere of super::IDaoSphere<ContractState> {
-        fn create_proposal(ref self: ContractState, description: ByteArray, end_time: u64) {
-            assert(description.len() > 3, 'Description is too short');
-
-            // let proposal_id = self.proposal_count.read();
-            // self.proposal_count.write(proposal_id + 1);
-
-            let caller = get_caller_address();
-            let jose = call_contract_syscall(
-                caller, selector!("is_valid_signature"), array![0_felt252, 0_felt252].span(),
-            );
-
-            assert(jose.is_err(), 'la cagaste chamo');
-            // let juan2 = jose.expect('juan');
-
-            // let res = *juan2.at(0);
-        // println!("juan2 {:?}", res);
-        // match VoteCreationAccess::Admin {
-        //     VoteCreationAccess::Admin => {
-        //         assert(self.is_admin(caller), 'Caller is not admin');
-        //     },
-        //     VoteCreationAccess::AdminOrAdvisor => {
-        //         assert(self.is_admin(caller) || self.is_advisor(caller), 'Caller is not admin
-        //         or advisor');
-        //     },
-        //     VoteCreationAccess::All => {
-        //         assert(self.is_admin(caller) || self.is_advisor(caller) ||
-        //         self.is_user(caller), 'Caller is not admin or advisor or user');
-        //     },
-        // }
-        }
-
-
         fn is_admin(self: @ContractState, caller: ContractAddress) -> bool {
             assert(caller.is_non_zero(), 'admin address is not valid');
             let isAdmin = self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller);
@@ -391,6 +348,21 @@ mod DaoSphere {
                 i += 1;
             };
             advisor
+        }
+
+        // handle proposal  
+        fn create_proposal(
+            ref self: ContractState, title: ByteArray, description: ByteArray, end_time: u64,
+        ) {
+            let caller = get_caller_address();
+            assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
+            assert(title.len() > 3, 'Title is too short');
+            assert(description.len() > 3, 'Description is too short');
+            assert(end_time > get_block_timestamp(), 'End time is in the past');
+
+
+            //Decidir si coloco la descripcion obligatoria o la elimino de la faz de la tierra
+            
         }
     }
 }
