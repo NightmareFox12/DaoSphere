@@ -27,9 +27,10 @@ const TableDaoPublic: NextPage<TableDaoPublicProps> = ({
             <td className='text-center'>
               <button
                 className='btn btn-base px-10'
-                onClick={() =>
-                  handleEnterDao(x.args.dao_address, x.args.deploy_block)
-                }
+                onClick={() => {
+                  console.log(x.args);
+                  handleEnterDao(x.args.dao_address, x.args.deploy_block);
+                }}
               >
                 Enter
               </button>

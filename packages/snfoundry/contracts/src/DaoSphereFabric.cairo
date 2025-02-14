@@ -1,5 +1,3 @@
-use super::models::DaoSphereFabricModel::Dao;
-
 #[starknet::interface]
 pub trait IDaoSphereFabric<TContractState> {
     fn create_dao(ref self: TContractState, name_dao: ByteArray);
@@ -10,20 +8,19 @@ pub trait IDaoSphereFabric<TContractState> {
 #[starknet::contract]
 pub mod DaoSphereFabric {
     use starknet::{get_caller_address, ContractAddress, get_block_number};
-    use starknet::event::{EventEmitter};
-    use starknet::storage::{StoragePathEntry, Map};
-    use starknet::syscalls::{deploy_syscall};
+    use starknet::event::EventEmitter;
+    use starknet::storage::Map;
+    use starknet::syscalls::deploy_syscall;
     use starknet::class_hash::{class_hash_const, ClassHash};
     use core::num::traits::Zero;
-    use super::Dao;
 
     const DAO_SPHERE_CLASS_HASH: felt252 =
-    0x2a1960018d49f6af134a70a84c83409daf8e8b99cfee5a374cc75d2851f716c;
+        0x2a1960018d49f6af134a70a84c83409daf8e8b99cfee5a374cc75d2851f716c;
 
     #[storage]
     struct Storage {
         dao_id: u64,
-        daos: Map<u64, Dao>,
+        dao_name: Map<u64, ByteArray>,
     }
 
     #[event]
@@ -37,6 +34,7 @@ pub mod DaoSphereFabric {
         dao_id: u64,
         name_dao: ByteArray,
         dao_address: ContractAddress,
+        deploy_block: u64,
     }
 
 
@@ -44,7 +42,7 @@ pub mod DaoSphereFabric {
         let mut i: u64 = 0;
 
         let daoExist = loop {
-            if self.daos.entry(i).read().name_dao == name_dao {
+            if self.dao_name.read(i) == name_dao {
                 break true;
             } else if i == dao_id {
                 break false;
@@ -76,15 +74,15 @@ pub mod DaoSphereFabric {
             )
                 .expect('error deploy failed');
 
-            let new_dao: Dao = Dao {
-                dao_address, name_dao: name_dao, deploy_block: get_block_number(),
-            };
+            self.dao_name.write(dao_id, name_dao);
+            let stored_dao = self.dao_name.read(dao_id);
 
-            self.daos.write(dao_id, new_dao);
-
-            let stored_dao = self.daos.read(dao_id);
-
-            self.emit(DaoCreated { dao_id, name_dao: stored_dao.name_dao, dao_address });
+            self
+                .emit(
+                    DaoCreated {
+                        dao_id, name_dao: stored_dao, dao_address, deploy_block: get_block_number(),
+                    },
+                );
 
             self.dao_id.write(dao_id + 1);
         }

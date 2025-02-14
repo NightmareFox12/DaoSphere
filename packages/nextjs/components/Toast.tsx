@@ -4,25 +4,25 @@ import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEven
 import {
   COUNT_CREATE_USER_KEY,
   DAO_ADDRESS_LOCALSTORAGE_KEY,
+  DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY,
 } from '~~/utils/Constants';
 import { motion, AnimatePresence } from 'motion/react';
-import { useBlock, useBlockNumber } from '@starknet-react/core';
 
 const Toast: NextPage = () => {
-  const { data: blockNumber } = useBlockNumber();
-
   //states
+  const [addressParsed, setAddressParsed] = useState<`0x${string}`>('0x0');
+  const [deployBlock, setDeployBlock] = useState<bigint>(0n);
+
   const [showToastUser, setShowToastUser] = useState<boolean>(false);
   const [showToastAdvisor, setShowToastAdvisor] = useState<boolean>(false);
-  const [addressParsed, setAddressParsed] = useState<`0x${string}`>('0x0');
 
   //smart contract
   const { data: userEvent } = useScaffoldEventHistory({
     contractName: 'DaoSphere',
     eventName: 'contracts::DaoSphere::DaoSphere::CreatedUser',
-    fromBlock: 0n,
+    fromBlock: deployBlock,
     contractAddress: addressParsed,
-    watch: true
+    watch: true,
   });
 
   const { data: advisorEvent } = useScaffoldEventHistory({
@@ -36,6 +36,9 @@ const Toast: NextPage = () => {
   //efects
   useEffect(() => {
     const address = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
+    const deployBlock = localStorage.getItem(DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY);
+    setDeployBlock(BigInt(deployBlock ?? 0));
+
     if (address !== null) {
       const addressParsed: `0x${string}` = `0x${address.slice(2)}`;
       setAddressParsed(addressParsed);
