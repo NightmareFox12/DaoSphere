@@ -28,7 +28,6 @@ const TableDaoPublic: NextPage<TableDaoPublicProps> = ({
               <button
                 className='btn btn-base px-10'
                 onClick={() => {
-                  console.log(x.args);
                   handleEnterDao(x.args.dao_address, x.args.deploy_block);
                 }}
               >

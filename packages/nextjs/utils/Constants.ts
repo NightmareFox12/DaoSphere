@@ -288,3 +288,4 @@ export {
 export const DAO_ADDRESS_LOCALSTORAGE_KEY = 'Address';
 export const DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY = 'DeployBlock';
 export const COUNT_CREATE_USER_KEY = 'CountCreateUser';
+export const COUNT_CREATE_ADVISOR_KEY = 'CountCreateAdvisor';

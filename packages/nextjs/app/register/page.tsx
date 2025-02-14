@@ -25,7 +25,7 @@ const Register: NextPage = () => {
   const { data } = useScaffoldEventHistory({
     contractName: 'DaoSphereFabric',
     eventName: 'contracts::DaoSphereFabric::DaoSphereFabric::DaoCreated',
-    fromBlock: BigInt(0),
+    fromBlock: BigInt(0), //DESDE QUE BLOQUE!!
     filters: { parameterName: 'name_dao' },
     blockData: true,
     transactionData: false,
@@ -74,7 +74,7 @@ const Register: NextPage = () => {
         <motion.button
           whileHover={{ scale: 1.2 }}
           onClick={() => router.push('/')}
-          className='btn btn-circle'
+          className='btn btn-circle btn-accent'
         >
           <ArrowLeftIcon className='w-6 h-6' />
         </motion.button>

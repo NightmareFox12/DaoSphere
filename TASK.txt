@@ -10,3 +10,7 @@ Elimine la dependencia de radix-icon (porque la pusieron?)
 #Debo buscar en Scaffold a ver si viene ese error
 
 cree el comando deploy-full para compilar y desplegar de una vez
+
+
+--- Deudas ---
+En el hook de event que esta en el register, al desplegar la Dapp poner el bloque del DaoSphereFabric

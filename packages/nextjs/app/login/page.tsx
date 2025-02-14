@@ -65,7 +65,7 @@ const Login: NextPage = () => {
         <motion.button
           whileHover={{ scale: 1.2 }}
           onClick={() => router.push('/')}
-          className='btn btn-circle'
+          className='btn btn-circle btn-accent'
         >
           <ArrowLeftIcon className='w-6 h-6' />
         </motion.button>

@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
 import {
+  COUNT_CREATE_ADVISOR_KEY,
   COUNT_CREATE_USER_KEY,
   DAO_ADDRESS_LOCALSTORAGE_KEY,
   DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY,
@@ -28,7 +29,7 @@ const Toast: NextPage = () => {
   const { data: advisorEvent } = useScaffoldEventHistory({
     contractName: 'DaoSphere',
     eventName: 'contracts::DaoSphere::DaoSphere::CreatedAdvisor',
-    fromBlock: 0n,
+    fromBlock: deployBlock,
     contractAddress: addressParsed,
     watch: true,
   });
@@ -48,37 +49,38 @@ const Toast: NextPage = () => {
   useEffect(() => {
     const countUser = localStorage.getItem(COUNT_CREATE_USER_KEY);
 
-    if (userEvent !== undefined) {
-      console.log(userEvent);
-      console.log('countUser', countUser);
-      // if (userEvent.length > parseInt(countUser?.toString() ?? '1')) {
-      setShowToastUser(true);
-      // localStorage.setItem(
-      //   COUNT_CREATE_USER_KEY,
-      //   userEvent.length.toString()
-      // );
+    if (userEvent !== undefined && userEvent.length > 0) {
+      if (userEvent.length > parseInt(countUser?.toString() ?? '0')) {
+        setShowToastUser(true);
+        localStorage.setItem(
+          COUNT_CREATE_USER_KEY,
+          userEvent.length.toString()
+        );
 
-      setTimeout(() => {
-        setShowToastUser(false);
-      }, 2000);
-      // }
+        setTimeout(() => {
+          setShowToastUser(false);
+        }, 2000);
+      }
     }
   }, [userEvent]);
 
-  // useEffect(() => {
-  //   const countUser = localStorage.getItem(COUNT_CREATE_USER_KEY);
+  useEffect(() => {
+    const countAdvisor = localStorage.getItem(COUNT_CREATE_ADVISOR_KEY);
 
-  //   if (userEvent !== undefined) {
-  //     if (userEvent.length > parseInt(countUser?.toString() ?? '0')) {
-  //       setShowToastAdvisor(true);
-  //       localStorage.setItem('count', userEvent.length.toString());
-  //     }
-  //   }
+    if (advisorEvent !== undefined && advisorEvent.length > 0) {
+      if (advisorEvent.length > parseInt(countAdvisor?.toString() ?? '0')) {
+        setShowToastAdvisor(true);
+        localStorage.setItem(
+          COUNT_CREATE_ADVISOR_KEY,
+          advisorEvent.length.toString()
+        );
 
-  //   setTimeout(() => {
-  //     setShowToastAdvisor(false);
-  //   }, 2000);
-  // }, [userEvent]);
+        setTimeout(() => {
+          setShowToastAdvisor(false);
+        }, 2000);
+      }
+    }
+  }, [advisorEvent]);
 
   return (
     <>
@@ -92,14 +94,14 @@ const Toast: NextPage = () => {
             transition={{ duration: 0.5 }}
           >
             <div className='alert alert-info'>
-              <span>New user created</span>
+              <span>New user created!</span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* <AnimatePresence>
-        {showToast && (
+      <AnimatePresence>
+        {showToastAdvisor && (
           <motion.div
             className='toast'
             initial={{ opacity: 0 }}
@@ -108,11 +110,11 @@ const Toast: NextPage = () => {
             transition={{ duration: 0.5 }}
           >
             <div className='alert alert-info'>
-              <span>New user created</span>
+              <span>New advisor created!</span>
             </div>
           </motion.div>
         )}
-      </AnimatePresence> */}
+      </AnimatePresence>
     </>
   );
 };

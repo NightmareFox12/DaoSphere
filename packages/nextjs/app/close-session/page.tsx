@@ -3,6 +3,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import {
+  COUNT_CREATE_ADVISOR_KEY,
   COUNT_CREATE_USER_KEY,
   DAO_ADDRESS_LOCALSTORAGE_KEY,
 } from '~~/utils/Constants';
@@ -13,6 +14,7 @@ const CloseSession: NextPage = () => {
   useEffect(() => {
     localStorage.removeItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
     localStorage.removeItem(COUNT_CREATE_USER_KEY);
+    localStorage.removeItem(COUNT_CREATE_ADVISOR_KEY);
     router.push('/');
   }, [, router]);
 
