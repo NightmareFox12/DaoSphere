@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x67746d65feb56ef9fab729509aff4efdc305f42eb1c710759c3976ea1a16921",
+        "0x42d470d158fc9e17918e24ca51b736f50d16940d674421e79db03bb4c8dbf21",
       abi: [
         {
           type: "impl",
@@ -122,30 +122,12 @@ const deployedContracts = {
     },
     DaoSphere: {
       address:
-        "0x17cf759f53981b92f3cb866a0a5f9a49401c16b0324594714dedd7321d53768",
+        "0x10678d5be033c244841dc19f4e52db16e8e30d9d33e45c554b7b47bd6075ef5",
       abi: [
         {
           type: "impl",
           name: "DaoSphere",
           interface_name: "contracts::DaoSphere::IDaoSphere",
-        },
-        {
-          type: "struct",
-          name: "core::byte_array::ByteArray",
-          members: [
-            {
-              name: "data",
-              type: "core::array::Array::<core::bytes_31::bytes31>",
-            },
-            {
-              name: "pending_word",
-              type: "core::felt252",
-            },
-            {
-              name: "pending_word_len",
-              type: "core::integer::u32",
-            },
-          ],
         },
         {
           type: "enum",
@@ -224,24 +206,41 @@ const deployedContracts = {
           ],
         },
         {
+          type: "struct",
+          name: "core::byte_array::ByteArray",
+          members: [
+            {
+              name: "data",
+              type: "core::array::Array::<core::bytes_31::bytes31>",
+            },
+            {
+              name: "pending_word",
+              type: "core::felt252",
+            },
+            {
+              name: "pending_word_len",
+              type: "core::integer::u32",
+            },
+          ],
+        },
+        {
           type: "interface",
           name: "contracts::DaoSphere::IDaoSphere",
           items: [
             {
               type: "function",
-              name: "modify_vote_creation_access",
-              inputs: [
+              name: "proposal_count",
+              inputs: [],
+              outputs: [
                 {
-                  name: "new_access",
-                  type: "core::byte_array::ByteArray",
+                  type: "core::integer::u64",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
+              state_mutability: "view",
             },
             {
               type: "function",
-              name: "get_vote_creation_access",
+              name: "vote_selected_access",
               inputs: [],
               outputs: [
                 {
@@ -399,6 +398,18 @@ const deployedContracts = {
                 },
               ],
               state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "modify_vote_creation_access",
+              inputs: [
+                {
+                  name: "new_access",
+                  type: "core::byte_array::ByteArray",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
             },
             {
               type: "function",
@@ -712,7 +723,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x43d412e00d8804b91b3fa2f88de933500f39923410fa0f9b44f61caaaf9d714",
+        "0x114744390778e51c05af660181bb0136e86fb81193f9eb1a2562d562e3fae36",
     },
   },
 } as const;

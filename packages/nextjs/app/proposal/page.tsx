@@ -7,9 +7,11 @@ import {
 } from '@heroicons/react/24/outline';
 import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputBase } from '~~/components/scaffold-stark';
+import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 import { VoteOptions } from '~~/types/VoteOptions';
+import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 
 const Proposal: NextPage = () => {
   //states
@@ -19,6 +21,23 @@ const Proposal: NextPage = () => {
   const [isYesNoVote, setIsYesNoVote] = useState<boolean>(false);
   const [nextId, setNextId] = useState(1);
   const [options, setOptions] = useState<VoteOptions[]>([]);
+
+  const [contractAddress, setContractAddress] = useState<`0x${string}`>('0x0');
+  //smart contract
+  const { data: proposalCount } = useScaffoldReadContract({
+    contractName: 'DaoSphere',
+    functionName: 'proposal_count',
+    contractAddress: contractAddress,
+  });
+
+  //efects
+  useEffect(() => {
+    const contractAddress = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
+
+    if (contractAddress !== null) {
+      setContractAddress(contractAddress as `0x${string}`);
+    }
+  }, []);
 
   //functions
   const handleAddOption = () => {
@@ -181,7 +200,12 @@ const Proposal: NextPage = () => {
             </article>
           )}
         </div>
-        <button className='mt-5 btn btn-accent mx-auto px-16'>Create</button>
+        <button
+          className='mt-5 btn btn-accent mx-auto px-16'
+          disabled={title === '' || endDate === '' || options.length === 0}
+        >
+          Create
+        </button>
       </article>
     </section>
   );

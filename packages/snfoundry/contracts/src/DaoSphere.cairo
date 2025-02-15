@@ -3,10 +3,11 @@ use super::models::DaoSphereModel;
 
 #[starknet::interface]
 trait IDaoSphere<TContractState> {
-    fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
-    fn get_vote_creation_access(self: @TContractState) -> DaoSphereModel::VoteCreationAccess;
+    //data
+    fn proposal_count(self: @TContractState) -> u64;
+    fn vote_selected_access(self: @TContractState) -> DaoSphereModel::VoteCreationAccess;
 
-    //
+    //handle roles
     fn is_admin(self: @TContractState, caller: ContractAddress) -> bool;
     fn is_advisor(self: @TContractState, caller: ContractAddress) -> bool;
     fn is_user(self: @TContractState, caller: ContractAddress) -> bool;
@@ -26,6 +27,7 @@ trait IDaoSphere<TContractState> {
     ) -> DaoSphereModel::Advisor;
 
     // handle proposal
+    fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
     fn create_proposal(
         ref self: TContractState, title: ByteArray, description: ByteArray, end_time: u64,
     );
@@ -81,6 +83,7 @@ mod DaoSphere {
         #[substorage(v0)]
         src5: SRC5Component::Storage,
     }
+    
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
@@ -113,6 +116,16 @@ mod DaoSphere {
 
     #[abi(embed_v0)]
     impl DaoSphere of super::IDaoSphere<ContractState> {
+        //data
+        fn proposal_count(self: @ContractState) -> u64 {
+            self.proposal_count.read()
+        }
+
+        fn vote_selected_access(self: @ContractState) -> VoteCreationAccess {
+            self.vote_selected_access.read()
+        }
+
+        //handle roles
         fn is_admin(self: @ContractState, caller: ContractAddress) -> bool {
             assert(caller.is_non_zero(), 'admin address is not valid');
             let isAdmin = self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller);
@@ -130,27 +143,6 @@ mod DaoSphere {
             let isUser = self.accesscontrol.hasRole(USER_ROLE, caller);
 
             isUser
-        }
-
-        fn modify_vote_creation_access(ref self: ContractState, new_access: ByteArray) {
-            let caller = get_caller_address();
-            assert(self.is_admin(caller), 'Caller is not admin');
-
-            self.vote_selected_access.write(VoteCreationAccess::Admin(false));
-            self.vote_selected_access.write(VoteCreationAccess::AdminOrAdvisor(false));
-            self.vote_selected_access.write(VoteCreationAccess::All(false));
-
-            if new_access == "Admin" {
-                self.vote_selected_access.write(VoteCreationAccess::Admin(true));
-            } else if new_access == "AdminOrAdvisor" {
-                self.vote_selected_access.write(VoteCreationAccess::AdminOrAdvisor(true));
-            } else if new_access == "All" {
-                self.vote_selected_access.write(VoteCreationAccess::All(true));
-            };
-        }
-
-        fn get_vote_creation_access(self: @ContractState) -> VoteCreationAccess {
-            self.vote_selected_access.read()
         }
 
         //handle user
@@ -267,7 +259,9 @@ mod DaoSphere {
             assert(
                 !self.accesscontrol.hasRole(USER_ROLE, advisorAddress), 'User cannot be a advisor',
             );
-            assert(!self.accesscontrol.hasRole(ADVISOR_ROLE, advisorAddress), 'Advisor already exists');
+            assert(
+                !self.accesscontrol.hasRole(ADVISOR_ROLE, advisorAddress), 'Advisor already exists',
+            );
 
             self.accesscontrol.grantRole(ADVISOR_ROLE, advisorAddress);
 
@@ -333,6 +327,23 @@ mod DaoSphere {
         }
 
         // handle proposal
+        fn modify_vote_creation_access(ref self: ContractState, new_access: ByteArray) {
+            let caller = get_caller_address();
+            assert(self.is_admin(caller), 'Caller is not admin');
+
+            self.vote_selected_access.write(VoteCreationAccess::Admin(false));
+            self.vote_selected_access.write(VoteCreationAccess::AdminOrAdvisor(false));
+            self.vote_selected_access.write(VoteCreationAccess::All(false));
+
+            if new_access == "Admin" {
+                self.vote_selected_access.write(VoteCreationAccess::Admin(true));
+            } else if new_access == "AdminOrAdvisor" {
+                self.vote_selected_access.write(VoteCreationAccess::AdminOrAdvisor(true));
+            } else if new_access == "All" {
+                self.vote_selected_access.write(VoteCreationAccess::All(true));
+            };
+        }
+
         fn create_proposal(
             ref self: ContractState, title: ByteArray, description: ByteArray, end_time: u64,
         ) {
@@ -341,7 +352,6 @@ mod DaoSphere {
             assert(title.len() > 3, 'Title is too short');
             assert(description.len() > 3, 'Description is too short');
             assert(end_time > get_block_timestamp(), 'End time is in the past');
-
         }
     }
 }
