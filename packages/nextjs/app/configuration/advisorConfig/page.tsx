@@ -17,6 +17,7 @@ const AdvisorConfig: NextPage<AdvisorConfigProps> = ({
   contractAddress,
   setOption,
 }) => {
+  //states
   const [showAddAdvisorModal, setShowAddAdvisorModal] =
     useState<boolean>(false);
   const [advisorSelected, setAdvisorSelected] = useState<Advisor | undefined>(

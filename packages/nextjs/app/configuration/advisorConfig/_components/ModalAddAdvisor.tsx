@@ -1,7 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { AddressInput } from '~~/components/scaffold-stark';
-import { XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
+import {
+  XMarkIcon,
+  UserIcon,
+  ArrowPathIcon,
+} from '@heroicons/react/24/outline';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 
@@ -17,6 +21,7 @@ const ModalAddAdvisor: NextPage<ModalAddAdvisorProps> = ({
   //states
   const [advisorAddress, setAdvisorAddress] = useState<string>('');
   const [isMatchAddress, setIsMatchAddress] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //smart contract
   const { sendAsync } = useScaffoldWriteContract({
@@ -47,13 +52,15 @@ const ModalAddAdvisor: NextPage<ModalAddAdvisorProps> = ({
     args: [advisorAddress],
   });
 
-  const handleAddUser = async () => {
+  const handleAddAdvisor = async () => {
     try {
+      setIsLoading(true);
       await sendAsync();
       setAdvisorAddress('');
     } catch (err) {
       console.log(err);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,15 +109,21 @@ const ModalAddAdvisor: NextPage<ModalAddAdvisorProps> = ({
         <div className='flex justify-center'>
           <button
             className='btn btn-primary px-10'
-            onClick={() => handleAddUser()}
+            onClick={() => handleAddAdvisor()}
             disabled={
+              isLoading ||
               !advisorAddress.includes('0x') ||
               advisorAddress.length === 0 ||
+              isMatchAddress ||
               isAdmin?.toString() === 'true'
             }
           >
-            <UserIcon className='w-4 h-4' />
-            Create Supervisor
+            {isLoading ? (
+              <ArrowPathIcon className='w-4 h-4 animate-spin' />
+            ) : (
+              <UserIcon className='w-4 h-4' />
+            )}
+            {isLoading ? 'Creating...' : 'Create Advisor'}
           </button>
         </div>
       </div>
