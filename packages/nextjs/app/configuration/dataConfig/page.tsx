@@ -108,7 +108,7 @@ const DataConfig: NextPage<DataConfigProps> = ({
         {users !== undefined &&
         advisors !== undefined &&
         (users.length > 0 || advisors.length > 0) ? (
-          <section className='w-9/12 flex items-center justify-between mx-auto mt-16'>
+          <section className='w-9/12 flex items-center justify-between mx-auto mt-16 flex-col md:flex-row'>
             <article>
               <h3 className='text-center text-lg font-bold'>
                 Users and Advisors

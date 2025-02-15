@@ -48,13 +48,24 @@ const AdvisorConfig: NextPage<AdvisorConfigProps> = ({
         />
       )}
 
-      <div className='relative w-full p-4'>
+      <div className='relative w-full flex justify-between items-center p-4'>
         <button
           className='btn btn-circle btn-accent hover:scale-110 transition-all delay-75'
           onClick={() => setOption(undefined)}
         >
           <ArrowLeftIcon className='w-8 h-8' />
         </button>
+
+        <motion.div
+          whileHover={{ scale: 1.2 }}
+          onClick={() => setShowAddAdvisorModal(!showAddAdvisorModal)}
+          className='tooltip tooltip-left tooltip-primary'
+          data-tip='add advisor'
+        >
+          <button className='btn btn-circle btn-accent'>
+            <PlusIcon className='w-8 h-8' />
+          </button>
+        </motion.div>
       </div>
 
       {advisors !== undefined && advisors.length > 0 ? (
@@ -76,17 +87,6 @@ const AdvisorConfig: NextPage<AdvisorConfigProps> = ({
           </motion.button>
         </div>
       )}
-
-      <motion.div
-        whileHover={{ scale: 1.2 }}
-        onClick={() => setShowAddAdvisorModal(!showAddAdvisorModal)}
-        className='tooltip tooltip-left tooltip-primary absolute md:bottom-8 md:right-8 scale-110'
-        data-tip='add advisor'
-      >
-        <button className='btn btn-circle '>
-          <PlusIcon className='w-8 h-8' />
-        </button>
-      </motion.div>
     </>
   );
 };
