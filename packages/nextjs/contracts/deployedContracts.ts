@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x68d25ef3c83f0697a7650a4c288d144dd75ef98221fee31b0909ed0b1c48855",
+        "0x67746d65feb56ef9fab729509aff4efdc305f42eb1c710759c3976ea1a16921",
       abi: [
         {
           type: "impl",
@@ -59,7 +59,23 @@ const deployedContracts = {
               ],
               state_mutability: "view",
             },
+            {
+              type: "function",
+              name: "get_deploy_block",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u64",
+                },
+              ],
+              state_mutability: "view",
+            },
           ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [],
         },
         {
           type: "event",
@@ -102,11 +118,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x26c4de2ca8fb2426c2c51c9afaf1f3ae56b365790547cf2ca488783a00460fa",
+        "0x78e7b1d95ff5895a3576ed9b2d0a152d242c0f23ebec3c62bb279034f8d2f88",
     },
     DaoSphere: {
       address:
-        "0x566996bfdb6cbcea4eed3afba49286621391168a50fcb87a5105039aab1191b",
+        "0x17cf759f53981b92f3cb866a0a5f9a49401c16b0324594714dedd7321d53768",
       abi: [
         {
           type: "impl",
@@ -696,7 +712,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x2a1960018d49f6af134a70a84c83409daf8e8b99cfee5a374cc75d2851f716c",
+        "0x43d412e00d8804b91b3fa2f88de933500f39923410fa0f9b44f61caaaf9d714",
     },
   },
 } as const;

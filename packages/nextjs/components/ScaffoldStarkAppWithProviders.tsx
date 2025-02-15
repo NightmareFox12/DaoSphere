@@ -14,7 +14,6 @@ import { useAccount } from '~~/hooks/useAccount';
 import ModalConnectWallet from './ModalConnectWallet';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 import { LoginProvider, useLoginContext } from '~~/context/LoginContext';
-import Toast from './Toast';
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
@@ -28,7 +27,6 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const daoAddress = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
     setIsLogin(daoAddress !== null);
-    console.log(isLogin);
   }, [isConnected, isLogin, setIsLogin]);
 
   return (
@@ -50,7 +48,6 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
         )}
         {isLogin && <Header />}
         <main className='relative flex flex-col flex-1'>
-          <Toast />
           {children}
         </main>
         <Footer />

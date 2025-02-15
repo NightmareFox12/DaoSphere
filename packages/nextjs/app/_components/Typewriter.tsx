@@ -31,7 +31,6 @@ const Typewriter: NextPage<TypewriterProps> = ({ text, delay }) => {
         exit={{ opacity: 0 }}
       >
         {currentText}
-        {/* Cursor parpadeante */}
         <motion.span
           style={{ display: 'inline-block', width: '2px', height: '1em' }}
           className='bg-secondary-content'

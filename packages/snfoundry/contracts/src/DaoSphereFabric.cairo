@@ -2,6 +2,7 @@
 pub trait IDaoSphereFabric<TContractState> {
     fn create_dao(ref self: TContractState, name_dao: ByteArray);
     fn dao_id(self: @TContractState) -> u64;
+    fn get_deploy_block(self: @TContractState) -> u64;
 }
 
 
@@ -15,12 +16,18 @@ pub mod DaoSphereFabric {
     use core::num::traits::Zero;
 
     const DAO_SPHERE_CLASS_HASH: felt252 =
-        0x2a1960018d49f6af134a70a84c83409daf8e8b99cfee5a374cc75d2851f716c;
+        0x43d412e00d8804b91b3fa2f88de933500f39923410fa0f9b44f61caaaf9d714;
+
+    #[constructor]
+    fn constructor(ref self: ContractState) {
+        self.deploy_block.write(get_block_number());
+    }
 
     #[storage]
     struct Storage {
         dao_id: u64,
         dao_name: Map<u64, ByteArray>,
+        deploy_block: u64,
     }
 
     #[event]
@@ -89,6 +96,10 @@ pub mod DaoSphereFabric {
 
         fn dao_id(self: @ContractState) -> u64 {
             self.dao_id.read()
+        }
+
+        fn get_deploy_block(self: @ContractState) -> u64 {
+            self.deploy_block.read()
         }
     }
 }

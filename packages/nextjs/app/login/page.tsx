@@ -3,7 +3,10 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
-import { DAO_ADDRESS_LOCALSTORAGE_KEY, DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY } from '~~/utils/Constants';
+import {
+  DAO_ADDRESS_LOCALSTORAGE_KEY,
+  DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY,
+} from '~~/utils/Constants';
 import { InputBase } from '~~/components/scaffold-stark';
 import { SwitchTheme } from '~~/components/SwitchTheme';
 import { AnimatePresence, motion } from 'motion/react';
@@ -13,6 +16,7 @@ import { feltToHex } from '~~/utils/scaffold-stark/common';
 import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
 import TableDaoPublic from './_components/TableDao';
 import { useRouter } from 'next/navigation';
+import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -22,10 +26,15 @@ const Login: NextPage = () => {
   const [daoData, setDaoData] = useState<any[]>([]);
 
   //smart contract
-  const { data } = useScaffoldEventHistory({
+  const { data: deployBlock } = useScaffoldReadContract({
+    contractName: 'DaoSphereFabric',
+    functionName: 'get_deploy_block',
+  });
+
+  const { data, isLoading } = useScaffoldEventHistory({
     contractName: 'DaoSphereFabric',
     eventName: 'contracts::DaoSphereFabric::DaoSphereFabric::DaoCreated',
-    fromBlock: BigInt(0),
+    fromBlock: BigInt(deployBlock?.toString() ?? 0),
     blockData: true,
     transactionData: false,
     receiptData: false,
@@ -81,7 +90,7 @@ const Login: NextPage = () => {
           <InputBase
             value={nameDao}
             onChange={(e) => setNameDao(e)}
-            placeholder='name DAO public'
+            placeholder='name DAO'
           />
         </div>
 
@@ -91,30 +100,38 @@ const Login: NextPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
           >
-            <h4 className='text-center font-semibold text-2xl mt-5'>
-              DAO public
-            </h4>
-            {daoData.length === 0 && data.length !== 0 ? (
-              <motion.p
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                className='text-center text-lg'
-              >
-                There is no DAO by that name
-              </motion.p>
+            <h4 className='text-center font-semibold text-2xl mt-5'>DAOs</h4>
+            {isLoading ? (
+              <article className='flex flex-col gap-3'>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className='skeleton h-10 w-full' />
+                ))}
+              </article>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                className='overflow-x-auto w-full'
-              >
-                <TableDaoPublic
-                  daoData={daoData}
-                  handleEnterDao={handleEnterDao}
-                />
-              </motion.div>
+              <>
+                {daoData.length === 0 && data.length !== 0 ? (
+                  <motion.p
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className='text-center text-lg'
+                  >
+                    There is no DAO by that name
+                  </motion.p>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className='overflow-x-auto w-full'
+                  >
+                    <TableDaoPublic
+                      daoData={daoData}
+                      handleEnterDao={handleEnterDao}
+                    />
+                  </motion.div>
+                )}
+              </>
             )}
           </motion.div>
         </AnimatePresence>

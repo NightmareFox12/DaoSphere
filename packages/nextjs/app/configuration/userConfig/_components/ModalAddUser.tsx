@@ -1,7 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { AddressInput } from '~~/components/scaffold-stark';
-import { XMarkIcon, UserIcon } from '@heroicons/react/24/outline';
+import {
+  XMarkIcon,
+  UserIcon,
+  ArrowPathIcon,
+} from '@heroicons/react/24/outline';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 
@@ -17,6 +21,7 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
   //states
   const [userAddress, setUserAddress] = useState<string>('');
   const [isMatchAddress, setIsMatchAddress] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //smart contract
   const { sendAsync } = useScaffoldWriteContract({
@@ -49,11 +54,13 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
 
   const handleAddUser = async () => {
     try {
+      setIsLoading(true);
       await sendAsync();
       setUserAddress('');
     } catch (err) {
       console.log(err);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -104,13 +111,19 @@ const ModalAddUser: NextPage<ModalAddUserProps> = ({
             className='btn btn-primary px-10'
             onClick={() => handleAddUser()}
             disabled={
+              isLoading ||
               !userAddress.includes('0x') ||
               userAddress.length === 0 ||
+              isMatchAddress ||
               isAdmin?.toString() === 'true'
             }
           >
-            <UserIcon className='w-4 h-4' />
-            Create User
+            {isLoading ? (
+              <ArrowPathIcon className='w-4 h-4 animate-spin' />
+            ) : (
+              <UserIcon className='w-4 h-4' />
+            )}
+            {isLoading ? 'Creating...' : 'Create User'}
           </button>
         </div>
       </div>

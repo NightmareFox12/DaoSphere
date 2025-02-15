@@ -9,6 +9,7 @@ import UserConfig from './userConfig/page';
 import ModalAdminOrSupervisor from './_components/ModalAdminOrSupervisor';
 import SupervisorConfig from './advisorConfig/page';
 import DataConfig from './dataConfig/page';
+import ToastConfiguration from './_components/ToastConfiguration';
 
 const Configuration: NextPage = () => {
   const { account } = useAccount();
@@ -51,6 +52,8 @@ const Configuration: NextPage = () => {
       {!isAdmin && !isAdvisor && <ModalAdminOrSupervisor />}
 
       <section className={`${!isAdmin && !isAdvisor ? 'blur-md' : ''}`}>
+        <ToastConfiguration />
+
         {option === undefined && (
           <CardOptions
             setOption={setOption}
@@ -59,10 +62,7 @@ const Configuration: NextPage = () => {
         )}
 
         {option === 1 && (
-          <UserConfig
-            contractAddress={contractAddress}
-            setOption={setOption}
-          />
+          <UserConfig contractAddress={contractAddress} setOption={setOption} />
         )}
 
         {option === 2 && (
@@ -73,10 +73,7 @@ const Configuration: NextPage = () => {
         )}
 
         {option === 3 && (
-          <DataConfig
-            contractAddress={contractAddress}
-            setOption={setOption}
-          />
+          <DataConfig contractAddress={contractAddress} setOption={setOption} />
         )}
       </section>
     </>

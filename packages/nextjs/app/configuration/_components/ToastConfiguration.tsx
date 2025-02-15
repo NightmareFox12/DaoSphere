@@ -9,7 +9,7 @@ import {
 } from '~~/utils/Constants';
 import { motion, AnimatePresence } from 'motion/react';
 
-const Toast: NextPage = () => {
+const ToastConfiguration: NextPage = () => {
   //states
   const [addressParsed, setAddressParsed] = useState<`0x${string}`>('0x0');
   const [deployBlock, setDeployBlock] = useState<bigint>(0n);
@@ -21,7 +21,7 @@ const Toast: NextPage = () => {
   const { data: userEvent } = useScaffoldEventHistory({
     contractName: 'DaoSphere',
     eventName: 'contracts::DaoSphere::DaoSphere::CreatedUser',
-    fromBlock: deployBlock,
+    fromBlock: 0n,
     contractAddress: addressParsed,
     watch: true,
   });
@@ -36,17 +36,9 @@ const Toast: NextPage = () => {
 
   //efects
   useEffect(() => {
-    const address = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
-    const deployBlock = localStorage.getItem(DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY);
-    setDeployBlock(BigInt(deployBlock ?? 0));
-
-    if (address !== null) {
-      const addressParsed: `0x${string}` = `0x${address.slice(2)}`;
-      setAddressParsed(addressParsed);
-    }
-  }, []);
-
-  useEffect(() => {
+    getDataStorage();
+    console.log(userEvent);
+    console.log(deployBlock);
     const countUser = localStorage.getItem(COUNT_CREATE_USER_KEY);
 
     if (userEvent !== undefined && userEvent.length > 0) {
@@ -62,9 +54,10 @@ const Toast: NextPage = () => {
         }, 2000);
       }
     }
-  }, [userEvent]);
+  }, [deployBlock, userEvent, addressParsed]);
 
   useEffect(() => {
+    getDataStorage();
     const countAdvisor = localStorage.getItem(COUNT_CREATE_ADVISOR_KEY);
 
     if (advisorEvent !== undefined && advisorEvent.length > 0) {
@@ -80,8 +73,21 @@ const Toast: NextPage = () => {
         }, 2000);
       }
     }
-  }, [advisorEvent]);
+  }, [deployBlock, advisorEvent, addressParsed]);
 
+  //functions
+  const getDataStorage = () => {
+    const address = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
+
+    if (address !== null) {
+      const addressParsed: `0x${string}` = `0x${address.slice(2)}`;
+      setAddressParsed(addressParsed);
+    }
+    const deployBlock = localStorage.getItem(DAO_DEPLOY_BLOCK_LOCALSTORAGE_KEY);
+    setDeployBlock(BigInt(deployBlock ?? 0));
+  };
+
+  
   return (
     <>
       <AnimatePresence>
@@ -119,4 +125,4 @@ const Toast: NextPage = () => {
   );
 };
 
-export default Toast;
+export default ToastConfiguration;

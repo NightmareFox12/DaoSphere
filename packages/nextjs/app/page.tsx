@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 import { useLoginContext } from '~~/context/LoginContext';
 import Image from 'next/image';
-import Typewriter from './Typewriter';
+import Typewriter from './_components/Typewriter'; 
 import { useAccount } from '~~/hooks/useAccount';
 
 const Home: NextPage = () => {

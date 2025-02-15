@@ -81,7 +81,6 @@ mod DaoSphere {
         #[substorage(v0)]
         src5: SRC5Component::Storage,
     }
-
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
@@ -266,11 +265,9 @@ mod DaoSphere {
             assert(advisorAddress.is_non_zero(), 'Invalid advisor address');
             assert(advisorAddress != caller, 'Admin cannot be a advisor');
             assert(
-                !self.accesscontrol.hasRole(USER_ROLE, advisorAddress), 'Advisor already exists',
+                !self.accesscontrol.hasRole(USER_ROLE, advisorAddress), 'User cannot be a advisor',
             );
-            assert(
-                !self.accesscontrol.hasRole(USER_ROLE, advisorAddress), 'Advisor cannot be a user',
-            );
+            assert(!self.accesscontrol.hasRole(ADVISOR_ROLE, advisorAddress), 'Advisor already exists');
 
             self.accesscontrol.grantRole(ADVISOR_ROLE, advisorAddress);
 
@@ -344,7 +341,6 @@ mod DaoSphere {
             assert(title.len() > 3, 'Title is too short');
             assert(description.len() > 3, 'Description is too short');
             assert(end_time > get_block_timestamp(), 'End time is in the past');
-            //Decidir si coloco la descripcion obligatoria o la elimino de la faz de la tierra
 
         }
     }
