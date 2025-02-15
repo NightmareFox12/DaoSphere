@@ -28,6 +28,9 @@ trait IDaoSphere<TContractState> {
 
     // handle proposal
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
+
+    fn create_proposal_basic(ref self: TContractState, title: ByteArray, end_time: u64);
+
     fn create_proposal(
         ref self: TContractState, title: ByteArray, description: ByteArray, end_time: u64,
     );
@@ -83,7 +86,7 @@ mod DaoSphere {
         #[substorage(v0)]
         src5: SRC5Component::Storage,
     }
-    
+
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
@@ -160,6 +163,9 @@ mod DaoSphere {
                 !self.accesscontrol.hasRole(ADVISOR_ROLE, userAddress), 'Advisor cannot be a user',
             );
             assert(userAddress != caller, 'Admin cannot be a user');
+
+            let advisor_exist: Advisor = self.get_advisor(userAddress);
+            assert(advisor_exist.unlock == true, 'Advisor blocked');
 
             self.accesscontrol.grantRole(USER_ROLE, userAddress);
             let user_id = self.user_count.read();
@@ -343,6 +349,69 @@ mod DaoSphere {
                 self.vote_selected_access.write(VoteCreationAccess::All(true));
             };
         }
+
+        //TODO: seguir luchando con la fecha
+
+        fn create_proposal_basic(ref self: ContractState, title: ByteArray, end_time: u64) {
+            let caller = get_caller_address();
+            assert(title.len() > 3, 'Title is too short');
+            assert(end_time >= get_block_timestamp(), 'End time is in the past');
+
+            match self.vote_selected_access.read() {
+                VoteCreationAccess::Admin => {
+                    assert(
+                        self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller),
+                        'Caller is not admin',
+                    );
+                },
+                VoteCreationAccess::AdminOrAdvisor => {
+                    assert(
+                        self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller)
+                            || self.accesscontrol.hasRole(ADVISOR_ROLE, caller),
+                        'Caller not admin or advisor',
+                    );
+                },
+                VoteCreationAccess::All => {
+                    if !self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller)
+                    || !self.accesscontrol.hasRole(ADVISOR_ROLE, caller) 
+                    || !self.accesscontrol.hasRole(USER_ROLE, caller)
+                    {
+                        let user_id = self.user_count.read();
+                        self
+                            .users
+                            .write(
+                                user_id,
+                                User {
+                                    user_id: user_id,
+                                    address: caller,
+                                    unlock: true,
+                                    date: get_block_timestamp(),
+                                },
+                            );
+            
+                        self.emit(CreatedUser { user_id: user_id, address: caller });
+                        self.user_count.write(user_id + 1);
+                    }
+                },
+            }
+
+            let proposal_id = self.proposal_count.read();
+            self
+                .proposal
+                .write(
+                    Proposal {
+                        proposal_id: proposal_id,
+                        creator_address: caller,
+                        title: title,
+                        start_time: get_block_timestamp(),
+                        end_time: end_time,
+                    },
+                );
+
+            //buscar la manera de cobrar y enviarmelo al contract fabric
+            self.proposal_count.write(proposal_id + 1);
+        }
+
 
         fn create_proposal(
             ref self: ContractState, title: ByteArray, description: ByteArray, end_time: u64,

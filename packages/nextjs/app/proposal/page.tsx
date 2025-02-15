@@ -5,15 +5,19 @@ import {
   PlusIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { useBlock } from '@starknet-react/core';
 import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { InputBase } from '~~/components/scaffold-stark';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
+import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { VoteOptions } from '~~/types/VoteOptions';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 
 const Proposal: NextPage = () => {
+  const { data: jose } = useBlock();
+
   //states
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
@@ -28,6 +32,13 @@ const Proposal: NextPage = () => {
     contractName: 'DaoSphere',
     functionName: 'proposal_count',
     contractAddress: contractAddress,
+  });
+
+  const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
+    contractName: 'DaoSphere',
+    functionName: 'create_proposal_basic',
+    contractAddress: contractAddress,
+    args: ['', 0n],
   });
 
   //efects
@@ -73,6 +84,31 @@ const Proposal: NextPage = () => {
     const nextMonthLocalDate = nextMonth.toLocaleDateString('sv-SE');
 
     return nextMonthLocalDate;
+  };
+
+  const handleCreateProposal = async () => {
+    console.log('create proposal');
+    //hacer todas las validaciones
+    console.log(title, endDate);
+    const date = new Date(endDate);
+    const timestamp = Math.floor(date.getTime() / 1000);
+    console.log(timestamp);
+
+    if (jose?.timestamp !== undefined) {
+      const adjustedTimestamp = timestamp + (jose.timestamp - timestamp);
+      console.log('adjustedTimestamp',  adjustedTimestamp);
+
+      console.log(new Date(adjustedTimestamp * 1000).toLocaleDateString());
+      if (isYesNoVote) {
+        sendProposalBasic({ args: [title, adjustedTimestamp] });
+      }
+    }
+
+    //const timestamp = 1739577600;
+    //const date = new Date(timestamp * 1000);
+    //console.log(date.toLocaleDateString());
+
+   
   };
 
   return (
@@ -121,6 +157,11 @@ const Proposal: NextPage = () => {
               Title <span className='text-error font-bold'>*</span>
             </p>
             <InputBase placeholder='Title' value={title} onChange={setTitle} />
+            <p className='text-sm text-error m-1 ps-1'>
+              {title.length > 0 &&
+                title.length < 5 &&
+                'Title must be at least 5 characters'}
+            </p>
           </div>
 
           <div>
@@ -202,7 +243,12 @@ const Proposal: NextPage = () => {
         </div>
         <button
           className='mt-5 btn btn-accent mx-auto px-16'
-          disabled={title === '' || endDate === '' || options.length === 0}
+          onClick={handleCreateProposal}
+          disabled={
+            title === '' ||
+            endDate === '' ||
+            (isYesNoVote ? false : options.length <= 0)
+          }
         >
           Create
         </button>

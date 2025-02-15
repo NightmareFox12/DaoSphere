@@ -30,7 +30,6 @@ pub struct Proposal {
     pub proposal_id: u64,
     pub creator_address: ContractAddress,
     pub title: ByteArray,
-    pub description: ByteArray,
     pub start_time: u64,
     pub end_time: u64,
 }

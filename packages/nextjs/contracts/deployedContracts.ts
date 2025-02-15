@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x42d470d158fc9e17918e24ca51b736f50d16940d674421e79db03bb4c8dbf21",
+        "0x7679587e13381dce7565594cd710af52000a670f5ef8ed5338a19a4e6ad93c6",
       abi: [
         {
           type: "impl",
@@ -118,11 +118,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x78e7b1d95ff5895a3576ed9b2d0a152d242c0f23ebec3c62bb279034f8d2f88",
+        "0x70dfc112ee30503488fd058869aaff99fd18b05bf0e26d5ffaa63c886edb4e3",
     },
     DaoSphere: {
       address:
-        "0x10678d5be033c244841dc19f4e52db16e8e30d9d33e45c554b7b47bd6075ef5",
+        "0x37103796746f60e206a2494681bd831761ee792f5d9b26a8b29246a5283117d",
       abi: [
         {
           type: "impl",
@@ -406,6 +406,22 @@ const deployedContracts = {
                 {
                   name: "new_access",
                   type: "core::byte_array::ByteArray",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "create_proposal_basic",
+              inputs: [
+                {
+                  name: "title",
+                  type: "core::byte_array::ByteArray",
+                },
+                {
+                  name: "end_time",
+                  type: "core::integer::u64",
                 },
               ],
               outputs: [],
@@ -723,7 +739,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x114744390778e51c05af660181bb0136e86fb81193f9eb1a2562d562e3fae36",
+        "0x746c97587a3c4db88eb77459668733b8dff081ea5fb425172d9d409c9df32e1",
     },
   },
 } as const;

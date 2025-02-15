@@ -38,7 +38,7 @@ const DataConfig: NextPage<DataConfigProps> = ({
 
   const { data: voteCreationData } = useScaffoldReadContract({
     contractName: 'DaoSphere',
-    functionName: 'get_vote_creation_access',
+    functionName: 'vote_selected_access',
     contractAddress: contractAddress,
   });
 

@@ -16,7 +16,7 @@ pub mod DaoSphereFabric {
     use core::num::traits::Zero;
 
     const DAO_SPHERE_CLASS_HASH: felt252 =
-        0x43d412e00d8804b91b3fa2f88de933500f39923410fa0f9b44f61caaaf9d714;
+    0x746c97587a3c4db88eb77459668733b8dff081ea5fb425172d9d409c9df32e1;
 
     #[constructor]
     fn constructor(ref self: ContractState) {
