@@ -1,5 +1,6 @@
 'use client';
 import {
+  ArrowPathIcon,
   BellAlertIcon,
   BellIcon,
   PlusIcon,
@@ -22,9 +23,11 @@ const Proposal: NextPage = () => {
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-  const [isYesNoVote, setIsYesNoVote] = useState<boolean>(false);
+  const [isYesNoVote, setIsYesNoVote] = useState<boolean>(true);
   const [nextId, setNextId] = useState(1);
   const [options, setOptions] = useState<VoteOptions[]>([]);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [contractAddress, setContractAddress] = useState<`0x${string}`>('0x0');
   //smart contract
@@ -77,38 +80,25 @@ const Proposal: NextPage = () => {
     setOptions(options.filter((option) => option.id !== id));
   };
 
-  const oneMonthFromNow = (): string => {
-    const date = new Date();
-
-    const nextMonth = new Date(date.setMonth(date.getMonth() + 1));
-    const nextMonthLocalDate = nextMonth.toLocaleDateString('sv-SE');
-
-    return nextMonthLocalDate;
-  };
-
   const handleCreateProposal = async () => {
-    console.log('create proposal');
-    //hacer todas las validaciones
-    console.log(title, endDate);
-    const date = new Date(endDate);
-    const timestamp = Math.floor(date.getTime() / 1000);
-    console.log(timestamp);
+    try {
+      setIsLoading(true);
+      //hacer todas las validaciones
 
-    if (jose?.timestamp !== undefined) {
-      const adjustedTimestamp = timestamp + (jose.timestamp - timestamp);
-      console.log('adjustedTimestamp',  adjustedTimestamp);
+      console.log(title, endDate);
+      const timestamp = new Date(endDate).getTime();
 
-      console.log(new Date(adjustedTimestamp * 1000).toLocaleDateString());
       if (isYesNoVote) {
-        sendProposalBasic({ args: [title, adjustedTimestamp] });
+        sendProposalBasic({ args: [title, timestamp] });
+        setTitle('');
+        setEndDate('');
+        setIsYesNoVote(true);
       }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
     }
-
-    //const timestamp = 1739577600;
-    //const date = new Date(timestamp * 1000);
-    //console.log(date.toLocaleDateString());
-
-   
   };
 
   return (
@@ -171,8 +161,16 @@ const Proposal: NextPage = () => {
             <label className='input input-bordered flex items-center gap-2'>
               <input
                 type='date'
-                min={new Date().toLocaleDateString('sv-SE')}
-                max={oneMonthFromNow()}
+                min={
+                  new Date(new Date().setDate(new Date().getDate() + 1))
+                    .toISOString()
+                    .split('T')[0]
+                }
+                max={
+                  new Date(new Date().setDate(new Date().getDate() + 30))
+                    .toISOString()
+                    .split('T')[0]
+                }
                 className='grow'
                 placeholder='End Date'
                 value={endDate}
@@ -245,12 +243,20 @@ const Proposal: NextPage = () => {
           className='mt-5 btn btn-accent mx-auto px-16'
           onClick={handleCreateProposal}
           disabled={
+            isLoading ||
             title === '' ||
             endDate === '' ||
             (isYesNoVote ? false : options.length <= 0)
           }
         >
-          Create
+          {isLoading ? (
+            <>
+              <ArrowPathIcon className='w-6 h-6 animate-spin' />
+              Creating Proposal...
+            </>
+          ) : (
+            'Create Proposal'
+          )}
         </button>
       </article>
     </section>

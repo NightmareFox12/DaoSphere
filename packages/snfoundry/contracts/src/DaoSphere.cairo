@@ -355,7 +355,7 @@ mod DaoSphere {
         fn create_proposal_basic(ref self: ContractState, title: ByteArray, end_time: u64) {
             let caller = get_caller_address();
             assert(title.len() > 3, 'Title is too short');
-            assert(end_time >= get_block_timestamp(), 'End time is in the past');
+            assert(end_time > get_block_timestamp(), 'End time is in the past');
 
             match self.vote_selected_access.read() {
                 VoteCreationAccess::Admin => {

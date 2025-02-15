@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x7679587e13381dce7565594cd710af52000a670f5ef8ed5338a19a4e6ad93c6",
+        "0x6815d4cdc0a9502dfe3a15298408201a3032d71dfc382364ee021f6bbefc217",
       abi: [
         {
           type: "impl",
@@ -122,7 +122,7 @@ const deployedContracts = {
     },
     DaoSphere: {
       address:
-        "0x37103796746f60e206a2494681bd831761ee792f5d9b26a8b29246a5283117d",
+        "0x73292b278741eb1f89e7b1c36026904dcc3e487baf2097717784410af80ac0d",
       abi: [
         {
           type: "impl",
