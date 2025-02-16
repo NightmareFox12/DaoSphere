@@ -6,7 +6,6 @@ import {
   PlusIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import { useBlock } from '@starknet-react/core';
 import { parseEther } from 'ethers';
 import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
@@ -34,7 +33,7 @@ const Proposal: NextPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //smart contract
-  const { data: EthContract } = useDeployedContractInfo('Eth');
+  // const { data: EthContract } = useDeployedContractInfo('Eth');
   const { data: StrkContract } = useDeployedContractInfo('Strk');
 
   const { data: proposalCount } = useScaffoldReadContract({
@@ -48,7 +47,7 @@ const Proposal: NextPage = () => {
       {
         contractName: 'Strk',
         functionName: 'approve',
-        args: [contractAddress, parseEther('1')],
+        args: [contractAddress, 2n * (10n ** 18n)],
       },
       {
         contractName: 'DaoSphere',
@@ -58,7 +57,7 @@ const Proposal: NextPage = () => {
           title,
           BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
           StrkContract?.address,
-          parseEther('1'),
+          1n * (10n ** 18n),
         ],
       },
     ],
@@ -67,12 +66,20 @@ const Proposal: NextPage = () => {
   // const { sendAsync: ayuda } = useScaffoldWriteContract({
   //   contractName: 'Strk',
   //   functionName: 'approve',
-  //   args: [StrkContract?.address, parseEther('0.01')],
+  //   args: [StrkContract?.address, parseEther('1')],
   // });
 
-  //   const { sendAsync: sendProposalBasic } = useScaffoldWriteContract(
-
-  // );
+  // const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
+  //   contractName: 'DaoSphere',
+  //   functionName: 'create_proposal_basic',
+  //   contractAddress: contractAddress,
+  //   args: [
+  //     title,
+  //     BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
+  //     StrkContract?.address,
+  //     parseEther('1'),
+  //   ],
+  // });
 
   //efects
   useEffect(() => {
@@ -114,6 +121,7 @@ const Proposal: NextPage = () => {
     try {
       setIsLoading(true);
       if (isYesNoVote) {
+        // await ayuda();
         await sendProposalBasic();
         setTitle('');
         setEndDate(undefined);
@@ -125,8 +133,6 @@ const Proposal: NextPage = () => {
       setIsLoading(false);
     }
   };
-
-  console.log();
 
   return (
     <section className='w-full h-full flex flex-1 justify-center items-center'>

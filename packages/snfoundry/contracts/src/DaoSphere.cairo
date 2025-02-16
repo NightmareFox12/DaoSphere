@@ -43,6 +43,7 @@ pub mod DaoSphere {
     use starknet::storage::{StoragePathEntry, Map};
     use starknet::{
         get_caller_address, ContractAddress, get_block_timestamp, contract_address_const,
+        get_contract_address,
     };
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
@@ -52,7 +53,7 @@ pub mod DaoSphere {
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use super::DaoSphereModel::{
         User, Advisor, VoteCreationAccess, Proposal, OptionProposal, ETH_CONTRACT_ADDRESS,
-        STRK_CONTRACT_ADDRESS, USER_ROLE, ADVISOR_ROLE,
+        STRK_CONTRACT_ADDRESS, USER_ROLE, ADVISOR_ROLE, STRK_CONTRACT_ADDRESS_DEVNET,
     };
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
@@ -439,6 +440,7 @@ pub mod DaoSphere {
         fn _require_supported_token(ref self: ContractState, token: ContractAddress) {
             assert(
                 token == contract_address_const::<STRK_CONTRACT_ADDRESS>()
+                    || token == contract_address_const::<STRK_CONTRACT_ADDRESS_DEVNET>()
                     || token == contract_address_const::<ETH_CONTRACT_ADDRESS>(),
                 'Unsupported token',
             );

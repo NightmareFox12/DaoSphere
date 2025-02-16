@@ -18,7 +18,7 @@ pub mod DaoSphereFabric {
     use core::num::traits::Zero;
 
     const DAO_SPHERE_CLASS_HASH: felt252 =
-    0x342be6838d1666d922d330ebe55b1affa698d600d7c5b1404caa12119b68dc2;
+    0x5cf63e6e4adfd5265795dc1cc51dd370382338ce4aceb5793f06dbdcba56f40;
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress) {
@@ -89,7 +89,12 @@ pub mod DaoSphereFabric {
 
             let class_hash: ClassHash = class_hash_const::<DAO_SPHERE_CLASS_HASH>();
             let contract_address_salt: felt252 = dao_id.into();
-            let calldata: Span<felt252> = array![caller.into(), this.into()].span();
+
+            let mut data = ArrayTrait::new();
+            data.append(caller.into());
+            data.append(this.into());
+
+            let calldata: Span<felt252> = data.span();
 
             let (dao_address, _) = deploy_syscall(
                 class_hash, contract_address_salt, calldata, false,
