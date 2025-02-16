@@ -37,8 +37,6 @@ const ToastConfiguration: NextPage = () => {
   //efects
   useEffect(() => {
     getDataStorage();
-    console.log(userEvent);
-    console.log(deployBlock);
     const countUser = localStorage.getItem(COUNT_CREATE_USER_KEY);
 
     if (userEvent !== undefined && userEvent.length > 0) {

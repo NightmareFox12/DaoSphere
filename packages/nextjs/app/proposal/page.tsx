@@ -24,8 +24,6 @@ const Proposal: NextPage = () => {
   const [contractAddress, setContractAddress] = useState<`0x${string}`>('0x0');
   const [selectedToken, setSelectedToken] = useState<'ETH' | 'STRK'>('STRK');
 
-  const [amount2, setAmount2] = useState<string>('');
-
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [endDate, setEndDate] = useState<string | undefined>(undefined);
@@ -50,7 +48,7 @@ const Proposal: NextPage = () => {
       {
         contractName: 'Strk',
         functionName: 'approve',
-        args: [StrkContract?.address, parseEther('0.01')],
+        args: [contractAddress, parseEther('1')],
       },
       {
         contractName: 'DaoSphere',
@@ -60,7 +58,7 @@ const Proposal: NextPage = () => {
           title,
           BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
           StrkContract?.address,
-          parseEther('0.01'),
+          parseEther('1'),
         ],
       },
     ],
@@ -116,10 +114,9 @@ const Proposal: NextPage = () => {
     try {
       setIsLoading(true);
       if (isYesNoVote) {
-        console.log(amount2);
         await sendProposalBasic();
         setTitle('');
-        setEndDate('');
+        setEndDate(undefined);
         setIsYesNoVote(true);
       }
     } catch (err) {
@@ -143,13 +140,6 @@ const Proposal: NextPage = () => {
             </p>
           </div>
 
-          <EtherInput
-            value={amount2}
-            onChange={(amount) => {
-              setAmount2(amount);
-              console.log(amount);
-            }}
-          />
           <div
             className='tooltip tooltip-primary tooltip-top'
             data-tip='By pressing the notification button, you will activate automatic alerts that will inform you every time a new vote is registered.'
@@ -201,7 +191,7 @@ const Proposal: NextPage = () => {
               <input
                 type='date'
                 min={
-                  new Date(new Date().setDate(new Date().getDate() - 12))
+                  new Date(new Date().setDate(new Date().getDate() + 1))
                     .toISOString()
                     .split('T')[0]
                 }

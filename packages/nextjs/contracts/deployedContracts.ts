@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x6f46d8be3080deda4b1005f2c227d8c4780f9af8ebb3d3efbad8157ad44bd9b",
+        "0x5bee08c01b2a5b5465e4d7cce4640d402be450888b25dea28398278572366e3",
       abi: [
         {
           type: "impl",
@@ -157,11 +157,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x7b26857be193614a05bd45c887f1913bbe411a6a9edb98a2ae4723cf84f7f56",
+        "0x48ef6ae55f06493c224b6c063df21f7f37cb6cb1e4a04d9efac68ec84a4e835",
     },
     DaoSphere: {
       address:
-        "0x24d7680f0f1064890d83757b5434fa4f53563a75e8bd1463f099e64870b0980",
+        "0x4935407995af3183a27f7e1ed9433a4f3bc1481c884bd680863903b1c6979b5",
       abi: [
         {
           type: "impl",
@@ -784,7 +784,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x5c38f57b2ebf67c9847554b12d7c2c84178ab7891d93616101cd61d3766f438",
+        "0x342be6838d1666d922d330ebe55b1affa698d600d7c5b1404caa12119b68dc2",
     },
   },
 } as const;

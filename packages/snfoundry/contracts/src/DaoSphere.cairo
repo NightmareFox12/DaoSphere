@@ -35,13 +35,6 @@ pub trait IDaoSphere<TContractState> {
         token: ContractAddress,
         amount: u256,
     );
-    // fn create_proposal(
-//     ref self: TContractState,
-//     title: ByteArray,
-//     description: ByteArray,
-//     end_time: u64,
-//     token: ContractAddress,
-// );
 }
 
 #[starknet::contract]
@@ -80,7 +73,6 @@ pub mod DaoSphere {
 
     #[storage]
     struct Storage {
-        admin: ContractAddress,
         dao_sphere_fabric: ContractAddress,
         proposal_count: u64,
         proposal: Proposal,
@@ -143,7 +135,6 @@ pub mod DaoSphere {
 
         //handle roles
         fn is_admin(self: @ContractState, caller: ContractAddress) -> bool {
-            assert(caller.is_non_zero(), 'admin address is not valid');
             let isAdmin = self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller);
 
             isAdmin
