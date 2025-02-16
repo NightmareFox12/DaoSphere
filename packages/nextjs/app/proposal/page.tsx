@@ -7,10 +7,11 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { useBlock } from '@starknet-react/core';
+import { parseEther } from 'ethers';
 import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { InputBase } from '~~/components/scaffold-stark';
+import { Balance, EtherInput, InputBase } from '~~/components/scaffold-stark';
 import { useDeployedContractInfo } from '~~/hooks/scaffold-stark';
 import { useScaffoldMultiWriteContract } from '~~/hooks/scaffold-stark/useScaffoldMultiWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
@@ -21,11 +22,13 @@ import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 const Proposal: NextPage = () => {
   //states
   const [contractAddress, setContractAddress] = useState<`0x${string}`>('0x0');
-  const [selectedToken, setSelectedToken] = useState<'ETH' | 'STRK'>('ETH');
+  const [selectedToken, setSelectedToken] = useState<'ETH' | 'STRK'>('STRK');
+
+  const [amount2, setAmount2] = useState<string>('');
 
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string | undefined>(undefined);
   const [isYesNoVote, setIsYesNoVote] = useState<boolean>(true);
   const [nextId, setNextId] = useState(1);
   const [options, setOptions] = useState<VoteOptions[]>([]);
@@ -34,7 +37,7 @@ const Proposal: NextPage = () => {
 
   //smart contract
   // const { data: EthContract } = useDeployedContractInfo('Eth');
-  // const { data: StrkContract } = useDeployedContractInfo('Strk');
+  const { data: StrkContract } = useDeployedContractInfo('Strk');
 
   const { data: proposalCount } = useScaffoldReadContract({
     contractName: 'DaoSphere',
@@ -42,20 +45,32 @@ const Proposal: NextPage = () => {
     contractAddress: contractAddress,
   });
 
-  const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
-    calls: [
-      {
-        contractName: selectedToken === 'ETH' ? 'Eth' : 'Strk',
-        functionName: 'approve',
-        args: [contractAddress, 1n],
-      },
-      {
-        contractName: 'DaoSphere',
-        functionName: 'create_proposal_basic',
-        contractAddress: contractAddress,
-        args: [title, BigInt(Math.floor(new Date(endDate).getTime() / 1000))],
-      },
-    ],
+  // const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
+  //   calls: [
+  //     {
+  //       contractName: 'Strk',
+  //       functionName: 'approve',
+  //       args: [contractAddress, 20n],
+  //     },
+  //     // {
+  //     //   contractName: 'DaoSphere',
+  //     //   functionName: 'create_proposal_basic',
+  //     //   contractAddress: contractAddress,
+  //     //   args: [
+  //     //     title,
+  //     //     BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
+  //     //     1n,
+  //     //     StrkContract?.address,
+  //     //   ],
+  //     // },
+  //   ],
+  // });
+
+  const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
+    contractName: 'DaoSphere',
+    functionName: 'create_proposal_basic',
+    contractAddress: contractAddress,
+    args: [title, BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)), StrkContract?.address],
   });
 
   //efects
@@ -98,6 +113,7 @@ const Proposal: NextPage = () => {
     try {
       setIsLoading(true);
       if (isYesNoVote) {
+        console.log(amount2);
         await sendProposalBasic();
         setTitle('');
         setEndDate('');
@@ -109,6 +125,8 @@ const Proposal: NextPage = () => {
       setIsLoading(false);
     }
   };
+
+  console.log();
 
   return (
     <section className='w-full h-full flex flex-1 justify-center items-center'>
@@ -122,6 +140,13 @@ const Proposal: NextPage = () => {
             </p>
           </div>
 
+          <EtherInput
+            value={amount2}
+            onChange={(amount) => {
+              setAmount2(amount);
+              console.log(amount);
+            }}
+          />
           <div
             className='tooltip tooltip-primary tooltip-top'
             data-tip='By pressing the notification button, you will activate automatic alerts that will inform you every time a new vote is registered.'

@@ -29,11 +29,7 @@ pub trait IDaoSphere<TContractState> {
     // handle proposal
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
     fn create_proposal_basic(
-        ref self: TContractState,
-        title: ByteArray,
-        end_time: u64,
-        amount: u64,
-        token: ContractAddress,
+        ref self: TContractState, title: ByteArray, end_time: u64, token: ContractAddress,
     );
     // fn create_proposal(
 //     ref self: TContractState,
@@ -60,7 +56,7 @@ pub mod DaoSphere {
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use super::DaoSphereModel::{
         User, Advisor, VoteCreationAccess, Proposal, OptionProposal, ETH_CONTRACT_ADDRESS,
-        STRK_CONTRACT_ADDRESS, USER_ROLE, ADVISOR_ROLE,
+        STRK_CONTRACT_ADDRESS, USER_ROLE, ADVISOR_ROLE, AMOUNT_MIN_PROPOSAL,
     };
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
@@ -360,16 +356,12 @@ pub mod DaoSphere {
         }
 
         fn create_proposal_basic(
-            ref self: ContractState,
-            title: ByteArray,
-            end_time: u64,
-            amount: u64,
-            token: ContractAddress,
+            ref self: ContractState, title: ByteArray, end_time: u64, token: ContractAddress,
         ) {
             self._require_supported_token(token);
             let caller = get_caller_address();
 
-            assert(amount > 1, 'Amount must be greater than 1');
+            // assert(amount > 1, 'Amount must be greater than 1');
             assert(title.len() > 3, 'Title is too short');
             assert(end_time > get_block_timestamp(), 'End time is in the past');
 
@@ -410,6 +402,12 @@ pub mod DaoSphere {
                 },
             }
 
+            if AMOUNT_MIN_PROPOSAL > 0 {
+                self
+                    ._get_token_dispatcher(token)
+                    .transfer_from(get_caller_address(), get_contract_address(), AMOUNT_MIN_PROPOSAL);
+            }
+
             let proposal_id = self.proposal_count.read();
             self
                 .proposal
@@ -426,16 +424,6 @@ pub mod DaoSphere {
             //buscar la manera de cobrar y enviarmelo al contract fabric
             self.proposal_count.write(proposal_id + 1);
         }
-        // fn create_proposal(
-    //     ref self: ContractState, title: ByteArray, description: ByteArray, end_time: u64,
-    // ) {
-    //     let caller = get_caller_address();
-    //     assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not
-    //     admin');
-    //     assert(title.len() > 3, 'Title is too short');
-    //     assert(description.len() > 3, 'Description is too short');
-    //     assert(end_time > get_block_timestamp(), 'End time is in the past');
-    // }
     }
 
     // internal
