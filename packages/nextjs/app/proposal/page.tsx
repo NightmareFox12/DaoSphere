@@ -21,11 +21,12 @@ import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 const Proposal: NextPage = () => {
   //states
   const [contractAddress, setContractAddress] = useState<`0x${string}`>('0x0');
-  const [selectedToken, setSelectedToken] = useState<'ETH' | 'STRK'>('STRK');
+  // const [selectedToken, setSelectedToken] = useState<'ETH' | 'STRK'>('STRK');
 
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
-  const [endDate, setEndDate] = useState<string | undefined>(undefined);
+  // const [endDate, setEndDate] = useState<string | undefined>(undefined);
+  const [endDate, setEndDate] = useState<string>('');
   const [isYesNoVote, setIsYesNoVote] = useState<boolean>(true);
   const [nextId, setNextId] = useState(1);
   const [options, setOptions] = useState<VoteOptions[]>([]);
@@ -34,7 +35,7 @@ const Proposal: NextPage = () => {
 
   //smart contract
   // const { data: EthContract } = useDeployedContractInfo('Eth');
-  const { data: StrkContract } = useDeployedContractInfo('Strk');
+  // const { data: StrkContract } = useDeployedContractInfo('Strk');
 
   const { data: proposalCount } = useScaffoldReadContract({
     contractName: 'DaoSphere',
@@ -42,26 +43,26 @@ const Proposal: NextPage = () => {
     contractAddress: contractAddress,
   });
 
-  const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
-    calls: [
-      {
-        contractName: 'Strk',
-        functionName: 'approve',
-        args: [contractAddress, 2n * (10n ** 18n)],
-      },
-      {
-        contractName: 'DaoSphere',
-        functionName: 'create_proposal_basic',
-        contractAddress: contractAddress,
-        args: [
-          title,
-          BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
-          StrkContract?.address,
-          1n * (10n ** 18n),
-        ],
-      },
-    ],
-  });
+  // const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
+  //   calls: [
+  //     {
+  //       contractName: 'Strk',
+  //       functionName: 'approve',
+  //       args: [contractAddress, 2n * (10n ** 18n)],
+  //     },
+  //     {
+  //       contractName: 'DaoSphere',
+  //       functionName: 'create_proposal_basic',
+  //       contractAddress: contractAddress,
+  //       args: [
+  //         title,
+  //         BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
+  //         StrkContract?.address,
+  //         1n * (10n ** 18n),
+  //       ],
+  //     },
+  //   ],
+  // });
 
   // const { sendAsync: ayuda } = useScaffoldWriteContract({
   //   contractName: 'Strk',
@@ -82,6 +83,14 @@ const Proposal: NextPage = () => {
   // });
 
   //efects
+
+  const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
+    contractName: 'DaoSphere',
+    functionName: 'create_proposal_basic',
+    contractAddress: contractAddress,
+    args: [title, 0n],
+  });
+
   useEffect(() => {
     const contractAddress = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
 
@@ -122,9 +131,14 @@ const Proposal: NextPage = () => {
       setIsLoading(true);
       if (isYesNoVote) {
         // await ayuda();
-        await sendProposalBasic();
+        console.log(BigInt(new Date(endDate).getTime() / 1000));
+
+        await sendProposalBasic({
+          args: [title, BigInt(new Date(endDate).getTime() / 1000)],
+        });
+
         setTitle('');
-        setEndDate(undefined);
+        setEndDate('');
         setIsYesNoVote(true);
       }
     } catch (err) {
@@ -146,7 +160,7 @@ const Proposal: NextPage = () => {
             </p>
           </div>
 
-          <div
+          {/* <div
             className='tooltip tooltip-primary tooltip-top'
             data-tip='By pressing the notification button, you will activate automatic alerts that will inform you every time a new vote is registered.'
           >
@@ -174,7 +188,7 @@ const Proposal: NextPage = () => {
                 )}
               </AnimatePresence>
             </button>
-          </div>
+          </div> */}
         </div>
         <div className='w-full px-8 flex flex-col gap-8 my-4'>
           <div className='flex flex-col'>

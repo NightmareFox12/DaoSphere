@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x379d589dcb30c671a718cd33b682d6aa5809697521ab88cedb996c7cc3d1c59",
+        "0x47a287ccf347366ecfd5f29d199c3fcd1da1be5a265004923dc4385a91dfdf0",
       abi: [
         {
           type: "impl",
@@ -161,7 +161,7 @@ const deployedContracts = {
     },
     DaoSphere: {
       address:
-        "0x1e2f1e7086dcdda2d938c9c006ce0fb71da0a773f36b924736bb2609a12870e",
+        "0x6d7f223b98914cb6ec9d443cac80d5faaffe4fe945fb45c532079481796a017",
       abi: [
         {
           type: "impl",
@@ -259,20 +259,6 @@ const deployedContracts = {
             {
               name: "pending_word_len",
               type: "core::integer::u32",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "core::integer::u256",
-          members: [
-            {
-              name: "low",
-              type: "core::integer::u128",
-            },
-            {
-              name: "high",
-              type: "core::integer::u128",
             },
           ],
         },
@@ -476,14 +462,6 @@ const deployedContracts = {
                   name: "end_time",
                   type: "core::integer::u64",
                 },
-                {
-                  name: "token",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "amount",
-                  type: "core::integer::u256",
-                },
               ],
               outputs: [],
               state_mutability: "external",
@@ -663,6 +641,33 @@ const deployedContracts = {
         },
         {
           type: "event",
+          name: "contracts::DaoSphere::DaoSphere::CreatedProposal",
+          kind: "struct",
+          members: [
+            {
+              name: "proposal_id",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+            {
+              name: "creator_address",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+            {
+              name: "start_time",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+            {
+              name: "end_time",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
           name: "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleGranted",
           kind: "struct",
           members: [
@@ -771,6 +776,11 @@ const deployedContracts = {
               kind: "nested",
             },
             {
+              name: "CreatedProposal",
+              type: "contracts::DaoSphere::DaoSphere::CreatedProposal",
+              kind: "nested",
+            },
+            {
               name: "AccessControlEvent",
               type: "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::Event",
               kind: "flat",
@@ -784,7 +794,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x2b61a404c626a8bf199ea9986cffe764f56cc01c84769d4e956e64140fc1fc9",
+        "0x104b891b09b13a1347a6d2f33817f232f4709e806dc709757c49d5c63ff6cd9",
     },
   },
 } as const;

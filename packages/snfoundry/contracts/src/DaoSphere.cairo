@@ -29,7 +29,8 @@ pub trait IDaoSphere<TContractState> {
     // handle proposal
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
     fn create_proposal_basic(
-        ref self: TContractState, title: ByteArray, end_time: u64, token: ContractAddress,
+        ref self: TContractState, title: ByteArray, end_time: u64 
+        // token: ContractAddress,
         // amount: u256,
     );
 }
@@ -39,7 +40,8 @@ pub mod DaoSphere {
     use starknet::event::EventEmitter;
     use starknet::storage::{StoragePathEntry, Map};
     use starknet::{
-        get_caller_address, ContractAddress, get_block_timestamp // contract_address_const,
+        get_caller_address, ContractAddress, get_block_timestamp 
+        // contract_address_const,
     };
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
@@ -362,11 +364,14 @@ pub mod DaoSphere {
         }
 
         fn create_proposal_basic(
-            ref self: ContractState, title: ByteArray, end_time: u64, token: ContractAddress,
+            ref self: ContractState, title: ByteArray, end_time: u64
+            // token: ContractAddress,
             // amount: u256,
         ) {
             // self._require_supported_token(token);
             let caller: ContractAddress = get_caller_address();
+            let proposal_id = self.proposal_count.read();
+
             // let dao_sphere_fabric: ContractAddress = self.dao_sphere_fabric.read();
 
             // assert(amount > 0, 'Amount must be greater than 0');
@@ -412,8 +417,6 @@ pub mod DaoSphere {
 
             // self._get_token_dispatcher(token).transfer_from(caller, dao_sphere_fabric, amount);
 
-            let proposal_id = self.proposal_count.read();
-
             self
                 .proposal
                 .write(
@@ -426,7 +429,6 @@ pub mod DaoSphere {
                     },
                 );
 
-            self.proposal_count.write(proposal_id + 1);
             self
                 .emit(
                     CreatedProposal {
@@ -436,6 +438,8 @@ pub mod DaoSphere {
                         end_time: end_time,
                     },
                 );
+
+            self.proposal_count.write(proposal_id + 1);
         }
     }
     // internal
