@@ -29,11 +29,8 @@ pub trait IDaoSphere<TContractState> {
     // handle proposal
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
     fn create_proposal_basic(
-        ref self: TContractState,
-        title: ByteArray,
-        end_time: u64,
-        token: ContractAddress,
-        amount: u256,
+        ref self: TContractState, title: ByteArray, end_time: u64, token: ContractAddress,
+        // amount: u256,
     );
 }
 
@@ -41,19 +38,18 @@ pub trait IDaoSphere<TContractState> {
 pub mod DaoSphere {
     use starknet::event::EventEmitter;
     use starknet::storage::{StoragePathEntry, Map};
-    use starknet::{
-        get_caller_address, ContractAddress, get_block_timestamp, contract_address_const,
-        get_contract_address,
+    use starknet::{get_caller_address, ContractAddress, get_block_timestamp// contract_address_const,
     };
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
     use AccessControlComponent::InternalTrait;
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
     use openzeppelin_introspection::src5::SRC5Component;
-    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    // use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use super::DaoSphereModel::{
-        User, Advisor, VoteCreationAccess, Proposal, OptionProposal, ETH_CONTRACT_ADDRESS,
-        STRK_CONTRACT_ADDRESS, USER_ROLE, ADVISOR_ROLE, STRK_CONTRACT_ADDRESS_DEVNET,
+        User, Advisor, VoteCreationAccess, Proposal, OptionProposal, // ETH_CONTRACT_ADDRESS,
+        // STRK_CONTRACT_ADDRESS,
+        USER_ROLE, ADVISOR_ROLE,
     };
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
@@ -356,17 +352,14 @@ pub mod DaoSphere {
         }
 
         fn create_proposal_basic(
-            ref self: ContractState,
-            title: ByteArray,
-            end_time: u64,
-            token: ContractAddress,
-            amount: u256,
+            ref self: ContractState, title: ByteArray, end_time: u64, token: ContractAddress,
+            // amount: u256,
         ) {
-            self._require_supported_token(token);
+            // self._require_supported_token(token);
             let caller: ContractAddress = get_caller_address();
-            let dao_sphere_fabric: ContractAddress = self.dao_sphere_fabric.read();
+            // let dao_sphere_fabric: ContractAddress = self.dao_sphere_fabric.read();
 
-            assert(amount > 0, 'Amount must be greater than 0');
+            // assert(amount > 0, 'Amount must be greater than 0');
             assert(title.len() > 3, 'Title is too short');
             assert(end_time > get_block_timestamp(), 'End time is in the past');
 
@@ -407,7 +400,7 @@ pub mod DaoSphere {
                 },
             }
 
-            self._get_token_dispatcher(token).transfer_from(caller, dao_sphere_fabric, amount);
+            // self._get_token_dispatcher(token).transfer_from(caller, dao_sphere_fabric, amount);
 
             let proposal_id = self.proposal_count.read();
 
@@ -427,23 +420,21 @@ pub mod DaoSphere {
             self.proposal_count.write(proposal_id + 1);
         }
     }
-
     // internal
-    #[generate_trait]
-    impl TokenInternalImpl of TokenInternalTrait {
-        fn _get_token_dispatcher(
-            ref self: ContractState, token: ContractAddress,
-        ) -> IERC20Dispatcher {
-            return IERC20Dispatcher { contract_address: token };
-        }
+// #[generate_trait]
+// impl TokenInternalImpl of TokenInternalTrait {
+//     fn _get_token_dispatcher(
+//         ref self: ContractState, token: ContractAddress,
+//     ) -> IERC20Dispatcher {
+//         return IERC20Dispatcher { contract_address: token };
+//     }
 
-        fn _require_supported_token(ref self: ContractState, token: ContractAddress) {
-            assert(
-                token == contract_address_const::<STRK_CONTRACT_ADDRESS>()
-                    || token == contract_address_const::<STRK_CONTRACT_ADDRESS_DEVNET>()
-                    || token == contract_address_const::<ETH_CONTRACT_ADDRESS>(),
-                'Unsupported token',
-            );
-        }
-    }
+    //     fn _require_supported_token(ref self: ContractState, token: ContractAddress) {
+//         assert(
+//             token == contract_address_const::<STRK_CONTRACT_ADDRESS>()
+//                 || token == contract_address_const::<ETH_CONTRACT_ADDRESS>(),
+//             'Unsupported token',
+//         );
+//     }
+// }
 }
