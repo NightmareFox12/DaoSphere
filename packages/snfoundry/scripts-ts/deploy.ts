@@ -44,9 +44,9 @@ import { green } from './helpers/colorize-log';
 const deployDaoSphereFabric = async (): Promise<void> => {
   await deployContract({
     contract: 'DaoSphereFabric',
-    // constructorArgs: {
-    //   owner: deployer.address,
-    // },
+    constructorArgs: {
+      owner: deployer.address,
+    },
   });
 };
 
@@ -55,6 +55,7 @@ const deployDaoSphere = async (): Promise<void> => {
     contract: 'DaoSphere',
     constructorArgs: {
       admin: deployer.address,
+      dao_sphere_fabric: deployer.address,
     },
   });
 };

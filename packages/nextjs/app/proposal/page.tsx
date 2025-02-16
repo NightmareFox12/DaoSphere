@@ -36,7 +36,7 @@ const Proposal: NextPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //smart contract
-  // const { data: EthContract } = useDeployedContractInfo('Eth');
+  const { data: EthContract } = useDeployedContractInfo('Eth');
   const { data: StrkContract } = useDeployedContractInfo('Strk');
 
   const { data: proposalCount } = useScaffoldReadContract({
@@ -45,43 +45,36 @@ const Proposal: NextPage = () => {
     contractAddress: contractAddress,
   });
 
-  // const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
-  //   calls: [
-  //     {
-  //       contractName: 'Strk',
-  //       functionName: 'approve',
-  //       args: [contractAddress, 20n],
-  //     },
-  //     // {
-  //     //   contractName: 'DaoSphere',
-  //     //   functionName: 'create_proposal_basic',
-  //     //   contractAddress: contractAddress,
-  //     //   args: [
-  //     //     title,
-  //     //     BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
-  //     //     1n,
-  //     //     StrkContract?.address,
-  //     //   ],
-  //     // },
-  //   ],
-  // });
-
-  const { sendAsync: ayuda } = useScaffoldWriteContract({
-    contractName: 'Strk',
-    functionName: 'approve',
-    args: [StrkContract?.address, parseEther('0.01')],
-  });
-
-  const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
-    contractName: 'DaoSphere',
-    functionName: 'create_proposal_basic',
-    contractAddress: contractAddress,
-    args: [
-      title,
-      BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
-      StrkContract?.address,
+  const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
+    calls: [
+      {
+        contractName: 'Strk',
+        functionName: 'approve',
+        args: [StrkContract?.address, parseEther('0.01')],
+      },
+      {
+        contractName: 'DaoSphere',
+        functionName: 'create_proposal_basic',
+        contractAddress: contractAddress,
+        args: [
+          title,
+          BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
+          StrkContract?.address,
+          parseEther('0.01'),
+        ],
+      },
     ],
   });
+
+  // const { sendAsync: ayuda } = useScaffoldWriteContract({
+  //   contractName: 'Strk',
+  //   functionName: 'approve',
+  //   args: [StrkContract?.address, parseEther('0.01')],
+  // });
+
+  //   const { sendAsync: sendProposalBasic } = useScaffoldWriteContract(
+
+  // );
 
   //efects
   useEffect(() => {
@@ -124,7 +117,6 @@ const Proposal: NextPage = () => {
       setIsLoading(true);
       if (isYesNoVote) {
         console.log(amount2);
-        await ayuda();
         await sendProposalBasic();
         setTitle('');
         setEndDate('');

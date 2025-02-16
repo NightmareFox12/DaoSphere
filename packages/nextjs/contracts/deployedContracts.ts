@@ -4,10 +4,10 @@
  */
 
 const deployedContracts = {
-  sepolia: {
+  devnet: {
     DaoSphereFabric: {
       address:
-        "0x20371b8e250c363fc427355398ceaf9bf5a4071926702f92d265a1d6354c87b",
+        "0x6f46d8be3080deda4b1005f2c227d8c4780f9af8ebb3d3efbad8157ad44bd9b",
       abi: [
         {
           type: "impl",
@@ -70,12 +70,29 @@ const deployedContracts = {
               ],
               state_mutability: "view",
             },
+            {
+              type: "function",
+              name: "add_owner",
+              inputs: [
+                {
+                  name: "owner",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
           ],
         },
         {
           type: "constructor",
           name: "constructor",
-          inputs: [],
+          inputs: [
+            {
+              name: "owner",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
         },
         {
           type: "event",
@@ -106,6 +123,23 @@ const deployedContracts = {
         },
         {
           type: "event",
+          name: "contracts::DaoSphereFabric::DaoSphereFabric::OwnerAdded",
+          kind: "struct",
+          members: [
+            {
+              name: "owner_id",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+            {
+              name: "owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+          ],
+        },
+        {
+          type: "event",
           name: "contracts::DaoSphereFabric::DaoSphereFabric::Event",
           kind: "enum",
           variants: [
@@ -114,15 +148,20 @@ const deployedContracts = {
               type: "contracts::DaoSphereFabric::DaoSphereFabric::DaoCreated",
               kind: "nested",
             },
+            {
+              name: "OwnerAdded",
+              type: "contracts::DaoSphereFabric::DaoSphereFabric::OwnerAdded",
+              kind: "nested",
+            },
           ],
         },
       ],
       classHash:
-        "0xf7e503412b32a06b704895ddcb82645fa252d9d817ab7268e0a1830ff64f21",
+        "0x7b26857be193614a05bd45c887f1913bbe411a6a9edb98a2ae4723cf84f7f56",
     },
     DaoSphere: {
       address:
-        "0x2e9939ebdb4f41e78cee7ff6d43fb5e51b2337d5a8b19b317f3ad0a2ed6d005",
+        "0x24d7680f0f1064890d83757b5434fa4f53563a75e8bd1463f099e64870b0980",
       abi: [
         {
           type: "impl",
@@ -220,6 +259,20 @@ const deployedContracts = {
             {
               name: "pending_word_len",
               type: "core::integer::u32",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "core::integer::u256",
+          members: [
+            {
+              name: "low",
+              type: "core::integer::u128",
+            },
+            {
+              name: "high",
+              type: "core::integer::u128",
             },
           ],
         },
@@ -427,6 +480,10 @@ const deployedContracts = {
                   name: "token",
                   type: "core::starknet::contract_address::ContractAddress",
                 },
+                {
+                  name: "amount",
+                  type: "core::integer::u256",
+                },
               ],
               outputs: [],
               state_mutability: "external",
@@ -562,6 +619,10 @@ const deployedContracts = {
           inputs: [
             {
               name: "admin",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "dao_sphere_fabric",
               type: "core::starknet::contract_address::ContractAddress",
             },
           ],
@@ -723,7 +784,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x46a225465e31fd9008fc0e145597f7eb380cbcac63464b20674e21d8a0af024",
+        "0x5c38f57b2ebf67c9847554b12d7c2c84178ab7891d93616101cd61d3766f438",
     },
   },
 } as const;

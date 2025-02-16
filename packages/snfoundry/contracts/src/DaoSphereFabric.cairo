@@ -4,7 +4,7 @@ pub trait IDaoSphereFabric<TContractState> {
     fn create_dao(ref self: TContractState, name_dao: ByteArray);
     fn dao_id(self: @TContractState) -> u64;
     fn get_deploy_block(self: @TContractState) -> u64;
-    fn add_admin(ref self: TContractState, admin: ContractAddress);
+    fn add_owner(ref self: TContractState, owner: ContractAddress);
 }
 
 
@@ -18,19 +18,19 @@ pub mod DaoSphereFabric {
     use core::num::traits::Zero;
 
     const DAO_SPHERE_CLASS_HASH: felt252 =
-        0x46a225465e31fd9008fc0e145597f7eb380cbcac63464b20674e21d8a0af024;
+    0x5c38f57b2ebf67c9847554b12d7c2c84178ab7891d93616101cd61d3766f438;
 
     #[constructor]
-    fn constructor(ref self: ContractState, admin: ContractAddress) {
+    fn constructor(ref self: ContractState, owner: ContractAddress) {
         self.deploy_block.write(get_block_number());
-        self.admin.write(self.admin_count.read(), admin);
-        self.admin_count.write(self.admin_count.read() + 1);
+        self.owners.write(self.owner_count.read(), owner);
+        self.owner_count.write(self.owner_count.read() + 1);
     }
 
     #[storage]
     struct Storage {
-        admin_count: u64,
-        admin: Map<u64, ContractAddress>,
+        owner_count: u64,
+        owners: Map<u64, ContractAddress>,
         dao_id: u64,
         dao_name: Map<u64, ByteArray>,
         deploy_block: u64,
@@ -40,6 +40,7 @@ pub mod DaoSphereFabric {
     #[derive(Drop, starknet::Event)]
     enum Event {
         DaoCreated: DaoCreated,
+        OwnerAdded: OwnerAdded,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -48,6 +49,13 @@ pub mod DaoSphereFabric {
         name_dao: ByteArray,
         dao_address: ContractAddress,
         deploy_block: u64,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct OwnerAdded {
+        owner_id: u64,
+        #[key]
+        owner: ContractAddress,
     }
 
 
@@ -109,22 +117,27 @@ pub mod DaoSphereFabric {
             self.deploy_block.read()
         }
 
-        fn add_admin(ref self: ContractState, admin: ContractAddress) {
+        fn add_owner(ref self: ContractState, owner: ContractAddress) {
             let caller: ContractAddress = get_caller_address();
+            let owner_count: u64 = self.owner_count.read();
             assert(caller.is_non_zero(), 'caller is zero');
 
             let mut i: u64 = 0;
-            let is_admin = loop {
-                if self.admin.read(i) == caller {
+            let is_owner = loop {
+                if self.owners.read(i) == caller {
                     break true;
+                } else if i == owner_count {
+                    break false;
                 }
 
                 i += 1;
             };
 
-            assert(is_admin, 'caller is not admin');
-            self.admin.write(self.admin_count.read(), admin);
-            self.admin_count.write(self.admin_count.read() + 1);
+            assert(is_owner, 'caller is not owner');
+            self.owners.write(owner_count, owner);
+            self.owner_count.write(owner_count + 1);
+
+            self.emit(OwnerAdded { owner_id: owner_count, owner });
         }
     }
 }
