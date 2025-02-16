@@ -52,7 +52,7 @@ pub mod DaoSphere {
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
     use openzeppelin_introspection::src5::SRC5Component;
     use super::DaoSphereModel::{
-        User, Advisor, VoteCreationAccess, Proposal, OptionProposal, USER_ROLE, ADVISOR_ROLE,
+        User, Advisor, VoteCreationAccess, Proposal, USER_ROLE, ADVISOR_ROLE,
     };
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
@@ -75,7 +75,7 @@ pub mod DaoSphere {
     struct Storage {
         dao_sphere_fabric: ContractAddress,
         proposal_count: u64,
-        proposals: Map<ContractAddress, Proposal>,
+        proposals: Map<u64, Proposal>,
         // proposal_options: Map<u64, OptionProposal>,
         vote_selected_access: VoteCreationAccess,
         user_count: u64,
@@ -375,9 +375,9 @@ pub mod DaoSphere {
             self
                 .proposals
                 .write(
-                    caller,
+                    proposal_id,
                     Proposal {
-                        proposal_id: proposal_id,
+                        creator_address: caller,
                         title: title,
                         start_time: get_block_timestamp(),
                         end_time: end_time,
@@ -403,11 +403,19 @@ pub mod DaoSphere {
 
             let mut i: u64 = 0;
             let limit: u64 = self.proposal_count.read();
+
             loop {
                 if i == limit {
-                    break Proposal { proposal_id: 0, title: "", start_time: 0, end_time: 0 };
+                    break Proposal {
+                        creator_address: 0.try_into().unwrap(),
+                        title: "",
+                        start_time: 0,
+                        end_time: 0,
+                    };
                 }
-                proposals_arr.append(self.proposals.read(caller));
+                if self.proposals.read(i).creator_address == caller {
+                    proposals_arr.append(self.proposals.read(i));
+                }
                 i += 1;
             };
 
