@@ -31,7 +31,7 @@ const Login: NextPage = () => {
     functionName: 'get_deploy_block',
   });
 
-  const { data, isLoading } = useScaffoldEventHistory({
+  const { data } = useScaffoldEventHistory({
     contractName: 'DaoSphereFabric',
     eventName: 'contracts::DaoSphereFabric::DaoSphereFabric::DaoCreated',
     fromBlock: BigInt(deployBlock?.toString() ?? 0),
@@ -101,13 +101,14 @@ const Login: NextPage = () => {
             exit={{ opacity: 0, scale: 0.5 }}
           >
             <h4 className='text-center font-semibold text-2xl mt-5'>DAOs</h4>
-            {isLoading ? (
-              <article className='flex flex-col gap-3'>
+            {/* {isLoading ? ( */}
+              {/* <article className='flex flex-col gap-3'>
                 {Array.from({ length: 5 }).map((_, index) => (
                   <div key={index} className='skeleton h-10 w-full' />
                 ))}
-              </article>
-            ) : (
+              </article> */}
+            {/* ) : ( */}
+
               <>
                 {daoData.length === 0 && data.length !== 0 ? (
                   <motion.p
@@ -132,7 +133,7 @@ const Login: NextPage = () => {
                   </motion.div>
                 )}
               </>
-            )}
+            {/* // )} */}
           </motion.div>
         </AnimatePresence>
       </article>

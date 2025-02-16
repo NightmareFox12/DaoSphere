@@ -66,11 +66,21 @@ const Proposal: NextPage = () => {
   //   ],
   // });
 
+  const { sendAsync: ayuda } = useScaffoldWriteContract({
+    contractName: 'Strk',
+    functionName: 'approve',
+    args: [StrkContract?.address, parseEther('0.01')],
+  });
+
   const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
     functionName: 'create_proposal_basic',
     contractAddress: contractAddress,
-    args: [title, BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)), StrkContract?.address],
+    args: [
+      title,
+      BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
+      StrkContract?.address,
+    ],
   });
 
   //efects
@@ -114,6 +124,7 @@ const Proposal: NextPage = () => {
       setIsLoading(true);
       if (isYesNoVote) {
         console.log(amount2);
+        await ayuda();
         await sendProposalBasic();
         setTitle('');
         setEndDate('');

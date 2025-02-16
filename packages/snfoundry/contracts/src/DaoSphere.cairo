@@ -29,7 +29,11 @@ pub trait IDaoSphere<TContractState> {
     // handle proposal
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
     fn create_proposal_basic(
-        ref self: TContractState, title: ByteArray, end_time: u64, token: ContractAddress,
+        ref self: TContractState,
+        title: ByteArray,
+        end_time: u64,
+        token: ContractAddress,
+        amount: u256,
     );
     // fn create_proposal(
 //     ref self: TContractState,
@@ -46,7 +50,6 @@ pub mod DaoSphere {
     use starknet::storage::{StoragePathEntry, Map};
     use starknet::{
         get_caller_address, ContractAddress, get_block_timestamp, contract_address_const,
-        get_contract_address,
     };
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
@@ -56,7 +59,7 @@ pub mod DaoSphere {
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use super::DaoSphereModel::{
         User, Advisor, VoteCreationAccess, Proposal, OptionProposal, ETH_CONTRACT_ADDRESS,
-        STRK_CONTRACT_ADDRESS, USER_ROLE, ADVISOR_ROLE, AMOUNT_MIN_PROPOSAL,
+        STRK_CONTRACT_ADDRESS, USER_ROLE, ADVISOR_ROLE,
     };
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
@@ -78,6 +81,7 @@ pub mod DaoSphere {
     #[storage]
     struct Storage {
         admin: ContractAddress,
+        dao_sphere_fabric: ContractAddress,
         proposal_count: u64,
         proposal: Proposal,
         proposal_options: Map<u64, OptionProposal>,
@@ -90,6 +94,16 @@ pub mod DaoSphere {
         accesscontrol: AccessControlComponent::Storage,
         #[substorage(v0)]
         src5: SRC5Component::Storage,
+    }
+
+    #[constructor]
+    fn constructor(
+        ref self: ContractState, admin: ContractAddress, dao_sphere_fabric: ContractAddress,
+    ) {
+        self.accesscontrol.initializer();
+        self.accesscontrol._grant_role(DEFAULT_ADMIN_ROLE, admin);
+        self.vote_selected_access.write(VoteCreationAccess::AdminOrAdvisor(true));
+        self.dao_sphere_fabric.write(dao_sphere_fabric);
     }
 
     #[event]
@@ -115,12 +129,6 @@ pub mod DaoSphere {
         address: ContractAddress,
     }
 
-    #[constructor]
-    fn constructor(ref self: ContractState, admin: ContractAddress) {
-        self.accesscontrol.initializer();
-        self.accesscontrol._grant_role(DEFAULT_ADMIN_ROLE, admin);
-        self.vote_selected_access.write(VoteCreationAccess::AdminOrAdvisor(true));
-    }
 
     #[abi(embed_v0)]
     impl DaoSphere of super::IDaoSphere<ContractState> {
@@ -356,12 +364,17 @@ pub mod DaoSphere {
         }
 
         fn create_proposal_basic(
-            ref self: ContractState, title: ByteArray, end_time: u64, token: ContractAddress,
+            ref self: ContractState,
+            title: ByteArray,
+            end_time: u64,
+            token: ContractAddress,
+            amount: u256,
         ) {
             self._require_supported_token(token);
-            let caller = get_caller_address();
+            let caller: ContractAddress = get_caller_address();
+            let dao_sphere_fabric: ContractAddress = self.dao_sphere_fabric.read();
 
-            // assert(amount > 1, 'Amount must be greater than 1');
+            assert(amount > 0, 'Amount must be greater than 0');
             assert(title.len() > 3, 'Title is too short');
             assert(end_time > get_block_timestamp(), 'End time is in the past');
 
@@ -402,13 +415,10 @@ pub mod DaoSphere {
                 },
             }
 
-            if AMOUNT_MIN_PROPOSAL > 0 {
-                self
-                    ._get_token_dispatcher(token)
-                    .transfer_from(get_caller_address(), get_contract_address(), AMOUNT_MIN_PROPOSAL);
-            }
+            self._get_token_dispatcher(token).transfer_from(caller, dao_sphere_fabric, amount);
 
             let proposal_id = self.proposal_count.read();
+
             self
                 .proposal
                 .write(

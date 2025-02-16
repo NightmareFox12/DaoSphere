@@ -1,14 +1,16 @@
+use starknet::ContractAddress;
 #[starknet::interface]
 pub trait IDaoSphereFabric<TContractState> {
     fn create_dao(ref self: TContractState, name_dao: ByteArray);
     fn dao_id(self: @TContractState) -> u64;
     fn get_deploy_block(self: @TContractState) -> u64;
+    fn add_admin(ref self: TContractState, admin: ContractAddress);
 }
 
 
 #[starknet::contract]
 pub mod DaoSphereFabric {
-    use starknet::{get_caller_address, ContractAddress, get_block_number};
+    use starknet::{get_caller_address, ContractAddress, get_block_number, get_contract_address};
     use starknet::event::EventEmitter;
     use starknet::storage::Map;
     use starknet::syscalls::deploy_syscall;
@@ -16,15 +18,19 @@ pub mod DaoSphereFabric {
     use core::num::traits::Zero;
 
     const DAO_SPHERE_CLASS_HASH: felt252 =
-    0x3c6ef1848da28f967def1398a89d00969f1d6e2db14eb234bf0e9651e841d98;
+        0x46a225465e31fd9008fc0e145597f7eb380cbcac63464b20674e21d8a0af024;
 
     #[constructor]
-    fn constructor(ref self: ContractState) {
+    fn constructor(ref self: ContractState, admin: ContractAddress) {
         self.deploy_block.write(get_block_number());
+        self.admin.write(self.admin_count.read(), admin);
+        self.admin_count.write(self.admin_count.read() + 1);
     }
 
     #[storage]
     struct Storage {
+        admin_count: u64,
+        admin: Map<u64, ContractAddress>,
         dao_id: u64,
         dao_name: Map<u64, ByteArray>,
         deploy_block: u64,
@@ -65,6 +71,7 @@ pub mod DaoSphereFabric {
     pub impl DaoSphereFabric of super::IDaoSphereFabric<ContractState> {
         fn create_dao(ref self: ContractState, name_dao: ByteArray) {
             let caller: ContractAddress = get_caller_address();
+            let this: ContractAddress = get_contract_address();
 
             assert(caller.is_non_zero(), 'caller is zero');
             assert(name_dao.len() > 2, 'the DAO name is too short');
@@ -74,7 +81,7 @@ pub mod DaoSphereFabric {
 
             let class_hash: ClassHash = class_hash_const::<DAO_SPHERE_CLASS_HASH>();
             let contract_address_salt: felt252 = dao_id.into();
-            let calldata: Span<felt252> = array![caller.into()].span();
+            let calldata: Span<felt252> = array![caller.into(), this.into()].span();
 
             let (dao_address, _) = deploy_syscall(
                 class_hash, contract_address_salt, calldata, false,
@@ -100,6 +107,24 @@ pub mod DaoSphereFabric {
 
         fn get_deploy_block(self: @ContractState) -> u64 {
             self.deploy_block.read()
+        }
+
+        fn add_admin(ref self: ContractState, admin: ContractAddress) {
+            let caller: ContractAddress = get_caller_address();
+            assert(caller.is_non_zero(), 'caller is zero');
+
+            let mut i: u64 = 0;
+            let is_admin = loop {
+                if self.admin.read(i) == caller {
+                    break true;
+                }
+
+                i += 1;
+            };
+
+            assert(is_admin, 'caller is not admin');
+            self.admin.write(self.admin_count.read(), admin);
+            self.admin_count.write(self.admin_count.read() + 1);
         }
     }
 }
