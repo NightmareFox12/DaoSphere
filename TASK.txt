@@ -13,7 +13,7 @@ cree el comando deploy-full para compilar y desplegar de una vez
 
 
 --- Deudas ---
-
+Poner cada votacion que me cobre 1 STRK, lo intente de mil maneras y no dio, hasta que me rendi (I surrendered...)
 
 
 ---- Local ----

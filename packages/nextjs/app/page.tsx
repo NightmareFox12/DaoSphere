@@ -7,30 +7,34 @@ import { useEffect, useState } from 'react';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 import { useLoginContext } from '~~/context/LoginContext';
 import Image from 'next/image';
-import Typewriter from './_components/Typewriter'; 
+import Typewriter from './_components/Typewriter';
 import { useAccount } from '~~/hooks/useAccount';
+import MyProposal from './_components/MyProposal';
 
 const Home: NextPage = () => {
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const router = useRouter();
 
   //context
   const { isLogin, setIsLogin } = useLoginContext();
 
   //states
-  const [daoAddress2, setDaoAddress2] = useState<string | null>(null);
+  const [daoAddress, setDaoAddress] = useState<`0x${string}` | null>(null);
 
   useEffect(() => {
     const daoAddress = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
     setIsLogin(daoAddress !== null && daoAddress !== undefined);
-    setDaoAddress2(daoAddress);
+
+    if (daoAddress) {
+      setDaoAddress(daoAddress as `0x${string}`);
+    }
   }, [isLogin, setIsLogin]);
 
   return (
     <main>
-      <h1 className='font-bold '>{daoAddress2?.toString()}</h1>
+      <h1 className='font-bold '>{daoAddress?.toString()}</h1>
 
-      {!isLogin && (
+      {!isLogin ? (
         <>
           <motion.div
             className='mt-24 flex items-center flex-col'
@@ -87,6 +91,8 @@ const Home: NextPage = () => {
             </article>
           </section>
         </>
+      ) : (
+        <MyProposal address={address} daoAddress={daoAddress} />
       )}
     </main>
   );

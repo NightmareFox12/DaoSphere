@@ -28,31 +28,31 @@ pub trait IDaoSphere<TContractState> {
 
     // handle proposal
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
-    fn create_proposal_basic(
-        ref self: TContractState, title: ByteArray, end_time: u64 
-        // token: ContractAddress,
-        // amount: u256,
-    );
+    fn create_proposal_basic(ref self: TContractState, title: ByteArray, end_time: u64);
+
+    fn get_my_proposals(
+        self: @TContractState, caller: ContractAddress,
+    ) -> Array<DaoSphereModel::Proposal>;
+    // fn create_proposal_multiple(
+//     ref self: TContractState,
+//     title: ByteArray,
+//     end_time: u64,
+//     options: Array<DaoSphereModel::OptionProposal>,
+// );
 }
 
 #[starknet::contract]
 pub mod DaoSphere {
     use starknet::event::EventEmitter;
     use starknet::storage::{StoragePathEntry, Map};
-    use starknet::{
-        get_caller_address, ContractAddress, get_block_timestamp 
-        // contract_address_const,
-    };
+    use starknet::{get_caller_address, ContractAddress, get_block_timestamp};
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
     use AccessControlComponent::InternalTrait;
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
     use openzeppelin_introspection::src5::SRC5Component;
-    // use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use super::DaoSphereModel::{
-        User, Advisor, VoteCreationAccess, Proposal, OptionProposal, // ETH_CONTRACT_ADDRESS,
-        // STRK_CONTRACT_ADDRESS,
-        USER_ROLE, ADVISOR_ROLE,
+        User, Advisor, VoteCreationAccess, Proposal, OptionProposal, USER_ROLE, ADVISOR_ROLE,
     };
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
@@ -75,8 +75,8 @@ pub mod DaoSphere {
     struct Storage {
         dao_sphere_fabric: ContractAddress,
         proposal_count: u64,
-        proposal: Proposal,
-        proposal_options: Map<u64, OptionProposal>,
+        proposals: Map<ContractAddress, Proposal>,
+        // proposal_options: Map<u64, OptionProposal>,
         vote_selected_access: VoteCreationAccess,
         user_count: u64,
         users: Map<u64, User>,
@@ -363,21 +363,115 @@ pub mod DaoSphere {
             };
         }
 
-        fn create_proposal_basic(
-            ref self: ContractState, title: ByteArray, end_time: u64
-            // token: ContractAddress,
-            // amount: u256,
-        ) {
-            // self._require_supported_token(token);
+        fn create_proposal_basic(ref self: ContractState, title: ByteArray, end_time: u64) {
             let caller: ContractAddress = get_caller_address();
             let proposal_id = self.proposal_count.read();
 
-            // let dao_sphere_fabric: ContractAddress = self.dao_sphere_fabric.read();
-
-            // assert(amount > 0, 'Amount must be greater than 0');
             assert(title.len() > 3, 'Title is too short');
             assert(end_time > get_block_timestamp(), 'End time is in the past');
 
+            self._validate_vote_access(caller);
+
+            self
+                .proposals
+                .write(
+                    caller,
+                    Proposal {
+                        proposal_id: proposal_id,
+                        title: title,
+                        start_time: get_block_timestamp(),
+                        end_time: end_time,
+                    },
+                );
+
+            // self
+            //     .emit(
+            //         CreatedProposal {
+            //             proposal_id: proposal_id,
+            //             creator_address: caller,
+            //             start_time: get_block_timestamp(),
+            //             end_time: end_time,
+            //         },
+            //     );
+
+            self.proposal_count.write(proposal_id + 1);
+        }
+
+        fn get_my_proposals(self: @ContractState, caller: ContractAddress) -> Array<Proposal> {
+            assert(caller.is_non_zero(), 'Invalid caller address');
+            let mut proposals_arr: Array<Proposal> = ArrayTrait::<Proposal>::new();
+
+            let mut i: u64 = 0;
+            let limit: u64 = self.proposal_count.read();
+            loop {
+                if i == limit {
+                    break Proposal { proposal_id: 0, title: "", start_time: 0, end_time: 0 };
+                }
+                proposals_arr.append(self.proposals.read(caller));
+                i += 1;
+            };
+
+            proposals_arr
+        }
+        // fn create_proposal_multiple(
+    //     ref self: ContractState,
+    //     title: ByteArray,
+    //     end_time: u64,
+    //     options: Array<OptionProposal>,
+    // ) {
+    //     let caller: ContractAddress = get_caller_address();
+    //     let proposal_id = self.proposal_count.read();
+
+        //     assert(title.len() > 3, 'Title is too short');
+    //     assert(end_time > get_block_timestamp(), 'End time is in the past');
+
+        //     self._validate_vote_access(caller);
+
+        //     self
+    //         .proposal
+    //         .write(
+    //             Proposal {
+    //                 proposal_id: proposal_id,
+    //                 creator_address: caller,
+    //                 title: title,
+    //                 start_time: get_block_timestamp(),
+    //                 end_time: end_time,
+    //             },
+    //         );
+
+        //     let mut option_counter: u64 = 0;
+
+        //     // loop {
+    //     //     self
+    //     //         .proposal_options
+    //     //         .write(
+    //     //             proposal_id,
+    //     //             OptionProposal {
+
+        //     //                 option_id: option_counter,
+    //     //                 description: options[option_counter].description,
+    //     //             },
+    //     //         );
+    //     //     option_counter += 1;
+    //     // };
+
+        //     // self
+    //     //     .emit(
+    //     //         CreatedProposal {
+    //     //             proposal_id: proposal_id,
+    //     //             creator_address: caller,
+    //     //             start_time: get_block_timestamp(),
+    //     //             end_time: end_time,
+    //     //         },
+    //     //     );
+
+        //     self.proposal_count.write(proposal_id + 1);
+    // }
+    }
+
+    #[generate_trait]
+    impl Private of PrivateDaoSphereTrait {
+        fn _validate_vote_access(ref self: ContractState, caller: ContractAddress) {
             match self.vote_selected_access.read() {
                 VoteCreationAccess::Admin => {
                     assert(
@@ -414,49 +508,6 @@ pub mod DaoSphere {
                     }
                 },
             }
-
-            // self._get_token_dispatcher(token).transfer_from(caller, dao_sphere_fabric, amount);
-
-            self
-                .proposal
-                .write(
-                    Proposal {
-                        proposal_id: proposal_id,
-                        creator_address: caller,
-                        title: title,
-                        start_time: get_block_timestamp(),
-                        end_time: end_time,
-                    },
-                );
-
-            self
-                .emit(
-                    CreatedProposal {
-                        proposal_id: proposal_id,
-                        creator_address: caller,
-                        start_time: get_block_timestamp(),
-                        end_time: end_time,
-                    },
-                );
-
-            self.proposal_count.write(proposal_id + 1);
         }
     }
-    // internal
-// #[generate_trait]
-// impl TokenInternalImpl of TokenInternalTrait {
-//     fn _get_token_dispatcher(
-//         ref self: ContractState, token: ContractAddress,
-//     ) -> IERC20Dispatcher {
-//         return IERC20Dispatcher { contract_address: token };
-//     }
-
-    //     fn _require_supported_token(ref self: ContractState, token: ContractAddress) {
-//         assert(
-//             token == contract_address_const::<STRK_CONTRACT_ADDRESS>()
-//                 || token == contract_address_const::<ETH_CONTRACT_ADDRESS>(),
-//             'Unsupported token',
-//         );
-//     }
-// }
 }

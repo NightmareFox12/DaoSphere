@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x47a287ccf347366ecfd5f29d199c3fcd1da1be5a265004923dc4385a91dfdf0",
+        "0x6036f5c507642e059441d709e7259d214842a65e7ba039b6acd6e68e67de8d4",
       abi: [
         {
           type: "impl",
@@ -157,11 +157,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0xa0e9165dca65f04307eb0981f8e0310ee01e7b346f509d128d8316e0df1b13",
+        "0x18c2431eae342908460a6ab2de8dbab2d7da8fcafa52e960b32abbb1db5a77c",
     },
     DaoSphere: {
       address:
-        "0x6d7f223b98914cb6ec9d443cac80d5faaffe4fe945fb45c532079481796a017",
+        "0x4f501b587bb7087a19303b6f9d59e798a3f0ac34b39c50f1bbbf37a47d9fc65",
       abi: [
         {
           type: "impl",
@@ -259,6 +259,28 @@ const deployedContracts = {
             {
               name: "pending_word_len",
               type: "core::integer::u32",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::models::DaoSphereModel::Proposal",
+          members: [
+            {
+              name: "proposal_id",
+              type: "core::integer::u64",
+            },
+            {
+              name: "title",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "start_time",
+              type: "core::integer::u64",
+            },
+            {
+              name: "end_time",
+              type: "core::integer::u64",
             },
           ],
         },
@@ -465,6 +487,22 @@ const deployedContracts = {
               ],
               outputs: [],
               state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_my_proposals",
+              inputs: [
+                {
+                  name: "caller",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::array::Array::<contracts::models::DaoSphereModel::Proposal>",
+                },
+              ],
+              state_mutability: "view",
             },
           ],
         },
@@ -794,7 +832,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x104b891b09b13a1347a6d2f33817f232f4709e806dc709757c49d5c63ff6cd9",
+        "0x3a63c16dbb9bf6ffca5891e43dcc90a232be076432807f397e035283ce33d8",
     },
   },
 } as const;

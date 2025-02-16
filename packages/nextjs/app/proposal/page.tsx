@@ -91,6 +91,13 @@ const Proposal: NextPage = () => {
     args: [title, 0n],
   });
 
+  // const { sendAsync: sendProposalMultiple } = useScaffoldWriteContract({
+  //   contractName: 'DaoSphere',
+  //   functionName: 'create_proposal_basic',
+  //   contractAddress: contractAddress,
+  //   args: [title, 0n],
+  // });
+
   useEffect(() => {
     const contractAddress = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
 
@@ -131,16 +138,14 @@ const Proposal: NextPage = () => {
       setIsLoading(true);
       if (isYesNoVote) {
         // await ayuda();
-        console.log(BigInt(new Date(endDate).getTime() / 1000));
-
         await sendProposalBasic({
           args: [title, BigInt(new Date(endDate).getTime() / 1000)],
         });
-
-        setTitle('');
-        setEndDate('');
-        setIsYesNoVote(true);
+      } else {
       }
+      setTitle('');
+      setEndDate('');
+      setIsYesNoVote(true);
     } catch (err) {
       console.log(err);
     } finally {
@@ -228,7 +233,7 @@ const Proposal: NextPage = () => {
             </label>
           </div>
 
-          <div className='join w-full flex justify-center gap-1'>
+          {/* <div className='join w-full flex justify-center gap-1'>
             <button
               className={`${isYesNoVote && 'btn-active'} join-item btn btn-outline px-10`}
               onClick={() => setIsYesNoVote(true)}
@@ -242,7 +247,7 @@ const Proposal: NextPage = () => {
               Multiple Choice Vote
             </button>
           </div>
-
+*/}
           {!isYesNoVote && (
             <article className='flex flex-col justify-center items-center gap-3'>
               <p className='text-xl m-1 font-bold'>Options</p>
