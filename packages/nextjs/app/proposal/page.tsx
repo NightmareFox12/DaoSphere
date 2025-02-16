@@ -11,15 +11,18 @@ import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { InputBase } from '~~/components/scaffold-stark';
+import { useDeployedContractInfo } from '~~/hooks/scaffold-stark';
+import { useScaffoldMultiWriteContract } from '~~/hooks/scaffold-stark/useScaffoldMultiWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { VoteOptions } from '~~/types/VoteOptions';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 
 const Proposal: NextPage = () => {
-  const { data: jose } = useBlock();
-
   //states
+  const [contractAddress, setContractAddress] = useState<`0x${string}`>('0x0');
+  const [selectedToken, setSelectedToken] = useState<'ETH' | 'STRK'>('ETH');
+
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
@@ -29,19 +32,30 @@ const Proposal: NextPage = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [contractAddress, setContractAddress] = useState<`0x${string}`>('0x0');
   //smart contract
+  // const { data: EthContract } = useDeployedContractInfo('Eth');
+  // const { data: StrkContract } = useDeployedContractInfo('Strk');
+
   const { data: proposalCount } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     functionName: 'proposal_count',
     contractAddress: contractAddress,
   });
 
-  const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
-    contractName: 'DaoSphere',
-    functionName: 'create_proposal_basic',
-    contractAddress: contractAddress,
-    args: ['', 0n],
+  const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
+    calls: [
+      {
+        contractName: selectedToken === 'ETH' ? 'Eth' : 'Strk',
+        functionName: 'approve',
+        args: [contractAddress, 1n],
+      },
+      {
+        contractName: 'DaoSphere',
+        functionName: 'create_proposal_basic',
+        contractAddress: contractAddress,
+        args: [title, BigInt(Math.floor(new Date(endDate).getTime() / 1000))],
+      },
+    ],
   });
 
   //efects
@@ -83,13 +97,8 @@ const Proposal: NextPage = () => {
   const handleCreateProposal = async () => {
     try {
       setIsLoading(true);
-      //hacer todas las validaciones
-
-      console.log(title, endDate);
-      const timestamp = new Date(endDate).getTime();
-
       if (isYesNoVote) {
-        sendProposalBasic({ args: [title, timestamp] });
+        await sendProposalBasic();
         setTitle('');
         setEndDate('');
         setIsYesNoVote(true);
@@ -108,7 +117,9 @@ const Proposal: NextPage = () => {
       >
         <div className='flex justify-between items-center'>
           <div className='flex flex-1 items-center justify-center'>
-            <p className='text-center text-2xl font-bold mb-5'>Proposal 1</p>
+            <p className='text-center text-2xl font-bold mb-5'>
+              Proposal {proposalCount?.toString()}
+            </p>
           </div>
 
           <div
@@ -162,7 +173,7 @@ const Proposal: NextPage = () => {
               <input
                 type='date'
                 min={
-                  new Date(new Date().setDate(new Date().getDate() + 1))
+                  new Date(new Date().setDate(new Date().getDate() - 12))
                     .toISOString()
                     .split('T')[0]
                 }

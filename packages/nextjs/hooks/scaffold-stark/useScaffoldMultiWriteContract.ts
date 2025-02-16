@@ -1,4 +1,4 @@
-import { useTargetNetwork } from "./useTargetNetwork";
+import { useTargetNetwork } from './useTargetNetwork';
 import {
   Contract,
   ContractAbi,
@@ -7,18 +7,18 @@ import {
   ExtractAbiFunctionNamesScaffold,
   UseScaffoldArgsParam,
   UseScaffoldWriteConfig,
-} from "~~/utils/scaffold-stark/contract";
-import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
+} from '~~/utils/scaffold-stark/contract';
+import { useSendTransaction, useNetwork, Abi } from '@starknet-react/core';
 import {
   Contract as StarknetJsContract,
   InvocationsDetails,
   Call,
-} from "starknet";
-import { notification } from "~~/utils/scaffold-stark";
-import { useTransactor } from "./useTransactor";
+} from 'starknet';
+import { notification } from '~~/utils/scaffold-stark';
+import { useTransactor } from './useTransactor';
 
 function isRawCall(value: Call | any): value is Call {
-  return "entrypoint" in value;
+  return 'entrypoint' in value;
 }
 
 export const useScaffoldMultiWriteContract = <
@@ -26,16 +26,19 @@ export const useScaffoldMultiWriteContract = <
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
-    "external"
+    'external'
   >,
 >({
   calls,
   options,
+  contractAddress,
 }: {
   calls: Array<
-    UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName> | Call
+    | UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName, `0x${string}`>
+    | Call
   >;
   options?: InvocationsDetails;
+  contractAddress?: `0x${string}`;
 }) => {
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
@@ -47,11 +50,11 @@ export const useScaffoldMultiWriteContract = <
 
   const sendContractWriteTx = async () => {
     if (!chain?.id) {
-      console.error("Please connect your wallet");
+      console.error('Please connect your wallet');
       return;
     }
     if (chain?.id !== targetNetwork.id) {
-      console.error("You are on the wrong network");
+      console.error('You are on the wrong network');
       return;
     }
 
@@ -74,12 +77,12 @@ export const useScaffoldMultiWriteContract = <
               // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
               const contractInstance = new StarknetJsContract(
                 contract.abi,
-                contract.address,
+                contractAddress ??contract.address
               );
 
               return contractInstance.populate(
                 functionName,
-                unParsedArgs as any[],
+                unParsedArgs as any[]
               );
             });
           } else {
@@ -89,7 +92,7 @@ export const useScaffoldMultiWriteContract = <
 
         // setIsMining(true);
         return await sendTxnWrapper(() =>
-          sendTransactionInstance.sendAsync(parsedCalls),
+          sendTransactionInstance.sendAsync(parsedCalls)
         );
       } catch (e: any) {
         throw e;
@@ -97,7 +100,7 @@ export const useScaffoldMultiWriteContract = <
         // setIsMining(false);
       }
     } else {
-      notification.error("Contract writer error. Try again.");
+      notification.error('Contract writer error. Try again.');
       return;
     }
   };
@@ -113,12 +116,12 @@ export function createContractCall<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
-    "external"
+    'external'
   >,
 >(
   contractName: TContractName,
   functionName: TFunctionName,
-  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"],
+  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>['args']
 ) {
   return { contractName, functionName, args };
 }

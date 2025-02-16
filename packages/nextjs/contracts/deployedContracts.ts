@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x6815d4cdc0a9502dfe3a15298408201a3032d71dfc382364ee021f6bbefc217",
+        "0x7fbab86b424359bd6117a87f7001c568b1efedf11b144b4a5583dba51789522",
       abi: [
         {
           type: "impl",
@@ -118,11 +118,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x70dfc112ee30503488fd058869aaff99fd18b05bf0e26d5ffaa63c886edb4e3",
+        "0x518189fff1fa9721434f5ec1eb430a20ad3ed4ab5d8e421d77f35120c1319eb",
     },
     DaoSphere: {
       address:
-        "0x73292b278741eb1f89e7b1c36026904dcc3e487baf2097717784410af80ac0d",
+        "0x6be1a793d5770a78a44849129b1603545e9b38074e7b9ca0e4350c69609f2a1",
       abi: [
         {
           type: "impl",
@@ -423,25 +423,13 @@ const deployedContracts = {
                   name: "end_time",
                   type: "core::integer::u64",
                 },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "create_proposal",
-              inputs: [
                 {
-                  name: "title",
-                  type: "core::byte_array::ByteArray",
-                },
-                {
-                  name: "description",
-                  type: "core::byte_array::ByteArray",
-                },
-                {
-                  name: "end_time",
+                  name: "amount",
                   type: "core::integer::u64",
+                },
+                {
+                  name: "token",
+                  type: "core::starknet::contract_address::ContractAddress",
                 },
               ],
               outputs: [],
@@ -739,7 +727,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x746c97587a3c4db88eb77459668733b8dff081ea5fb425172d9d409c9df32e1",
+        "0x7f475b884c62aa0b9861ad1feb740d92085c4896269e3d90b29605f3ee6f4b7",
     },
   },
 } as const;

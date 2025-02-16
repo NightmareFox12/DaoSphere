@@ -2,7 +2,7 @@ use starknet::ContractAddress;
 use super::models::DaoSphereModel;
 
 #[starknet::interface]
-trait IDaoSphere<TContractState> {
+pub trait IDaoSphere<TContractState> {
     //data
     fn proposal_count(self: @TContractState) -> u64;
     fn vote_selected_access(self: @TContractState) -> DaoSphereModel::VoteCreationAccess;
@@ -28,31 +28,40 @@ trait IDaoSphere<TContractState> {
 
     // handle proposal
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
-
-    fn create_proposal_basic(ref self: TContractState, title: ByteArray, end_time: u64);
-
-    fn create_proposal(
-        ref self: TContractState, title: ByteArray, description: ByteArray, end_time: u64,
+    fn create_proposal_basic(
+        ref self: TContractState,
+        title: ByteArray,
+        end_time: u64,
+        amount: u64,
+        token: ContractAddress,
     );
+    // fn create_proposal(
+//     ref self: TContractState,
+//     title: ByteArray,
+//     description: ByteArray,
+//     end_time: u64,
+//     token: ContractAddress,
+// );
 }
 
-const USER_ROLE: felt252 = selector!("USER_ROLE");
-const ADVISOR_ROLE: felt252 = selector!("ADVISOR_ROLE");
-
 #[starknet::contract]
-mod DaoSphere {
+pub mod DaoSphere {
     use starknet::event::EventEmitter;
     use starknet::storage::{StoragePathEntry, Map};
-    use starknet::{get_caller_address, ContractAddress, get_block_timestamp};
-
+    use starknet::{
+        get_caller_address, ContractAddress, get_block_timestamp, contract_address_const,
+        get_contract_address,
+    };
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
     use AccessControlComponent::InternalTrait;
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
     use openzeppelin_introspection::src5::SRC5Component;
-
-    use super::{USER_ROLE, ADVISOR_ROLE};
-    use super::DaoSphereModel::{User, Advisor, VoteCreationAccess, Proposal, OptionProposal};
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use super::DaoSphereModel::{
+        User, Advisor, VoteCreationAccess, Proposal, OptionProposal, ETH_CONTRACT_ADDRESS,
+        STRK_CONTRACT_ADDRESS, USER_ROLE, ADVISOR_ROLE,
+    };
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -350,10 +359,17 @@ mod DaoSphere {
             };
         }
 
-        //TODO: seguir luchando con la fecha
-
-        fn create_proposal_basic(ref self: ContractState, title: ByteArray, end_time: u64) {
+        fn create_proposal_basic(
+            ref self: ContractState,
+            title: ByteArray,
+            end_time: u64,
+            amount: u64,
+            token: ContractAddress,
+        ) {
+            self._require_supported_token(token);
             let caller = get_caller_address();
+
+            assert(amount > 1, 'Amount must be greater than 1');
             assert(title.len() > 3, 'Title is too short');
             assert(end_time > get_block_timestamp(), 'End time is in the past');
 
@@ -373,9 +389,8 @@ mod DaoSphere {
                 },
                 VoteCreationAccess::All => {
                     if !self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller)
-                    || !self.accesscontrol.hasRole(ADVISOR_ROLE, caller) 
-                    || !self.accesscontrol.hasRole(USER_ROLE, caller)
-                    {
+                        || !self.accesscontrol.hasRole(ADVISOR_ROLE, caller)
+                        || !self.accesscontrol.hasRole(USER_ROLE, caller) {
                         let user_id = self.user_count.read();
                         self
                             .users
@@ -388,7 +403,7 @@ mod DaoSphere {
                                     date: get_block_timestamp(),
                                 },
                             );
-            
+
                         self.emit(CreatedUser { user_id: user_id, address: caller });
                         self.user_count.write(user_id + 1);
                     }
@@ -411,16 +426,33 @@ mod DaoSphere {
             //buscar la manera de cobrar y enviarmelo al contract fabric
             self.proposal_count.write(proposal_id + 1);
         }
+        // fn create_proposal(
+    //     ref self: ContractState, title: ByteArray, description: ByteArray, end_time: u64,
+    // ) {
+    //     let caller = get_caller_address();
+    //     assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not
+    //     admin');
+    //     assert(title.len() > 3, 'Title is too short');
+    //     assert(description.len() > 3, 'Description is too short');
+    //     assert(end_time > get_block_timestamp(), 'End time is in the past');
+    // }
+    }
 
+    // internal
+    #[generate_trait]
+    impl TokenInternalImpl of TokenInternalTrait {
+        fn _get_token_dispatcher(
+            ref self: ContractState, token: ContractAddress,
+        ) -> IERC20Dispatcher {
+            return IERC20Dispatcher { contract_address: token };
+        }
 
-        fn create_proposal(
-            ref self: ContractState, title: ByteArray, description: ByteArray, end_time: u64,
-        ) {
-            let caller = get_caller_address();
-            assert(self.accesscontrol.hasRole(DEFAULT_ADMIN_ROLE, caller), 'Caller is not admin');
-            assert(title.len() > 3, 'Title is too short');
-            assert(description.len() > 3, 'Description is too short');
-            assert(end_time > get_block_timestamp(), 'End time is in the past');
+        fn _require_supported_token(ref self: ContractState, token: ContractAddress) {
+            assert(
+                token == contract_address_const::<STRK_CONTRACT_ADDRESS>()
+                    || token == contract_address_const::<ETH_CONTRACT_ADDRESS>(),
+                'Unsupported token',
+            );
         }
     }
 }
