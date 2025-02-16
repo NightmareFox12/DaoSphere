@@ -38,7 +38,8 @@ pub trait IDaoSphere<TContractState> {
 pub mod DaoSphere {
     use starknet::event::EventEmitter;
     use starknet::storage::{StoragePathEntry, Map};
-    use starknet::{get_caller_address, ContractAddress, get_block_timestamp// contract_address_const,
+    use starknet::{
+        get_caller_address, ContractAddress, get_block_timestamp // contract_address_const,
     };
     use core::num::traits::Zero;
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
@@ -100,6 +101,7 @@ pub mod DaoSphere {
     enum Event {
         CreatedUser: CreatedUser,
         CreatedAdvisor: CreatedAdvisor,
+        CreatedProposal: CreatedProposal,
         #[flat]
         AccessControlEvent: AccessControlComponent::Event,
         #[flat]
@@ -116,6 +118,14 @@ pub mod DaoSphere {
     struct CreatedAdvisor {
         advisor_id: u64,
         address: ContractAddress,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct CreatedProposal {
+        proposal_id: u64,
+        creator_address: ContractAddress,
+        start_time: u64,
+        end_time: u64,
     }
 
 
@@ -416,8 +426,16 @@ pub mod DaoSphere {
                     },
                 );
 
-            //buscar la manera de cobrar y enviarmelo al contract fabric
             self.proposal_count.write(proposal_id + 1);
+            self
+                .emit(
+                    CreatedProposal {
+                        proposal_id: proposal_id,
+                        creator_address: caller,
+                        start_time: get_block_timestamp(),
+                        end_time: end_time,
+                    },
+                );
         }
     }
     // internal
