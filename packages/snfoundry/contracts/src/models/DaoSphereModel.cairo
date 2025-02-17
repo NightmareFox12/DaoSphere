@@ -36,6 +36,7 @@ pub enum VoteCreationAccess {
 
 #[derive(Drop, Serde, starknet::Store)]
 pub struct Proposal {
+    pub proposal_id: u64,
     pub creator_address: ContractAddress,
     pub title: ByteArray,
     pub start_time: u64,
@@ -48,4 +49,11 @@ pub struct OptionProposal {
     pub option_id: u64,
     pub description: ByteArray,
     // pub count_votes: u64,
+}
+
+#[derive(Drop, Serde, starknet::Store)]
+pub struct ProposalVoted {
+    pub proposal_id: u64,
+    pub voted: bool,
+    pub voter_address: ContractAddress,
 }

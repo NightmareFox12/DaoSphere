@@ -45,14 +45,18 @@ pub trait IDaoSphere<TContractState> {
 pub mod DaoSphere {
     use starknet::event::EventEmitter;
     use starknet::storage::{StoragePathEntry, Map};
-    use starknet::{get_caller_address, ContractAddress, get_block_timestamp};
+    use starknet::{
+        get_caller_address, ContractAddress, get_block_timestamp, contract_address_const,
+    };
     use core::num::traits::Zero;
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
     use AccessControlComponent::InternalTrait;
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
     use openzeppelin_introspection::src5::SRC5Component;
     use super::DaoSphereModel::{
-        User, Advisor, VoteCreationAccess, Proposal, USER_ROLE, ADVISOR_ROLE,
+        User, Advisor, VoteCreationAccess, Proposal, USER_ROLE, ADVISOR_ROLE, STRK_CONTRACT_ADDRESS,
+        ETH_CONTRACT_ADDRESS, ProposalVoted,
     };
 
     component!(path: AccessControlComponent, storage: accesscontrol, event: AccessControlEvent);
@@ -76,6 +80,7 @@ pub mod DaoSphere {
         dao_sphere_fabric: ContractAddress,
         proposal_count: u64,
         proposals: Map<u64, Proposal>,
+        proposals_voted: Map<u64, ProposalVoted>,
         // proposal_options: Map<u64, OptionProposal>,
         vote_selected_access: VoteCreationAccess,
         user_count: u64,
@@ -126,6 +131,7 @@ pub mod DaoSphere {
     struct CreatedProposal {
         proposal_id: u64,
         creator_address: ContractAddress,
+        title: ByteArray,
         start_time: u64,
         end_time: u64,
     }
@@ -377,22 +383,24 @@ pub mod DaoSphere {
                 .write(
                     proposal_id,
                     Proposal {
+                        proposal_id,
                         creator_address: caller,
-                        title: title,
+                        title,
                         start_time: get_block_timestamp(),
-                        end_time: end_time,
+                        end_time,
                     },
                 );
 
-            // self
-            //     .emit(
-            //         CreatedProposal {
-            //             proposal_id: proposal_id,
-            //             creator_address: caller,
-            //             start_time: get_block_timestamp(),
-            //             end_time: end_time,
-            //         },
-            //     );
+            self
+                .emit(
+                    CreatedProposal {
+                        proposal_id,
+                        creator_address: caller,
+                        title: self.proposals.read(proposal_id).title,
+                        start_time: get_block_timestamp(),
+                        end_time,
+                    },
+                );
 
             self.proposal_count.write(proposal_id + 1);
         }
@@ -407,6 +415,7 @@ pub mod DaoSphere {
             loop {
                 if i == limit {
                     break Proposal {
+                        proposal_id: 0,
                         creator_address: 0.try_into().unwrap(),
                         title: "",
                         start_time: 0,
@@ -478,7 +487,7 @@ pub mod DaoSphere {
     }
 
     #[generate_trait]
-    impl Private of PrivateDaoSphereTrait {
+    pub impl Private of PrivateDaoSphereTrait {
         fn _validate_vote_access(ref self: ContractState, caller: ContractAddress) {
             match self.vote_selected_access.read() {
                 VoteCreationAccess::Admin => {
@@ -516,6 +525,20 @@ pub mod DaoSphere {
                     }
                 },
             }
+        }
+
+        fn _get_token_dispatcher(
+            ref self: ContractState, token: ContractAddress,
+        ) -> IERC20Dispatcher {
+            return IERC20Dispatcher { contract_address: token };
+        }
+
+        fn _require_supported_token(ref self: ContractState, token: ContractAddress) {
+            assert(
+                token == contract_address_const::<STRK_CONTRACT_ADDRESS>()
+                    || token == contract_address_const::<ETH_CONTRACT_ADDRESS>(),
+                'Unsupported token',
+            );
         }
     }
 }

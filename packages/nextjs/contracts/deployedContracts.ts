@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x5fc25dc1441db1ec5bfa95cac1ba718fdee4596e12f9bcc7aa7ad975a78c9c",
+        "0x214c13d6681ed9f697217a9289ad91cae7ef3aeef86e33e8d4086458146602f",
       abi: [
         {
           type: "impl",
@@ -157,11 +157,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x1ca881cde1a0c801b57b85723395858cf4d6b7bc97a5721dda230030a8b3ce1",
+        "0x27e9581f60c15b4e2ed5f96d596f0159a38dd9bb6ed716a3ca753958c0b9951",
     },
     DaoSphere: {
       address:
-        "0x535cdd4c806faeb54e6ecb6bed25107e1f060248ec813b85d1ade2b747b182a",
+        "0x334ffc524e856d03a6a9a4f72f11830e24e1b0d556eb2072f0ad57cd9311102",
       abi: [
         {
           type: "impl",
@@ -266,6 +266,10 @@ const deployedContracts = {
           type: "struct",
           name: "contracts::models::DaoSphereModel::Proposal",
           members: [
+            {
+              name: "proposal_id",
+              type: "core::integer::u64",
+            },
             {
               name: "creator_address",
               type: "core::starknet::contract_address::ContractAddress",
@@ -693,6 +697,11 @@ const deployedContracts = {
               kind: "data",
             },
             {
+              name: "title",
+              type: "core::byte_array::ByteArray",
+              kind: "data",
+            },
+            {
               name: "start_time",
               type: "core::integer::u64",
               kind: "data",
@@ -832,7 +841,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x6261eafdd55bd1a2d0838a16afc5a5e10f3d1c440dfb1864bdec4a21bef187e",
+        "0x737519cdc8b913f4e61ce8c76ed0f9196435b31a2851d8ade8de6aa676eb2e4",
     },
   },
 } as const;

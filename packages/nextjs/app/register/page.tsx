@@ -25,13 +25,7 @@ const Register: NextPage = () => {
   const { data } = useScaffoldEventHistory({
     contractName: 'DaoSphereFabric',
     eventName: 'contracts::DaoSphereFabric::DaoSphereFabric::DaoCreated',
-    fromBlock: BigInt(0), //DESDE QUE BLOQUE!!
-    filters: { parameterName: 'name_dao' },
-    blockData: true,
-    transactionData: false,
-    receiptData: false,
-    watch: true,
-    enabled: true,
+    fromBlock: 0n, //TODO: DESDE QUE BLOQUE!!
   });
 
   useEffect(() => {

@@ -10449,6 +10449,7 @@ __metadata:
     pinst: ^3.0.0
     postcss: ^8.4.38
     prettier: ^3.2.5
+    swiper: ^11.2.4
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -10764,6 +10765,13 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 53b1e247e68e05db7b3808b99b892bd36fb096e6fba213a06da7fab22045e97597db425c724f2bbd6c99a3c295e1e73f3e4de78592289f38431049e1277ca0ae
+  languageName: node
+  linkType: hard
+
+"swiper@npm:^11.2.4":
+  version: 11.2.4
+  resolution: "swiper@npm:11.2.4"
+  checksum: edb5ef0ecec004b1d65933b50be88dfb5d6460d1c4f5193f9e6b6f49557cbcd6c88bdd138d237ad89a15761db2fc1569cbd8f1d7b3e2cd0573e03eb81c073459
   languageName: node
   linkType: hard
 

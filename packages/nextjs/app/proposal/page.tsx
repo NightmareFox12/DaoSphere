@@ -17,6 +17,7 @@ import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldRead
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { VoteOptions } from '~~/types/VoteOptions';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
+import { feltToHex } from '~~/utils/scaffold-stark/common';
 
 const Proposal: NextPage = () => {
   //states
@@ -26,7 +27,11 @@ const Proposal: NextPage = () => {
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   // const [endDate, setEndDate] = useState<string | undefined>(undefined);
-  const [endDate, setEndDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>(
+    new Date(new Date().setDate(new Date().getDate() + 1))
+      .toISOString()
+      .split('T')[0]
+  );
   const [isYesNoVote, setIsYesNoVote] = useState<boolean>(true);
   const [nextId, setNextId] = useState(1);
   const [options, setOptions] = useState<VoteOptions[]>([]);
@@ -48,7 +53,7 @@ const Proposal: NextPage = () => {
   //     {
   //       contractName: 'Strk',
   //       functionName: 'approve',
-  //       args: [contractAddress, 2n * (10n ** 18n)],
+  //       args: [contractAddress, 2n * 10n ** 18n],
   //     },
   //     {
   //       contractName: 'DaoSphere',
@@ -56,33 +61,13 @@ const Proposal: NextPage = () => {
   //       contractAddress: contractAddress,
   //       args: [
   //         title,
-  //         BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
-  //         StrkContract?.address,
-  //         1n * (10n ** 18n),
+  //         BigInt(new Date(endDate).getTime() / 1000),
+  //        '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+  //         2n * 10n ** 18n,
   //       ],
   //     },
   //   ],
   // });
-
-  // const { sendAsync: ayuda } = useScaffoldWriteContract({
-  //   contractName: 'Strk',
-  //   functionName: 'approve',
-  //   args: [StrkContract?.address, parseEther('1')],
-  // });
-
-  // const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
-  //   contractName: 'DaoSphere',
-  //   functionName: 'create_proposal_basic',
-  //   contractAddress: contractAddress,
-  //   args: [
-  //     title,
-  //     BigInt(Math.floor(new Date(endDate ?? new Date()).getTime() / 1000)),
-  //     StrkContract?.address,
-  //     parseEther('1'),
-  //   ],
-  // });
-
-  //efects
 
   const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
@@ -98,6 +83,7 @@ const Proposal: NextPage = () => {
   //   args: [title, 0n],
   // });
 
+  // efects
   useEffect(() => {
     const contractAddress = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
 
@@ -137,14 +123,17 @@ const Proposal: NextPage = () => {
     try {
       setIsLoading(true);
       if (isYesNoVote) {
-        // await ayuda();
         await sendProposalBasic({
           args: [title, BigInt(new Date(endDate).getTime() / 1000)],
         });
       } else {
       }
       setTitle('');
-      setEndDate('');
+      setEndDate(
+        new Date(new Date().setDate(new Date().getDate() + 1))
+          .toISOString()
+          .split('T')[0]  
+      );
       setIsYesNoVote(true);
     } catch (err) {
       console.log(err);
@@ -215,6 +204,10 @@ const Proposal: NextPage = () => {
             <label className='input input-bordered flex items-center gap-2'>
               <input
                 type='date'
+                className='grow'
+                placeholder='End Date'
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
                 min={
                   new Date(new Date().setDate(new Date().getDate() + 1))
                     .toISOString()
@@ -225,10 +218,6 @@ const Proposal: NextPage = () => {
                     .toISOString()
                     .split('T')[0]
                 }
-                className='grow'
-                placeholder='End Date'
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
               />
             </label>
           </div>

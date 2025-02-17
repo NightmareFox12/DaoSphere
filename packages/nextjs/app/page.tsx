@@ -9,7 +9,7 @@ import { useLoginContext } from '~~/context/LoginContext';
 import Image from 'next/image';
 import Typewriter from './_components/Typewriter';
 import { useAccount } from '~~/hooks/useAccount';
-import MyProposal from './_components/MyProposal';
+import HomeLogin from './_components/HomeLogin/HomeLogin';
 
 const Home: NextPage = () => {
   const { address, isConnected } = useAccount();
@@ -92,7 +92,7 @@ const Home: NextPage = () => {
           </section>
         </>
       ) : (
-        <MyProposal address={address} daoAddress={daoAddress} />
+        <HomeLogin address={address} daoAddress={daoAddress} />
       )}
     </main>
   );
