@@ -54,6 +54,6 @@ pub struct OptionProposal {
 #[derive(Drop, Serde, starknet::Store)]
 pub struct ProposalVoted {
     pub proposal_id: u64,
-    pub voted: bool,
+    pub vote_choice: bool,
     pub voter_address: ContractAddress,
 }

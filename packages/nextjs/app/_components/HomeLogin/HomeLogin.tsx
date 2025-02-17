@@ -1,8 +1,8 @@
 import { NextPage } from 'next';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, A11y } from 'swiper/modules';
-import CardProposal from './_components/CardProposal';
+import { Navigation } from 'swiper/modules';
+import CardPreviewProposal from './_components/CardPreviewProposal';
 import { Proposal } from '~~/types/Proposal';
 
 type HomeLoginProps = {
@@ -25,12 +25,11 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
 
       <div className='w-full px-2'>
         <Swiper
-          modules={[Navigation, Pagination, A11y]}
+          modules={[Navigation]}
           spaceBetween={25}
           slidesPerView={1}
           navigation
           pagination={{ clickable: true }}
-          scrollbar={{ draggable: true }}
           breakpoints={{
             768: {
               slidesPerView: 2,
@@ -41,8 +40,8 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
           }}
         >
           {proposals?.slice(0, 6).map((x: any, y: number) => (
-            <SwiperSlide key={y}>
-              <CardProposal proposal={x as Proposal} />
+            <SwiperSlide key={y} className='p-4'>
+              <CardPreviewProposal proposal={x as Proposal} />
             </SwiperSlide>
           ))}
         </Swiper>

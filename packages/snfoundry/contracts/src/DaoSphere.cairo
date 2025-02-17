@@ -29,10 +29,15 @@ pub trait IDaoSphere<TContractState> {
     // handle proposal
     fn modify_vote_creation_access(ref self: TContractState, new_access: ByteArray);
     fn create_proposal_basic(ref self: TContractState, title: ByteArray, end_time: u64);
-
     fn get_my_proposals(
         self: @TContractState, caller: ContractAddress,
     ) -> Array<DaoSphereModel::Proposal>;
+
+    fn set_vote_proposal(ref self: TContractState, proposal_id: u64, vote_choice: bool);
+    // fn get_votes_proposal(
+// self: @TContractState, proposal_id: u64,
+// ) -> Array<DaoSphereModel::ProposalVoted>;
+
     // fn create_proposal_multiple(
 //     ref self: TContractState,
 //     title: ByteArray,
@@ -429,6 +434,28 @@ pub mod DaoSphere {
             };
 
             proposals_arr
+        }
+
+        //    fn get_votes_proposal(
+        //     self: @ContractState, proposal_id: u64,
+        // ) -> Array<DaoSphereModel::ProposalVoted> {
+        //     self.proposals_voted.read(proposal_id)
+        //     }
+
+        fn set_vote_proposal(ref self: ContractState, proposal_id: u64, vote_choice: bool) {
+            let caller = get_caller_address();
+
+            assert(self.proposals.read(proposal_id).end_time > get_block_timestamp(), 'Proposal ended');
+
+            let proposal_voted: ProposalVoted = self.proposals_voted.read(proposal_id);
+            assert(proposal_voted.voter_address != caller, 'You already voted');
+
+            //TODO:  aqui se debe validar con loop que el votante no vote mas de una vez. 
+            self
+                .proposals_voted
+                .write(
+                    proposal_id, ProposalVoted { proposal_id, vote_choice, voter_address: caller },
+                );
         }
         // fn create_proposal_multiple(
     //     ref self: ContractState,
