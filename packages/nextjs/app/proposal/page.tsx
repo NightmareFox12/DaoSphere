@@ -1,23 +1,17 @@
 'use client';
 import {
   ArrowPathIcon,
-  BellAlertIcon,
-  BellIcon,
   PlusIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { parseEther } from 'ethers';
-import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { Balance, EtherInput, InputBase } from '~~/components/scaffold-stark';
-import { useDeployedContractInfo } from '~~/hooks/scaffold-stark';
+import { InputBase } from '~~/components/scaffold-stark';
 import { useScaffoldMultiWriteContract } from '~~/hooks/scaffold-stark/useScaffoldMultiWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
-import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { VoteOptions } from '~~/types/VoteOptions';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
-import { feltToHex } from '~~/utils/scaffold-stark/common';
 
 const Proposal: NextPage = () => {
   //states
@@ -26,7 +20,6 @@ const Proposal: NextPage = () => {
 
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
-  // const [endDate, setEndDate] = useState<string | undefined>(undefined);
   const [endDate, setEndDate] = useState<string>(
     new Date(new Date().setDate(new Date().getDate() + 1))
       .toISOString()
@@ -39,49 +32,30 @@ const Proposal: NextPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //smart contract
-  // const { data: EthContract } = useDeployedContractInfo('Eth');
-  // const { data: StrkContract } = useDeployedContractInfo('Strk');
-
   const { data: proposalCount } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     functionName: 'proposal_count',
     contractAddress: contractAddress,
   });
 
-  // const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
-  //   calls: [
-  //     {
-  //       contractName: 'Strk',
-  //       functionName: 'approve',
-  //       args: [contractAddress, 2n * 10n ** 18n],
-  //     },
-  //     {
-  //       contractName: 'DaoSphere',
-  //       functionName: 'create_proposal_basic',
-  //       contractAddress: contractAddress,
-  //       args: [
-  //         title,
-  //         BigInt(new Date(endDate).getTime() / 1000),
-  //        '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
-  //         2n * 10n ** 18n,
-  //       ],
-  //     },
-  //   ],
-  // });
-
-  const { sendAsync: sendProposalBasic } = useScaffoldWriteContract({
-    contractName: 'DaoSphere',
-    functionName: 'create_proposal_basic',
-    contractAddress: contractAddress,
-    args: [title, 0n],
+  const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
+    calls: [
+      {
+        contractName: 'Strk',
+        functionName: 'transfer',
+        args: [contractAddress, parseEther('1')],
+      },
+      {
+        contractName: 'DaoSphere',
+        functionName: 'create_proposal_basic',
+        contractAddress: contractAddress,
+        args: [title, BigInt(new Date(endDate).getTime() / 1000)],
+      },
+    ]
   });
 
-  // const { sendAsync: sendProposalMultiple } = useScaffoldWriteContract({
-  //   contractName: 'DaoSphere',
-  //   functionName: 'create_proposal_basic',
-  //   contractAddress: contractAddress,
-  //   args: [title, 0n],
-  // });
+  //TODO: Arreglar el sendProposalBasic
+  // TOOD: verificar el balance de STRK para apagar el boton de crear propuesta
 
   // efects
   useEffect(() => {
@@ -123,16 +97,17 @@ const Proposal: NextPage = () => {
     try {
       setIsLoading(true);
       if (isYesNoVote) {
-        await sendProposalBasic({
-          args: [title, BigInt(new Date(endDate).getTime() / 1000)],
-        });
+        // await sendProposalBasic({
+        //   args: [title, BigInt(new Date(endDate).getTime() / 1000)],
+        // });
+        await sendProposalBasic();
       } else {
       }
       setTitle('');
       setEndDate(
         new Date(new Date().setDate(new Date().getDate() + 1))
           .toISOString()
-          .split('T')[0]  
+          .split('T')[0]
       );
       setIsYesNoVote(true);
     } catch (err) {

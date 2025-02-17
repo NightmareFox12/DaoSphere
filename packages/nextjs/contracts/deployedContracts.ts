@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x214c13d6681ed9f697217a9289ad91cae7ef3aeef86e33e8d4086458146602f",
+        "0x74b11c3118e677a8cf3786b427813b087876a299a983bd77260e5d2849036fb",
       abi: [
         {
           type: "impl",
@@ -79,6 +79,13 @@ const deployedContracts = {
                   type: "core::starknet::contract_address::ContractAddress",
                 },
               ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "withdraw",
+              inputs: [],
               outputs: [],
               state_mutability: "external",
             },
@@ -157,11 +164,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x27e9581f60c15b4e2ed5f96d596f0159a38dd9bb6ed716a3ca753958c0b9951",
+        "0x1ca2b07f53c5e7ca04ee5f26ae782a10cf04390046a94037e3ab9cdc879e083",
     },
     DaoSphere: {
       address:
-        "0x334ffc524e856d03a6a9a4f72f11830e24e1b0d556eb2072f0ad57cd9311102",
+        "0xd51d62da067f43cb9629b4a47b4bf50af8365103c40d484705ddcbcbf864b1",
       abi: [
         {
           type: "impl",
@@ -310,6 +317,17 @@ const deployedContracts = {
               outputs: [
                 {
                   type: "contracts::models::DaoSphereModel::VoteCreationAccess",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "dao_sphere_fabric",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::starknet::contract_address::ContractAddress",
                 },
               ],
               state_mutability: "view",
@@ -507,6 +525,22 @@ const deployedContracts = {
                 },
               ],
               state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_vote_proposal",
+              inputs: [
+                {
+                  name: "proposal_id",
+                  type: "core::integer::u64",
+                },
+                {
+                  name: "vote_choice",
+                  type: "core::bool",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
             },
           ],
         },
@@ -841,7 +875,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x737519cdc8b913f4e61ce8c76ed0f9196435b31a2851d8ade8de6aa676eb2e4",
+        "0x6fc466057fdfdc7d4b0353ecfd178a1546f40ef9f775420ad5f2066423a4759",
     },
   },
 } as const;

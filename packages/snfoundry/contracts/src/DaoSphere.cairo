@@ -6,6 +6,7 @@ pub trait IDaoSphere<TContractState> {
     //data
     fn proposal_count(self: @TContractState) -> u64;
     fn vote_selected_access(self: @TContractState) -> DaoSphereModel::VoteCreationAccess;
+    fn dao_sphere_fabric(self: @TContractState) -> ContractAddress;
 
     //handle roles
     fn is_admin(self: @TContractState, caller: ContractAddress) -> bool;
@@ -151,6 +152,10 @@ pub mod DaoSphere {
 
         fn vote_selected_access(self: @ContractState) -> VoteCreationAccess {
             self.vote_selected_access.read()
+        }
+
+        fn dao_sphere_fabric(self: @ContractState) -> ContractAddress {
+            self.dao_sphere_fabric.read()
         }
 
         //handle roles

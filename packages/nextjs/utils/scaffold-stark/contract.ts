@@ -187,7 +187,6 @@ export type UseScaffoldWriteConfig<
     ContractAbi<TContractName>,
     "external"
   >,
-  contractAddress,
 > = {
   contractName: TContractName;
   contractAddress?: `0x${string}`;

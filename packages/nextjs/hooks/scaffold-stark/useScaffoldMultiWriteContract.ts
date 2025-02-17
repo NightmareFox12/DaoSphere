@@ -34,7 +34,7 @@ export const useScaffoldMultiWriteContract = <
   contractAddress,
 }: {
   calls: Array<
-    | UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName, `0x${string}`>
+    | UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>
     | Call
   >;
   options?: InvocationsDetails;

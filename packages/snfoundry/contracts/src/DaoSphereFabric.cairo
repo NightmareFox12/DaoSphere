@@ -5,20 +5,28 @@ pub trait IDaoSphereFabric<TContractState> {
     fn dao_id(self: @TContractState) -> u64;
     fn get_deploy_block(self: @TContractState) -> u64;
     fn add_owner(ref self: TContractState, owner: ContractAddress);
+    fn withdraw(ref self: TContractState);
 }
 
 
 #[starknet::contract]
 pub mod DaoSphereFabric {
-    use starknet::{get_caller_address, ContractAddress, get_block_number, get_contract_address};
+    use starknet::{
+        get_caller_address, ContractAddress, get_block_number, get_contract_address,
+        contract_address_const,
+    };
     use starknet::event::EventEmitter;
     use starknet::storage::Map;
     use starknet::syscalls::deploy_syscall;
     use starknet::class_hash::{class_hash_const, ClassHash};
     use core::num::traits::Zero;
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
+    //constants
     const DAO_SPHERE_CLASS_HASH: felt252 =
-    0x737519cdc8b913f4e61ce8c76ed0f9196435b31a2851d8ade8de6aa676eb2e4;
+        0x6fc466057fdfdc7d4b0353ecfd178a1546f40ef9f775420ad5f2066423a4759;
+    const STRK_CONTRACT_ADDRESS: felt252 =
+        0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d;
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress) {
@@ -127,6 +135,46 @@ pub mod DaoSphereFabric {
             let owner_count: u64 = self.owner_count.read();
             assert(caller.is_non_zero(), 'caller is zero');
 
+            self._is_owner(caller);
+
+            let mut i: u64 = 0;
+            let is_owner = loop {
+                if self.owners.read(i) == owner {
+                    break true;
+                } else if i == owner_count {
+                    break false;
+                }
+
+                i += 1;
+            };
+
+            assert(!is_owner, 'owner is already exist');
+
+            self.owners.write(owner_count, owner);
+            self.owner_count.write(owner_count + 1);
+
+            self.emit(OwnerAdded { owner_id: owner_count, owner });
+        }
+
+        fn withdraw(ref self: ContractState) {
+            let caller: ContractAddress = get_caller_address();
+            let this: ContractAddress = get_contract_address();
+            assert(caller.is_non_zero(), 'caller is zero');
+
+            self._is_owner(caller);
+
+            let strk_dispatcher: IERC20Dispatcher = self
+                ._get_token_dispatcher(contract_address_const::<STRK_CONTRACT_ADDRESS>());
+
+            strk_dispatcher.transfer(caller, strk_dispatcher.balance_of(this));
+        }
+    }
+
+    #[generate_trait]
+    impl Private of PrivateDaoSphereFabricTrait {
+        fn _is_owner(self: @ContractState, caller: ContractAddress) {
+            let owner_count: u64 = self.owner_count.read();
+
             let mut i: u64 = 0;
             let is_owner = loop {
                 if self.owners.read(i) == caller {
@@ -139,10 +187,12 @@ pub mod DaoSphereFabric {
             };
 
             assert(is_owner, 'caller is not owner');
-            self.owners.write(owner_count, owner);
-            self.owner_count.write(owner_count + 1);
+        }
 
-            self.emit(OwnerAdded { owner_id: owner_count, owner });
+        fn _get_token_dispatcher(
+            ref self: ContractState, token: ContractAddress,
+        ) -> IERC20Dispatcher {
+            return IERC20Dispatcher { contract_address: token };
         }
     }
 }
