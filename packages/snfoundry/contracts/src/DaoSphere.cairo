@@ -455,7 +455,6 @@ pub mod DaoSphere {
             let proposal_voted: ProposalVoted = self.proposals_voted.read(proposal_id);
             assert(proposal_voted.voter_address != caller, 'You already voted');
 
-            //TODO:  aqui se debe validar con loop que el votante no vote mas de una vez. 
             self
                 .proposals_voted
                 .write(

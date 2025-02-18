@@ -65,9 +65,6 @@ const Proposal: NextPage = () => {
     ],
   });
 
-  //TODO: Arreglar el sendProposalBasic
-  // TOOD: verificar el balance de STRK para apagar el boton de crear propuesta
-
   // efects
   useEffect(() => {
     const contractAddress = localStorage.getItem(DAO_ADDRESS_LOCALSTORAGE_KEY);
@@ -276,7 +273,7 @@ const Proposal: NextPage = () => {
             title === '' ||
             endDate === '' ||
             (isYesNoVote ? false : options.length <= 0) ||
-            parseInt(formatEther(userBalance?.toString() ?? '0')) < 10000
+            parseInt(formatEther(userBalance?.toString() ?? '0')) < 1
           }
         >
           {isLoading ? (
@@ -288,7 +285,7 @@ const Proposal: NextPage = () => {
             'Create Proposal'
           )}
         </button>
-        {parseInt(formatEther(userBalance?.toString() ?? '0')) < 10000 && (
+        {parseInt(formatEther(userBalance?.toString() ?? '0')) < 1 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}

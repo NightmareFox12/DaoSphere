@@ -4,6 +4,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import CardPreviewProposal from './_components/CardPreviewProposal';
 import { Proposal } from '~~/types/Proposal';
+import ModalViewDetails from './_components/ModalViewDetails';
+import { AnimatePresence } from 'motion/react';
+import { useState } from 'react';
 
 type HomeLoginProps = {
   address: `0x${string}` | undefined;
@@ -11,6 +14,11 @@ type HomeLoginProps = {
 };
 
 const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
+  //states
+  const [proposalSelected, setProposalSelected] = useState<
+    Proposal | undefined
+  >(undefined);
+
   //smart contract
   const { data: proposals } = useScaffoldReadContract({
     contractName: 'DaoSphere',
@@ -20,36 +28,54 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
   });
 
   return (
-    <section className='flex flex-col h-screen'>
+    <section className='flex flex-col'>
+      <AnimatePresence>
+        {proposalSelected && (
+          <ModalViewDetails
+            proposal={proposalSelected}
+            setProposalSelected={setProposalSelected}
+          />
+        )}
+      </AnimatePresence>
+
       <h2 className='text-2xl font-bold text-center'>My Proposals</h2>
-
-      <div className='w-full px-2'>
-        <Swiper
-          modules={[Navigation]}
-          spaceBetween={25}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true }}
-          breakpoints={{
-            768: {
-              slidesPerView: 2,
-            },
-            1024: {
-              slidesPerView: 3,
-            },
-          }}
-        >
-          {proposals?.slice(0, 6).map((x: any, y: number) => (
-            <SwiperSlide key={y} className='p-4'>
-              <CardPreviewProposal proposal={x as Proposal} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-
-      <button className='btn btn-sm btn-ghost mx-auto '>
-        <p className='m-0 text-sm'>Show more</p>
-      </button>
+      {proposals && proposals.length > 0 ? (
+        <>
+          <div className='w-full px-2'>
+            <Swiper
+              modules={[Navigation]}
+              spaceBetween={25}
+              slidesPerView={1}
+              navigation
+              pagination={{ clickable: true }}
+              breakpoints={{
+                768: {
+                  slidesPerView: 2,
+                },
+                1024: {
+                  slidesPerView: 3,
+                },
+              }}
+            >
+              {proposals?.slice(0, 6).map((x: any, y: number) => (
+                <SwiperSlide key={y} className='p-4'>
+                  <CardPreviewProposal
+                    proposal={x as Proposal}
+                    setProposalSelected={setProposalSelected}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+          <button className='btn btn-sm btn-ghost mx-auto '>
+            <p className='m-0 text-sm'>Show more</p>
+          </button>
+        </>
+      ) : (
+        <section className='flex flex-col'>
+          <h2 className='text-lg font-bold text-center'>No proposals</h2>
+        </section>
+      )}
     </section>
   );
 };

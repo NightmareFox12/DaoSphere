@@ -32,8 +32,6 @@ const Home: NextPage = () => {
 
   return (
     <main>
-      <h1 className='font-bold '>{daoAddress?.toString()}</h1>
-
       {!isLogin ? (
         <>
           <motion.div

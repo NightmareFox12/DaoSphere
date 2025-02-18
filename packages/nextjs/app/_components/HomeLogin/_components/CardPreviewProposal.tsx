@@ -1,15 +1,17 @@
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { NextPage } from 'next';
-import { Address, BlockieAvatar } from '~~/components/scaffold-stark';
-import { useScaffoldStarkProfile } from '~~/hooks/scaffold-stark/useScaffoldStarkProfile';
+import { BlockieAvatar } from '~~/components/scaffold-stark';
 import { Proposal } from '~~/types/Proposal';
+import { Dispatch, SetStateAction } from 'react';
 
 type CardPreviewProposalProps = {
   proposal: Proposal;
+  setProposalSelected: Dispatch<SetStateAction<Proposal | undefined>>;
 };
 
 const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
   proposal,
+  setProposalSelected,
 }) => {
   return (
     <article className='card card-compact bg-base-300 shadow-xl select-none p-2'>
@@ -74,7 +76,10 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
         </div>
 
         <div className='card-actions justify-center'>
-          <button className='btn btn-sm btn-outline btn-ghost mt-2'>
+          <button
+            className='btn btn-sm btn-outline btn-ghost mt-2'
+            onClick={() => setProposalSelected(proposal)}
+          >
             <EyeIcon className='w-4 h-4' />
             Show Details
           </button>
