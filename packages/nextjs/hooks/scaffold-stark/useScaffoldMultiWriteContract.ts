@@ -31,14 +31,12 @@ export const useScaffoldMultiWriteContract = <
 >({
   calls,
   options,
-  contractAddress,
 }: {
   calls: Array<
     | UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>
     | Call
   >;
   options?: InvocationsDetails;
-  contractAddress?: `0x${string}`;
 }) => {
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
@@ -77,7 +75,7 @@ export const useScaffoldMultiWriteContract = <
               // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
               const contractInstance = new StarknetJsContract(
                 contract.abi,
-                contractAddress ??contract.address
+                call.contractAddress ??contract.address
               );
 
               return contractInstance.populate(

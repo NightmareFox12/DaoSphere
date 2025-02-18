@@ -4,12 +4,15 @@ import {
   PlusIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import { parseEther } from 'ethers';
+import { formatEther, parseEther } from 'ethers';
+import { motion } from 'motion/react';
 import { NextPage } from 'next';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { InputBase } from '~~/components/scaffold-stark';
 import { useScaffoldMultiWriteContract } from '~~/hooks/scaffold-stark/useScaffoldMultiWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
+import { useAccount } from '~~/hooks/useAccount';
 import { VoteOptions } from '~~/types/VoteOptions';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 
@@ -32,10 +35,18 @@ const Proposal: NextPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //smart contract
+  const { address: userAddress } = useAccount();
+
   const { data: proposalCount } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     functionName: 'proposal_count',
     contractAddress: contractAddress,
+  });
+
+  const { data: userBalance } = useScaffoldReadContract({
+    contractName: 'Strk',
+    functionName: 'balance_of',
+    args: [userAddress],
   });
 
   const { sendAsync: sendProposalBasic } = useScaffoldMultiWriteContract({
@@ -51,7 +62,7 @@ const Proposal: NextPage = () => {
         contractAddress: contractAddress,
         args: [title, BigInt(new Date(endDate).getTime() / 1000)],
       },
-    ]
+    ],
   });
 
   //TODO: Arreglar el sendProposalBasic
@@ -264,7 +275,8 @@ const Proposal: NextPage = () => {
             isLoading ||
             title === '' ||
             endDate === '' ||
-            (isYesNoVote ? false : options.length <= 0)
+            (isYesNoVote ? false : options.length <= 0) ||
+            parseInt(formatEther(userBalance?.toString() ?? '0')) < 10000
           }
         >
           {isLoading ? (
@@ -276,6 +288,19 @@ const Proposal: NextPage = () => {
             'Create Proposal'
           )}
         </button>
+        {parseInt(formatEther(userBalance?.toString() ?? '0')) < 10000 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className='flex justify-center items-center gap-2'
+          >
+            <Image src='/strk.png' width={20} height={20} alt='warning' />
+            <p className='text-error font-bold m-0'>
+              You need to have STRK Sepolia to create a proposal
+            </p>
+          </motion.div>
+        )}
       </article>
     </section>
   );
