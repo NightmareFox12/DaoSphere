@@ -9,6 +9,7 @@ import { useAccount } from '~~/hooks/useAccount';
 import { feltToHex } from '~~/utils/scaffold-stark/common';
 import { getChecksumAddress } from 'starknet';
 import { Proposal } from '~~/types/Proposal';
+import { VotedProposalArgs } from '~~/types/VotedProposal';
 
 type CardPreviewProposalProps = {
   proposal: Proposal;
@@ -24,14 +25,13 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
   const { theme } = useTheme();
 
   //states
-  const [vote, setVote] = useState<boolean | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [yesVotes, setYesVotes] = useState<number>(0);
   const [noVotes, setNoVotes] = useState<number>(0);
-  const [totalVotes, setTotalVotes] = useState<number>(0);
   const [percentageYes, setPercentageYes] = useState<number>(0);
   const [percentageNo, setPercentageNo] = useState<number>(0);
+  const [voteParsed, setVoteParsed] = useState<VotedProposalArgs[]>([]);
 
   //smart contract
   const { address } = useAccount();
@@ -49,7 +49,6 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
     contractAddress,
   });
 
-
   const handleVoteProposal = async (vote: boolean) => {
     try {
       setIsLoading(true);
@@ -63,22 +62,20 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
 
   useEffect(() => {
     const yesVotes = votesProposal?.filter((x: any) => x.vote_choice === true);
-    const noVotes = votesProposal?.filter((x: any) => x.vote_choice === false);
-
-    console.log('votesProposal', votesProposal);
-
-    console.log('yesVotes', yesVotes);
-    console.log('noVotes', noVotes);
+    const noVotes = votesProposal?.filter(
+      (x: any) => x.vote_choice === false && x.voter_address !== 0n
+    );
 
     setYesVotes(yesVotes?.length ?? 0);
     setNoVotes(noVotes?.length ?? 0);
-    setTotalVotes(votesProposal?.length ?? 0);
     setPercentageYes(
       ((yesVotes?.length ?? 0) / (votesProposal?.length ?? 0)) * 100
     );
     setPercentageNo(
       ((noVotes?.length ?? 0) / (votesProposal?.length ?? 0)) * 100
     );
+
+    setVoteParsed(votesProposal as unknown as VotedProposalArgs[]);
   }, [votesProposal]);
 
   return (
@@ -89,7 +86,7 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
         <h2 className='card-title'>
           Proposal ID: {proposal.proposal_id.toString()}
         </h2>
-        <p className='text-sm truncate'>{proposal.title}</p>
+        <p className='m-0 text-sm truncate'>{proposal.title}</p>
         <div className='flex items-center gap-2'>
           <span>No</span>
           <progress
@@ -101,11 +98,11 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
             <div className='avatar-group -space-x-6 rtl:space-x-reverse'>
               {Array.from({ length: noVotes })
                 .slice(0, 3)
-                .map((_, index) => (
-                  <div className='avatar' key={index}>
+                .map((_, y) => (
+                  <div className='avatar' key={y}>
                     <div className='w-6'>
                       <BlockieAvatar
-                        address={proposal.creator_address.toString()}
+                        address={feltToHex(voteParsed[y]?.voter_address)}
                         size={0}
                         ensImage={''}
                       />
@@ -126,11 +123,11 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
             <div className='avatar-group -space-x-6 rtl:space-x-reverse'>
               {Array.from({ length: yesVotes })
                 .slice(0, 3)
-                .map((_, index) => (
-                  <div className='avatar' key={index}>
+                .map((_, y) => (
+                  <div className='avatar' key={y}>
                     <div className='w-6'>
                       <BlockieAvatar
-                        address={proposal.creator_address.toString()}
+                        address={feltToHex(voteParsed[y]?.voter_address)}
                         size={0}
                         ensImage={''}
                       />

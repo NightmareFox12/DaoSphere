@@ -60,7 +60,7 @@ const Home: NextPage = () => {
           {isConnected && (
             <Typewriter
               text='Descentralized Application designed to create and manage proposals for resolve problems in a democratic way.'
-              delay={75}
+              delay={50}
             />
           )}
 

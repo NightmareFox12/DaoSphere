@@ -511,7 +511,7 @@ pub mod DaoSphere {
             let mut proposal_voted_arr: Array<ProposalVoted> = ArrayTrait::<ProposalVoted>::new();
 
             let mut i: u64 = 0;
-            let limit: u64 = self.proposal_count.read();
+            let limit: u64 = self.proposal_voted_count.read();
 
             loop {
                 if i == limit {

@@ -24,7 +24,7 @@ pub mod DaoSphereFabric {
 
     //constants
     const DAO_SPHERE_CLASS_HASH: felt252 =
-    0x5bec4d622e0be84bfcfed3a49bbd67f678055ecf4e51aaacd19a4547d64eedc;
+        0x29c3d4f19add4abf06e84bea0fe016e27852d0ffc9cc964e31d5535cef0a926;
     const STRK_CONTRACT_ADDRESS: felt252 =
         0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d;
 
