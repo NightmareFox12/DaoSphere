@@ -35,6 +35,7 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
 
   //smart contract
   const { address } = useAccount();
+  
   const { sendAsync: setVoteProposal } = useScaffoldWriteContract({
     contractName: 'DaoSphere',
     functionName: 'set_vote_proposal',
