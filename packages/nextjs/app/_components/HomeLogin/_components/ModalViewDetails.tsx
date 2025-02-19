@@ -1,6 +1,7 @@
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { motion } from 'motion/react';
 import { NextPage } from 'next';
+import { useTheme } from 'next-themes';
 import { Dispatch, SetStateAction } from 'react';
 import { Address } from '~~/components/scaffold-stark';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
@@ -16,6 +17,7 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
   proposal,
   setProposalSelected,
 }) => {
+  const {theme} = useTheme()
   //smart contract
   // const { data: proposalVotes } = useScaffoldReadContract({
   //   contractName: 'DaoSphere',
@@ -52,7 +54,7 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
           {proposal.title}
         </h3>
 
-        <div className='collapse collapse-arrow bg-primary'>
+        <div className={`${theme === 'dark' ? 'bg-base-300' : 'bg-primary'} collapse collapse-arrow`}>
           <input className='p-0' type='checkbox' />
           <div className='collapse-title font-bold text-base'>Creator</div>
           <div className='collapse-content'>
@@ -63,6 +65,7 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
           </div>
         </div>
 
+        <h2 className='text-lg mt-2 text-center break-words'>Votes</h2>
         <div className=''>
           <table className='table'>
             {/* head */}

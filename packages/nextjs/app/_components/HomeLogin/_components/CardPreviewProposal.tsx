@@ -17,7 +17,9 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
   const { theme } = useTheme();
 
   return (
-    <article className='card card-compact bg-base-300 shadow-xl select-none p-2'>
+    <article
+      className={`${new Date(parseInt(proposal.end_time.toString()) * 1000) > new Date() ? 'bg-base-300' : 'bg-base-200'} card card-compact shadow-xl select-none p-2`}
+    >
       <div className='card-body'>
         <h2 className='card-title'>
           Proposal ID: {proposal.proposal_id.toString()}
