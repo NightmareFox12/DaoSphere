@@ -5,7 +5,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { formatEther, parseEther } from 'ethers';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,7 @@ import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldRead
 import { useAccount } from '~~/hooks/useAccount';
 import { VoteOptions } from '~~/types/VoteOptions';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
+import ButtonDateOption from './_components/ButtonDateOption';
 
 const Proposal: NextPage = () => {
   //states
@@ -31,6 +32,7 @@ const Proposal: NextPage = () => {
   const [isYesNoVote, setIsYesNoVote] = useState<boolean>(true);
   const [nextId, setNextId] = useState(1);
   const [options, setOptions] = useState<VoteOptions[]>([]);
+  const [dateOption, setDateOption] = useState<number | undefined>(undefined);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -74,6 +76,15 @@ const Proposal: NextPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (dateOption !== undefined)
+      setEndDate(
+        new Date(new Date().getTime() + dateOption * 60 * 1000)
+          .toISOString()
+          .split('.')[0]
+      );
+  }, [dateOption]);
+
   //functions
   const handleAddOption = () => {
     setOptions([
@@ -105,17 +116,14 @@ const Proposal: NextPage = () => {
     try {
       setIsLoading(true);
       if (isYesNoVote) {
-        // await sendProposalBasic({
-        //   args: [title, BigInt(new Date(endDate).getTime() / 1000)],
-        // });
         await sendProposalBasic();
       } else {
       }
       setTitle('');
       setEndDate(
-        new Date(new Date().setDate(new Date().getDate() + 1))
+        new Date(new Date().getTime() + 60 * 60 + 2000)
           .toISOString()
-          .split('T')[0]
+          .split('.')[0]
       );
       setIsYesNoVote(true);
     } catch (err) {
@@ -180,30 +188,45 @@ const Proposal: NextPage = () => {
             </p>
           </div>
 
-          <div>
-            <p className='text-lg m-1 font-bold'>
-              End Date <span className='text-error font-bold'>*</span>
-            </p>
-            <label className='input input-bordered flex items-center gap-2'>
-              <input
-                type='date'
-                className='grow'
-                placeholder='End Date'
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                min={
-                  new Date(new Date().setDate(new Date().getDate() + 1))
-                    .toISOString()
-                    .split('T')[0]
-                }
-                max={
-                  new Date(new Date().setDate(new Date().getDate() + 30))
-                    .toISOString()
-                    .split('T')[0]
-                }
-              />
-            </label>
-          </div>
+          <ButtonDateOption
+            dateOption={dateOption}
+            setDateOption={setDateOption}
+          />
+
+          <AnimatePresence>
+            {dateOption === undefined && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                enter={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className='flex flex-col'
+              >
+                <p className='text-lg m-1 font-bold'>
+                  End Date <span className='text-error font-bold'>*</span>
+                </p>
+                <label className='input input-bordered flex items-center gap-2'>
+                  <input
+                    type='datetime-local'
+                    className='grow'
+                    placeholder='End Date'
+                    value={endDate}
+                    onChange={(e) => console.log(e.target.value)}
+                    min={
+                      new Date(new Date().getTime() + 60 * 60 + 2000)
+                        .toISOString()
+                        .split('.')[0]
+                    }
+                    max={
+                      new Date(new Date().setDate(new Date().getDate() + 30))
+                        .toISOString()
+                        .split('.')[0]
+                    }
+                  />
+                </label>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* <div className='join w-full flex justify-center gap-1'>
             <button
