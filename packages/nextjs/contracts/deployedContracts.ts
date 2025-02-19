@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x7ad6b2ddedc8da975806826f48e385ed44a116c992ca2754cf5d4afd37beaa",
+        "0x8a4ea5f0a7415380941a70dc05a1ea3a78252f14d83a80448a6c1ba2567da6",
       abi: [
         {
           type: "impl",
@@ -164,11 +164,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x1ca2b07f53c5e7ca04ee5f26ae782a10cf04390046a94037e3ab9cdc879e083",
+        "0x1d0a32f99efcb33ce52167b7149a14380fb2b02109064afd30b7e4e09458009",
     },
     DaoSphere: {
       address:
-        "0x40bf84dace95f0f376b9294719beb5c2f72376e047b398f4cecf07199f1fbd",
+        "0x708977d6eec836a37790790c0dbc993092a6b0e0e31310795abf295b4a5a9d9",
       abi: [
         {
           type: "impl",
@@ -749,6 +749,33 @@ const deployedContracts = {
         },
         {
           type: "event",
+          name: "contracts::DaoSphere::DaoSphere::VotedProposal",
+          kind: "struct",
+          members: [
+            {
+              name: "proposal_id",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+            {
+              name: "voter_address",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+            {
+              name: "vote_choice",
+              type: "core::bool",
+              kind: "data",
+            },
+            {
+              name: "date",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
           name: "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleGranted",
           kind: "struct",
           members: [
@@ -862,6 +889,11 @@ const deployedContracts = {
               kind: "nested",
             },
             {
+              name: "VotedProposal",
+              type: "contracts::DaoSphere::DaoSphere::VotedProposal",
+              kind: "nested",
+            },
+            {
               name: "AccessControlEvent",
               type: "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::Event",
               kind: "flat",
@@ -875,7 +907,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x6fc466057fdfdc7d4b0353ecfd178a1546f40ef9f775420ad5f2066423a4759",
+        "0x1f98ace99d1623d500a507b8d66cce28261f6e8a64483b5c5067ae82fd2288a",
     },
   },
 } as const;

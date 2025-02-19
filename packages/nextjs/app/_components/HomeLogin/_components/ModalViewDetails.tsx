@@ -4,28 +4,35 @@ import { NextPage } from 'next';
 import { useTheme } from 'next-themes';
 import { Dispatch, SetStateAction } from 'react';
 import { Address } from '~~/components/scaffold-stark';
-import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
+import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
 import { Proposal } from '~~/types/Proposal';
 import { feltToHex } from '~~/utils/scaffold-stark/common';
 
 type ModalViewDetailsProps = {
   proposal: Proposal;
   setProposalSelected: Dispatch<SetStateAction<Proposal | undefined>>;
+  contractAddress: `0x${string}`;
 };
 
 const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
   proposal,
   setProposalSelected,
+  contractAddress,
 }) => {
-  const {theme} = useTheme()
+  const { theme } = useTheme();
   //smart contract
-  // const { data: proposalVotes } = useScaffoldReadContract({
-  //   contractName: 'DaoSphere',
-  //   functionName: 'get_votes_proposal',
-  //   args: [proposal.id],
-  // });
+  const { data: proposalVotes } = useScaffoldEventHistory({
+    contractName: 'DaoSphere',
+    eventName: 'contracts::DaoSphere::DaoSphere::VotedProposal',
+    contractAddress,
+    filters: {
+      proposal_id: proposal.proposal_id,
+    },
+    fromBlock: 0n,
+    watch: true,
+  });
 
-  // console.log(proposalVotes);
+  console.log(proposalVotes);
 
   return (
     <motion.section
@@ -54,7 +61,9 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
           {proposal.title}
         </h3>
 
-        <div className={`${theme === 'dark' ? 'bg-base-300' : 'bg-primary'} collapse collapse-arrow`}>
+        <div
+          className={`${theme === 'dark' ? 'bg-base-300' : 'bg-primary'} collapse collapse-arrow`}
+        >
           <input className='p-0' type='checkbox' />
           <div className='collapse-title font-bold text-base'>Creator</div>
           <div className='collapse-content'>
@@ -78,13 +87,18 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
               </tr>
             </thead>
             <tbody>
-              {/* row 1 */}
-              <tr>
-                <th>1</th>
-                <td>Cy Ganderton</td>
-                <td>Quality Control Specialist</td>
-                <td>Blue</td>
-              </tr>
+              {proposalVotes?.map((x, y) => (
+                <tr key={y}>
+                  <th>{y + 1}</th>
+                  {/* <td>{feltToHex(x.voter_address)}</td> */}
+                  <td>{x.vote_choice ? 'Yes' : 'No'}</td>
+                  {/* <td>
+                    {new Date(
+                      parseInt(x.date.toString()) * 1000
+                    ).toLocaleDateString()}
+                  </td> */}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

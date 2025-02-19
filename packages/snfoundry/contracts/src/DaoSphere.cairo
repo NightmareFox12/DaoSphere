@@ -145,8 +145,10 @@ pub mod DaoSphere {
 
     #[derive(Drop, starknet::Event)]
     struct VotedProposal {
+        #[key]
         proposal_id: u64,
         voter_address: ContractAddress,
+        #[key]
         vote_choice: bool,
         date: u64,
     }

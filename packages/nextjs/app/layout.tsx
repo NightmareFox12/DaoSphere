@@ -5,7 +5,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'DaoSphere',
-  description: '',
+  description:
+    'Descentralized Application designed to create and manage proposals for resolve problems in a democratic way',
   icons: '/logo.ico',
 };
 

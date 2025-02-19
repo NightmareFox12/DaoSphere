@@ -24,7 +24,7 @@ pub mod DaoSphereFabric {
 
     //constants
     const DAO_SPHERE_CLASS_HASH: felt252 =
-        0x6fc466057fdfdc7d4b0353ecfd178a1546f40ef9f775420ad5f2066423a4759;
+        0x1f98ace99d1623d500a507b8d66cce28261f6e8a64483b5c5067ae82fd2288a;
     const STRK_CONTRACT_ADDRESS: felt252 =
         0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d;
 
@@ -166,10 +166,12 @@ pub mod DaoSphereFabric {
             let strk_dispatcher: IERC20Dispatcher = self
                 ._get_token_dispatcher(contract_address_const::<STRK_CONTRACT_ADDRESS>());
 
+            assert(strk_dispatcher.balance_of(this) > 0, 'no STRK');
             strk_dispatcher.transfer(caller, strk_dispatcher.balance_of(this));
         }
     }
 
+    //internal
     #[generate_trait]
     impl Private of PrivateDaoSphereFabricTrait {
         fn _is_owner(self: @ContractState, caller: ContractAddress) {

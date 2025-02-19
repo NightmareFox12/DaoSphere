@@ -34,6 +34,7 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
           <ModalViewDetails
             proposal={proposalSelected}
             setProposalSelected={setProposalSelected}
+            contractAddress={daoAddress as `0x${string}`}
           />
         )}
       </AnimatePresence>
@@ -62,6 +63,7 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
                   <CardPreviewProposal
                     proposal={x as Proposal}
                     setProposalSelected={setProposalSelected}
+                    contractAddress={daoAddress as `0x${string}`}
                   />
                 </SwiperSlide>
               ))}

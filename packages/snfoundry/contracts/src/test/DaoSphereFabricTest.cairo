@@ -1,5 +1,7 @@
 use contracts::DaoSphereFabric::{IDaoSphereFabricDispatcher, IDaoSphereFabricDispatcherTrait};
 
+//TODO: AGREGAR TODO EL APARTADO DEL WITHDRAW, COMO POR EJEMPLO VERIFICAR QUE HAYA EL ERROR AL LLAMAR LA FUNCION SIN SER ADMINISTRADOR Y SI NO HAY STRK
+
 use snforge_std::{
     ContractClassTrait, DeclareResultTrait, declare, DeclareResult, EventSpyTrait, spy_events,
 };
