@@ -1,7 +1,6 @@
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { NextPage } from 'next';
 import { BlockieAvatar } from '~~/components/scaffold-stark';
-import { Proposal } from '~~/types/Proposal';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
@@ -9,6 +8,7 @@ import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldRead
 import { useAccount } from '~~/hooks/useAccount';
 import { feltToHex } from '~~/utils/scaffold-stark/common';
 import { getChecksumAddress } from 'starknet';
+import { Proposal } from '~~/types/Proposal';
 
 type CardPreviewProposalProps = {
   proposal: Proposal;
@@ -42,13 +42,13 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
     contractAddress,
   });
 
-  // smart contract
   const { data: votesProposal } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     functionName: 'get_votes_proposal',
     args: [Number(proposal.proposal_id)],
     contractAddress,
   });
+
 
   const handleVoteProposal = async (vote: boolean) => {
     try {
@@ -63,9 +63,12 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
 
   useEffect(() => {
     const yesVotes = votesProposal?.filter((x: any) => x.vote_choice === true);
-    const noVotes = votesProposal?.filter(
-      (x: any) => x.vote_choice === false && x.voter_address !== 0n
-    );
+    const noVotes = votesProposal?.filter((x: any) => x.vote_choice === false);
+
+    console.log('votesProposal', votesProposal);
+
+    console.log('yesVotes', yesVotes);
+    console.log('noVotes', noVotes);
 
     setYesVotes(yesVotes?.length ?? 0);
     setNoVotes(noVotes?.length ?? 0);

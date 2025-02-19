@@ -5,7 +5,6 @@ import { useTheme } from 'next-themes';
 import { Dispatch, SetStateAction } from 'react';
 import { Address } from '~~/components/scaffold-stark';
 import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
-import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 import { Proposal } from '~~/types/Proposal';
 import { VotedProposal } from '~~/types/VotedProposal';
 import { feltToHex } from '~~/utils/scaffold-stark/common';
@@ -24,7 +23,7 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
   const { theme } = useTheme();
 
   //smart contract
-  const { data: votesProposal } = useScaffoldEventHistory({
+  const { data: votesProposal, isLoading } = useScaffoldEventHistory({
     contractName: 'DaoSphere',
     eventName: 'contracts::DaoSphere::DaoSphere::VotedProposal',
     filters: {
@@ -33,8 +32,6 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
     contractAddress,
     fromBlock: 0n,
   });
-
-  console.log(votesProposal);
 
   return (
     <motion.section
@@ -76,40 +73,42 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
           </div>
         </div>
 
-        <h2 className='text-lg mt-2 text-center break-words'>Votes</h2>
-        <div className=''>
-          <table className='table'>
-            {/* head */}
-            <thead>
-              <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Vote</th>
-                <th>Date</th>
+        <h2 className='text-lg mt-2 text-center font-semibold'>Votes</h2>
+        {!isLoading ? (
+        <table className='table'>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Vote</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {votesProposal?.map((x: VotedProposal, y: number) => (
+              <tr key={y}>
+                <th>{y + 1}</th>
+                <td>
+                  <Address
+                    size='base'
+                    address={feltToHex(x.args.voter_address) as `0x${string}`}
+                  />
+                </td>
+                <td>{x.args.vote_choice ? 'Yes' : 'No'}</td>
+                <td>
+                  {new Date(
+                    parseInt(x.args.date.toString()) * 1000
+                  ).toLocaleDateString()}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {votesProposal?.map((x: VotedProposal, y: number) => (
-                <tr key={y}>
-
-                  <th>{feltToHex(x.args.voter_address)}</th>
-                  <td>
-                    <Address
-                      size='base'
-                      address={feltToHex(x.args.voter_address) as `0x${string}`}
-                    />
-                  </td>
-                  <td>{x.args.vote_choice ? 'Yes' : 'No'}</td>
-                  <td>
-                    {new Date(
-                      parseInt(x.args.date.toString()) * 1000
-                    ).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+        ) : (
+          <div className='flex justify-center items-center mt-20'>
+            <span className='loading loading-dots scale-150'/>
+          </div>
+        )}
       </motion.div>
     </motion.section>
   );

@@ -54,7 +54,8 @@ pub mod DaoSphere {
         get_caller_address, ContractAddress, get_block_timestamp, contract_address_const,
     };
     use core::num::traits::Zero;
-    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use openzeppelin_token::erc20::interface::IERC20Dispatcher;
+    // use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use openzeppelin_access::accesscontrol::interface::IAccessControlCamel;
     use AccessControlComponent::InternalTrait;
     use openzeppelin_access::accesscontrol::{DEFAULT_ADMIN_ROLE, AccessControlComponent};
@@ -85,6 +86,7 @@ pub mod DaoSphere {
         dao_sphere_fabric: ContractAddress,
         proposal_count: u64,
         proposals: Map<u64, Proposal>,
+        proposal_voted_count: u64,
         proposals_voted: Map<u64, ProposalVoted>,
         // proposal_options: Map<u64, OptionProposal>,
         vote_selected_access: VoteCreationAccess,
@@ -444,7 +446,7 @@ pub mod DaoSphere {
 
             proposals_arr
         }
-        
+
         fn get_open_proposals(self: @ContractState) -> Array<Proposal> {
             let mut proposals_arr: Array<Proposal> = ArrayTrait::<Proposal>::new();
 
@@ -466,18 +468,30 @@ pub mod DaoSphere {
 
         fn set_vote_proposal(ref self: ContractState, proposal_id: u64, vote_choice: bool) {
             let caller = get_caller_address();
+            let proposal_count: u64 = self.proposal_count.read();
+            let proposal_voted_count: u64 = self.proposal_voted_count.read();
 
+            assert(proposal_id < proposal_count, 'Invalid proposal id');
             assert(
                 self.proposals.read(proposal_id).end_time > get_block_timestamp(), 'Proposal ended',
             );
 
-            let proposal_voted: ProposalVoted = self.proposals_voted.read(proposal_id);
-            assert(proposal_voted.voter_address != caller, 'You already voted');
+            let mut i: u64 = 0;
+            loop {
+                if i == proposal_voted_count {
+                    break;
+                }
+                if self.proposals_voted.read(i).voter_address == caller {
+                    assert(false, 'You already voted');
+                }
+                i += 1;
+            };
 
             self
                 .proposals_voted
                 .write(
-                    proposal_id, ProposalVoted { proposal_id, vote_choice, voter_address: caller },
+                    proposal_voted_count,
+                    ProposalVoted { proposal_id, vote_choice, voter_address: caller },
                 );
 
             self
@@ -489,6 +503,8 @@ pub mod DaoSphere {
                         date: get_block_timestamp(),
                     },
                 );
+
+            self.proposal_voted_count.write(proposal_voted_count + 1);
         }
 
         fn get_votes_proposal(self: @ContractState, proposal_id: u64) -> Array<ProposalVoted> {
@@ -565,6 +581,7 @@ pub mod DaoSphere {
     // }
     }
 
+    //internal
     #[generate_trait]
     pub impl Private of PrivateDaoSphereTrait {
         fn _validate_vote_access(ref self: ContractState, caller: ContractAddress) {
