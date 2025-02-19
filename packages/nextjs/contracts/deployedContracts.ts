@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x11f2b14405ab971a9f744e19a905c62e64d3459c7b1c7c4b20bfa0f3f8f1bf3",
+        "0xffe27b98964c05808f763661b9f566b845dc5a8b6a639d4ffad0ea34b67352",
       abi: [
         {
           type: "impl",
@@ -164,11 +164,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x223ebde1094859e8b95cd4965d0516b9af90d66982f70ec3a343a44bc4dbbfc",
+        "0x6c6a8e6dcea917095c22207890d8c6cb04ff71a19803a0c57459db2fa2cec46",
     },
     DaoSphere: {
       address:
-        "0x34327defaca922847bbe84b70bd050a12e1423f57d0d274e5e50d33ff1d8455",
+        "0x16b3a718cd75e6c4bc6c08e718c91a6122bbb037fe72ee4446d2cf0373a8be2",
       abi: [
         {
           type: "impl",
@@ -537,6 +537,17 @@ const deployedContracts = {
                   type: "core::starknet::contract_address::ContractAddress",
                 },
               ],
+              outputs: [
+                {
+                  type: "core::array::Array::<contracts::models::DaoSphereModel::Proposal>",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_open_proposals",
+              inputs: [],
               outputs: [
                 {
                   type: "core::array::Array::<contracts::models::DaoSphereModel::Proposal>",
@@ -941,7 +952,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x4834d0bc26a1d4e3aa6a5db58e5840c7c9f2af51e4479d67742f546d2f4a858",
+        "0x5bec4d622e0be84bfcfed3a49bbd67f678055ecf4e51aaacd19a4547d64eedc",
     },
   },
 } as const;

@@ -6,8 +6,9 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
-import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
 import { useAccount } from '~~/hooks/useAccount';
+import { feltToHex } from '~~/utils/scaffold-stark/common';
+import { getChecksumAddress } from 'starknet';
 
 type CardPreviewProposalProps = {
   proposal: Proposal;
@@ -62,7 +63,9 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
 
   useEffect(() => {
     const yesVotes = votesProposal?.filter((x: any) => x.vote_choice === true);
-    const noVotes = votesProposal?.filter((x: any) => x.vote_choice === false);
+    const noVotes = votesProposal?.filter(
+      (x: any) => x.vote_choice === false && x.voter_address !== 0n
+    );
 
     setYesVotes(yesVotes?.length ?? 0);
     setNoVotes(noVotes?.length ?? 0);
@@ -136,7 +139,11 @@ const CardPreviewProposal: NextPage<CardPreviewProposalProps> = ({
         </div>
 
         {new Date(parseInt(proposal.end_time.toString()) * 1000) > new Date() &&
-          votesProposal?.find((x: any) => x.voter_address === address) && (
+          !votesProposal?.find(
+            (x: any) =>
+              getChecksumAddress(feltToHex(x.voter_address)).toLowerCase() ==
+              address?.toLowerCase()
+          ) && (
             <div className='card-actions justify-center'>
               <button
                 onClick={() => handleVoteProposal(true)}

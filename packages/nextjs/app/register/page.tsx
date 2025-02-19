@@ -11,6 +11,7 @@ import { SwitchTheme } from '~~/components/SwitchTheme';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
+import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 
 const Register: NextPage = () => {
   const router = useRouter();
@@ -22,10 +23,15 @@ const Register: NextPage = () => {
   const [loaderCreateDao, setLoaderCreateDao] = useState<boolean>(false);
 
   //smart contract
+  const { data: deployBlock } = useScaffoldReadContract({
+    contractName: 'DaoSphereFabric',
+    functionName: 'get_deploy_block',
+  });
+
   const { data } = useScaffoldEventHistory({
     contractName: 'DaoSphereFabric',
     eventName: 'contracts::DaoSphereFabric::DaoSphereFabric::DaoCreated',
-    fromBlock: 0n, //TODO: DESDE QUE BLOQUE!!
+    fromBlock: BigInt(deployBlock?.toString() || 0),
   });
 
   useEffect(() => {
@@ -37,7 +43,6 @@ const Register: NextPage = () => {
     const isMatch = data.some(
       (x) => x.args.name_dao.toLowerCase() === nameDao.toLowerCase()
     );
-
     setEnableButton(!isMatch);
   }, [nameDao, data]);
 

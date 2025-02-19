@@ -20,10 +20,17 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
   >(undefined);
 
   //smart contract
-  const { data: proposals } = useScaffoldReadContract({
+  const { data: myProposals } = useScaffoldReadContract({
     contractName: 'DaoSphere',
     functionName: 'get_my_proposals',
     args: [address],
+    contractAddress: daoAddress as `0x${string}`,
+  });
+
+  const { data: openProposals } = useScaffoldReadContract({
+    contractName: 'DaoSphere',
+    functionName: 'get_open_proposals',
+    args: [],
     contractAddress: daoAddress as `0x${string}`,
   });
 
@@ -40,7 +47,7 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
       </AnimatePresence>
 
       <h2 className='text-2xl font-bold text-center'>My Proposals</h2>
-      {proposals && proposals.length > 0 ? (
+      {myProposals && myProposals.length > 0 ? (
         <>
           <div className='w-full px-2'>
             <Swiper
@@ -58,7 +65,7 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
                 },
               }}
             >
-              {proposals?.slice(0, 6).map((x: any, y: number) => (
+              {myProposals?.slice(0, 6).map((x: any, y: number) => (
                 <SwiperSlide key={y} className='p-4'>
                   <CardPreviewProposal
                     proposal={x as Proposal}
@@ -75,7 +82,18 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
         </>
       ) : (
         <section className='flex flex-col'>
-          <h2 className='text-lg font-bold text-center'>No proposals</h2>
+          <h2 className='text-lg font-bold text-center'>No myProposals</h2>
+        </section>
+      )}
+
+      <h2 className='text-2xl font-bold text-center'>Open Proposals</h2>
+      {openProposals && openProposals.length > 0 ? (
+        <section className='flex flex-col'>
+          <h2 className='text-lg font-bold text-center'>No Open Proposals</h2>
+        </section>
+      ) : (
+        <section className='flex flex-col'>
+          <h2 className='text-lg font-bold text-center'>No openProposals</h2>
         </section>
       )}
     </section>

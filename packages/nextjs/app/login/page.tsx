@@ -100,40 +100,29 @@ const Login: NextPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
           >
-            <h4 className='text-center font-semibold text-2xl mt-5'>DAOs</h4>
-            {/* {isLoading ? ( */}
-              {/* <article className='flex flex-col gap-3'>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <div key={index} className='skeleton h-10 w-full' />
-                ))}
-              </article> */}
-            {/* ) : ( */}
-
-              <>
-                {daoData.length === 0 && data.length !== 0 ? (
-                  <motion.p
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    className='text-center text-lg'
-                  >
-                    There is no DAO by that name
-                  </motion.p>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    className='overflow-x-auto w-full'
-                  >
-                    <TableDaoPublic
-                      daoData={daoData}
-                      handleEnterDao={handleEnterDao}
-                    />
-                  </motion.div>
-                )}
-              </>
-            {/* // )} */}
+            <h4 className='text-center font-semibold text-2xl mt-5'>DAO</h4>
+            {daoData.length === 0 && data.length !== 0 ? (
+              <motion.p
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                className='text-center text-lg'
+              >
+                There is no DAO by that name
+              </motion.p>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                className='overflow-x-auto w-full'
+              >
+                <TableDaoPublic
+                  daoData={daoData}
+                  handleEnterDao={handleEnterDao}
+                />
+              </motion.div>
+            )}
           </motion.div>
         </AnimatePresence>
       </article>

@@ -33,7 +33,7 @@ pub trait IDaoSphere<TContractState> {
     fn get_my_proposals(
         self: @TContractState, caller: ContractAddress,
     ) -> Array<DaoSphereModel::Proposal>;
-
+    fn get_open_proposals(self: @TContractState) -> Array<DaoSphereModel::Proposal>;
     fn set_vote_proposal(ref self: TContractState, proposal_id: u64, vote_choice: bool);
     fn get_votes_proposal(
         self: @TContractState, proposal_id: u64,
@@ -433,7 +433,9 @@ pub mod DaoSphere {
             let limit: u64 = self.proposal_count.read();
 
             loop {
-                if i == limit { break;}
+                if i == limit {
+                    break;
+                }
                 if self.proposals.read(i).creator_address == caller {
                     proposals_arr.append(self.proposals.read(i));
                 }
@@ -442,12 +444,25 @@ pub mod DaoSphere {
 
             proposals_arr
         }
+        
+        fn get_open_proposals(self: @ContractState) -> Array<Proposal> {
+            let mut proposals_arr: Array<Proposal> = ArrayTrait::<Proposal>::new();
 
-        //    fn get_votes_proposal(
-        //     self: @ContractState, proposal_id: u64,
-        // ) -> Array<DaoSphereModel::ProposalVoted> {
-        //     self.proposals_voted.read(proposal_id)
-        //     }
+            let mut i: u64 = 0;
+            let limit: u64 = self.proposal_count.read();
+
+            loop {
+                if i == limit {
+                    break;
+                }
+                if self.proposals.read(i).end_time > get_block_timestamp() {
+                    proposals_arr.append(self.proposals.read(i));
+                }
+                i += 1;
+            };
+
+            proposals_arr
+        }
 
         fn set_vote_proposal(ref self: ContractState, proposal_id: u64, vote_choice: bool) {
             let caller = get_caller_address();

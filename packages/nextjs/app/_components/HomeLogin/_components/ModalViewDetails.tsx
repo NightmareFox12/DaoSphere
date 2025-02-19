@@ -91,7 +91,8 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
             <tbody>
               {votesProposal?.map((x: VotedProposal, y: number) => (
                 <tr key={y}>
-                  <th>{y + 1}</th>
+
+                  <th>{feltToHex(x.args.voter_address)}</th>
                   <td>
                     <Address
                       size='base'
