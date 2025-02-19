@@ -20,6 +20,7 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
   contractAddress,
 }) => {
   const { theme } = useTheme();
+  
   //smart contract
   const { data: proposalVotes } = useScaffoldEventHistory({
     contractName: 'DaoSphere',

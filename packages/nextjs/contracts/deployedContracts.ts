@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x8a4ea5f0a7415380941a70dc05a1ea3a78252f14d83a80448a6c1ba2567da6",
+        "0x112b9fa314eed2aff7292f3ec29397c459093534205037f475b99ba7f80322d",
       abi: [
         {
           type: "impl",
@@ -164,11 +164,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x1d0a32f99efcb33ce52167b7149a14380fb2b02109064afd30b7e4e09458009",
+        "0x2732c05c162c529a0e8bfd8f09529543febf1a7e5936b1597db43d05dcef941",
     },
     DaoSphere: {
       address:
-        "0x708977d6eec836a37790790c0dbc993092a6b0e0e31310795abf295b4a5a9d9",
+        "0x31bd58615557b0dcfef39ed22168ecb3154c4334b7a63233bbb3c53d7d046c8",
       abi: [
         {
           type: "impl",
@@ -755,7 +755,7 @@ const deployedContracts = {
             {
               name: "proposal_id",
               type: "core::integer::u64",
-              kind: "data",
+              kind: "key",
             },
             {
               name: "voter_address",
@@ -765,7 +765,7 @@ const deployedContracts = {
             {
               name: "vote_choice",
               type: "core::bool",
-              kind: "data",
+              kind: "key",
             },
             {
               name: "date",
@@ -907,7 +907,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x1f98ace99d1623d500a507b8d66cce28261f6e8a64483b5c5067ae82fd2288a",
+        "0x4733d86d99f7254861807c7e5a746ec866002df187f6ea314e21e6492022640",
     },
   },
 } as const;

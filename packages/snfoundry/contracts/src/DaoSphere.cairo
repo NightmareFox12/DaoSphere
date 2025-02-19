@@ -35,6 +35,9 @@ pub trait IDaoSphere<TContractState> {
     ) -> Array<DaoSphereModel::Proposal>;
 
     fn set_vote_proposal(ref self: TContractState, proposal_id: u64, vote_choice: bool);
+    fn get_votes_proposal(
+        self: @TContractState, proposal_id: u64,
+    ) -> Array<DaoSphereModel::ProposalVoted>;
     // fn get_votes_proposal(
 // self: @TContractState, proposal_id: u64,
 // ) -> Array<DaoSphereModel::ProposalVoted>;
@@ -483,6 +486,26 @@ pub mod DaoSphere {
                         date: get_block_timestamp(),
                     },
                 );
+        }
+
+        fn get_votes_proposal(self: @ContractState, proposal_id: u64) -> Array<ProposalVoted> {
+            let mut proposal_voted_arr: Array<ProposalVoted> = ArrayTrait::<ProposalVoted>::new();
+
+            let mut i: u64 = 0;
+            let limit: u64 = self.proposal_count.read();
+
+            loop {
+                if i == limit {
+                    break;
+                }
+
+                if self.proposals_voted.read(i).proposal_id == proposal_id {
+                    proposal_voted_arr.append(self.proposals_voted.read(i));
+                }
+                i += 1;
+            };
+
+            proposal_voted_arr
         }
         // fn create_proposal_multiple(
     //     ref self: ContractState,

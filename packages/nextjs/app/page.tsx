@@ -59,10 +59,7 @@ const Home: NextPage = () => {
 
           {isConnected && (
             <Typewriter
-              text='Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Distinctio at doloremque qui eos doloribus sapiente, sint expedita
-              maxime porro magnam nam explicabo? Ut reiciendis sed quis nihil
-              ipsa, commodi iste.'
+              text='Descentralized Application designed to create and manage proposals for resolve problems in a democratic way.'
               delay={75}
             />
           )}
