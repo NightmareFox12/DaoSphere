@@ -481,7 +481,8 @@ pub mod DaoSphere {
                 if i == proposal_voted_count {
                     break;
                 }
-                if self.proposals_voted.read(i).voter_address == caller {
+                if self.proposals_voted.read(i).voter_address == caller
+                    && self.proposals_voted.read(i).proposal_id == proposal_id {
                     assert(false, 'You already voted');
                 }
                 i += 1;

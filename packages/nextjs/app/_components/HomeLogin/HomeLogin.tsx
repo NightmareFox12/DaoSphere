@@ -64,7 +64,7 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
                 },
               }}
             >
-              {myProposals?.slice(0, 6).map((x: any, y: number) => (
+              {myProposals?.map((x: any, y: number) => (
                 <SwiperSlide key={y} className='p-4'>
                   <CardPreviewProposal
                     proposal={x as Proposal}
@@ -75,9 +75,9 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
               ))}
             </Swiper>
           </div>
-          <button className='btn btn-sm btn-ghost mx-auto '>
+          {/* <button className='btn btn-sm btn-ghost mx-auto '>
             <p className='m-0 text-sm'>Show more</p>
-          </button>
+          </button> */}
         </>
       ) : (
         <section className='flex flex-col'>
@@ -85,6 +85,7 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
         </section>
       )}
 
+      <br className='my-10' />
       <h2 className='text-2xl font-bold text-center'>Open Proposals</h2>
       {openProposals && openProposals.length > 0 ? (
         <>
@@ -104,7 +105,7 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
                 },
               }}
             >
-              {openProposals?.slice(0, 6).map((x: any, y: number) => (
+              {openProposals?.map((x: any, y: number) => (
                 <SwiperSlide key={y} className='p-4'>
                   <CardPreviewProposal
                     proposal={x as Proposal}
@@ -115,9 +116,9 @@ const HomeLogin: NextPage<HomeLoginProps> = ({ address, daoAddress }) => {
               ))}
             </Swiper>
           </div>
-          <button className='btn btn-sm btn-ghost mx-auto '>
+          {/* <button className='btn btn-sm btn-ghost mx-auto '>
             <p className='m-0 text-sm'>Show more</p>
-          </button>
+          </button> */}
         </>
       ) : (
         <section className='flex flex-col'>
