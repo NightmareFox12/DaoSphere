@@ -115,6 +115,7 @@ pub mod DaoSphere {
         CreatedUser: CreatedUser,
         CreatedAdvisor: CreatedAdvisor,
         CreatedProposal: CreatedProposal,
+        VotedProposal: VotedProposal,
         #[flat]
         AccessControlEvent: AccessControlComponent::Event,
         #[flat]
@@ -140,6 +141,14 @@ pub mod DaoSphere {
         title: ByteArray,
         start_time: u64,
         end_time: u64,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct VotedProposal {
+        proposal_id: u64,
+        voter_address: ContractAddress,
+        vote_choice: bool,
+        date: u64,
     }
 
 
@@ -450,7 +459,9 @@ pub mod DaoSphere {
         fn set_vote_proposal(ref self: ContractState, proposal_id: u64, vote_choice: bool) {
             let caller = get_caller_address();
 
-            assert(self.proposals.read(proposal_id).end_time > get_block_timestamp(), 'Proposal ended');
+            assert(
+                self.proposals.read(proposal_id).end_time > get_block_timestamp(), 'Proposal ended',
+            );
 
             let proposal_voted: ProposalVoted = self.proposals_voted.read(proposal_id);
             assert(proposal_voted.voter_address != caller, 'You already voted');
@@ -459,6 +470,16 @@ pub mod DaoSphere {
                 .proposals_voted
                 .write(
                     proposal_id, ProposalVoted { proposal_id, vote_choice, voter_address: caller },
+                );
+
+            self
+                .emit(
+                    VotedProposal {
+                        proposal_id,
+                        vote_choice,
+                        voter_address: caller,
+                        date: get_block_timestamp(),
+                    },
                 );
         }
         // fn create_proposal_multiple(

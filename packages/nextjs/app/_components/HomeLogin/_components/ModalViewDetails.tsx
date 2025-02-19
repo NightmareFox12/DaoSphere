@@ -36,7 +36,7 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         exit={{ y: 100 }}
-        className='bg-base-100 w-full sm:w-8/12 h-full rounded-3xl m-10 p-5 outline outline-2 outline-accent'
+        className='bg-base-100 w-full sm:w-8/12 h-full overflow-auto rounded-3xl m-10 p-5 outline outline-2 outline-accent'
       >
         <div className='p-1 flex justify-between items-center'>
           <h2 className='font-bold text-lg'>Proposal Details</h2>
@@ -53,25 +53,25 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
         </h3>
 
         <div className='collapse collapse-arrow bg-primary'>
-          <input type='checkbox' />
-          <div className='collapse-title text-xl font-medium'>Creator</div>
+          <input className='p-0' type='checkbox' />
+          <div className='collapse-title font-bold text-base'>Creator</div>
           <div className='collapse-content'>
             <Address
-              size='lg'
+              size='base'
               address={feltToHex(proposal.creator_address) as `0x${string}`}
             />
           </div>
         </div>
 
-        <div className='overflow-x-auto'>
+        <div className=''>
           <table className='table'>
             {/* head */}
             <thead>
               <tr>
                 <th></th>
                 <th>Name</th>
-                <th>Job</th>
-                <th>Favorite Color</th>
+                <th>Vote</th>
+                <th>Date</th>
               </tr>
             </thead>
             <tbody>
@@ -81,20 +81,6 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
                 <td>Cy Ganderton</td>
                 <td>Quality Control Specialist</td>
                 <td>Blue</td>
-              </tr>
-              {/* row 2 */}
-              <tr>
-                <th>2</th>
-                <td>Hart Hagerty</td>
-                <td>Desktop Support Technician</td>
-                <td>Purple</td>
-              </tr>
-              {/* row 3 */}
-              <tr>
-                <th>3</th>
-                <td>Brice Swyre</td>
-                <td>Tax Accountant</td>
-                <td>Red</td>
               </tr>
             </tbody>
           </table>

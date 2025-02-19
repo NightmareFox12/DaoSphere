@@ -4,8 +4,8 @@ import { ThemeProvider } from '~~/components/ThemeProvider';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Scaffold-Stark',
-  description: 'Fast track your starknet journey',
+  title: 'DaoSphere',
+  description: '',
   icons: '/logo.ico',
 };
 
