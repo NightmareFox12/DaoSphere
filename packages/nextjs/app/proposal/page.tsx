@@ -24,15 +24,13 @@ const Proposal: NextPage = () => {
 
   const [isNotification, setIsNotification] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
+  const [dateOption, setDateOption] = useState<number | undefined>(5);
   const [endDate, setEndDate] = useState<string>(
-    new Date(new Date().setDate(new Date().getDate() + 1))
-      .toISOString()
-      .split('T')[0]
+    new Date(new Date().getTime() + 5 * 60 * 1000).toISOString().split('.')[0]
   );
   const [isYesNoVote, setIsYesNoVote] = useState<boolean>(true);
   const [nextId, setNextId] = useState(1);
   const [options, setOptions] = useState<VoteOptions[]>([]);
-  const [dateOption, setDateOption] = useState<number | undefined>(undefined);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
