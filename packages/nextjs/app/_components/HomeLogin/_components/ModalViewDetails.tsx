@@ -5,7 +5,9 @@ import { useTheme } from 'next-themes';
 import { Dispatch, SetStateAction } from 'react';
 import { Address } from '~~/components/scaffold-stark';
 import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
+import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
 import { Proposal } from '~~/types/Proposal';
+import { VotedProposal } from '~~/types/VotedProposal';
 import { feltToHex } from '~~/utils/scaffold-stark/common';
 
 type ModalViewDetailsProps = {
@@ -20,20 +22,19 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
   contractAddress,
 }) => {
   const { theme } = useTheme();
-  
+
   //smart contract
-  const { data: proposalVotes } = useScaffoldEventHistory({
+  const { data: votesProposal } = useScaffoldEventHistory({
     contractName: 'DaoSphere',
     eventName: 'contracts::DaoSphere::DaoSphere::VotedProposal',
-    contractAddress,
     filters: {
       proposal_id: proposal.proposal_id,
     },
+    contractAddress,
     fromBlock: 0n,
-    watch: true,
   });
 
-  console.log(proposalVotes);
+  console.log(votesProposal);
 
   return (
     <motion.section
@@ -88,16 +89,21 @@ const ModalViewDetails: NextPage<ModalViewDetailsProps> = ({
               </tr>
             </thead>
             <tbody>
-              {proposalVotes?.map((x, y) => (
+              {votesProposal?.map((x: VotedProposal, y: number) => (
                 <tr key={y}>
                   <th>{y + 1}</th>
-                  {/* <td>{feltToHex(x.voter_address)}</td> */}
-                  <td>{x.vote_choice ? 'Yes' : 'No'}</td>
-                  {/* <td>
+                  <td>
+                    <Address
+                      size='base'
+                      address={feltToHex(x.args.voter_address) as `0x${string}`}
+                    />
+                  </td>
+                  <td>{x.args.vote_choice ? 'Yes' : 'No'}</td>
+                  <td>
                     {new Date(
-                      parseInt(x.date.toString()) * 1000
+                      parseInt(x.args.date.toString()) * 1000
                     ).toLocaleDateString()}
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>

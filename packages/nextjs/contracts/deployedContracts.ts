@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x112b9fa314eed2aff7292f3ec29397c459093534205037f475b99ba7f80322d",
+        "0x11f2b14405ab971a9f744e19a905c62e64d3459c7b1c7c4b20bfa0f3f8f1bf3",
       abi: [
         {
           type: "impl",
@@ -164,11 +164,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x2732c05c162c529a0e8bfd8f09529543febf1a7e5936b1597db43d05dcef941",
+        "0x223ebde1094859e8b95cd4965d0516b9af90d66982f70ec3a343a44bc4dbbfc",
     },
     DaoSphere: {
       address:
-        "0x31bd58615557b0dcfef39ed22168ecb3154c4334b7a63233bbb3c53d7d046c8",
+        "0x34327defaca922847bbe84b70bd050a12e1423f57d0d274e5e50d33ff1d8455",
       abi: [
         {
           type: "impl",
@@ -292,6 +292,24 @@ const deployedContracts = {
             {
               name: "end_time",
               type: "core::integer::u64",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::models::DaoSphereModel::ProposalVoted",
+          members: [
+            {
+              name: "proposal_id",
+              type: "core::integer::u64",
+            },
+            {
+              name: "vote_choice",
+              type: "core::bool",
+            },
+            {
+              name: "voter_address",
+              type: "core::starknet::contract_address::ContractAddress",
             },
           ],
         },
@@ -541,6 +559,22 @@ const deployedContracts = {
               ],
               outputs: [],
               state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_votes_proposal",
+              inputs: [
+                {
+                  name: "proposal_id",
+                  type: "core::integer::u64",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::array::Array::<contracts::models::DaoSphereModel::ProposalVoted>",
+                },
+              ],
+              state_mutability: "view",
             },
           ],
         },
@@ -907,7 +941,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x4733d86d99f7254861807c7e5a746ec866002df187f6ea314e21e6492022640",
+        "0x4834d0bc26a1d4e3aa6a5db58e5840c7c9f2af51e4479d67742f546d2f4a858",
     },
   },
 } as const;

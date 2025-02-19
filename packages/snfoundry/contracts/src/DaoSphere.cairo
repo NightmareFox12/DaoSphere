@@ -38,10 +38,6 @@ pub trait IDaoSphere<TContractState> {
     fn get_votes_proposal(
         self: @TContractState, proposal_id: u64,
     ) -> Array<DaoSphereModel::ProposalVoted>;
-    // fn get_votes_proposal(
-// self: @TContractState, proposal_id: u64,
-// ) -> Array<DaoSphereModel::ProposalVoted>;
-
     // fn create_proposal_multiple(
 //     ref self: TContractState,
 //     title: ByteArray,
@@ -437,15 +433,7 @@ pub mod DaoSphere {
             let limit: u64 = self.proposal_count.read();
 
             loop {
-                if i == limit {
-                    break Proposal {
-                        proposal_id: 0,
-                        creator_address: 0.try_into().unwrap(),
-                        title: "",
-                        start_time: 0,
-                        end_time: 0,
-                    };
-                }
+                if i == limit { break;}
                 if self.proposals.read(i).creator_address == caller {
                     proposals_arr.append(self.proposals.read(i));
                 }
@@ -498,7 +486,6 @@ pub mod DaoSphere {
                 if i == limit {
                     break;
                 }
-
                 if self.proposals_voted.read(i).proposal_id == proposal_id {
                     proposal_voted_arr.append(self.proposals_voted.read(i));
                 }
