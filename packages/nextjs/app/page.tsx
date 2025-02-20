@@ -81,7 +81,7 @@ const Home: NextPage = () => {
                 onClick={() => router.push('/login')}
               >
                 <h2 className='card-title'>Login</h2>
-                <p>enter a DAO</p>
+                <p>Enter a DAO</p>
               </div>
             </article>
           </section>
