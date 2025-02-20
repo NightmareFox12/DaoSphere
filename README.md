@@ -65,3 +65,4 @@ The contract uses several StarkNet features including event emission 📡, stora
 **Project in Vercel**: <https://dao-sphere.vercel.app>  
 **Repository**: <https://github.com/NightmareFox12/DaoSphere>  
 **Video**: <https://www.youtube.com/watch?v=jv4CbdQcyUE&feature=youtu.be>
+
