@@ -9,7 +9,7 @@ import UserConfig from './userConfig/page';
 import ModalAdminOrSupervisor from './_components/ModalAdminOrSupervisor';
 import DataConfig from './dataConfig/page';
 import ToastConfiguration from './_components/ToastConfiguration';
-// import AdvisorConfig from './advisorConfig/page';
+import AdvisorConfig from './advisorConfig/page';
 
 const Configuration: NextPage = () => {
   const { account } = useAccount();
@@ -65,12 +65,12 @@ const Configuration: NextPage = () => {
           <UserConfig contractAddress={contractAddress} setOption={setOption} />
         )}
 
-        {/* {option === 2 && (
+        {option === 2 && (
           <AdvisorConfig
             contractAddress={contractAddress}
             setOption={setOption}
           />
-        )} */}
+        )}
 
         {option === 3 && (
           <DataConfig contractAddress={contractAddress} setOption={setOption} />
