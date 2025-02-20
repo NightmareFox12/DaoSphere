@@ -23,7 +23,6 @@ pub mod DaoSphereFabric {
         get_caller_address, ContractAddress, get_block_number, get_contract_address,
         contract_address_const,
     };
-    use starknet::event::EventEmitter;
     use starknet::storage::Map;
     use starknet::syscalls::deploy_syscall;
     use starknet::class_hash::{class_hash_const, ClassHash};
@@ -53,20 +52,6 @@ pub mod DaoSphereFabric {
         daos: Map<u64, Dao>,
         deploy_block: u64,
     }
-
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    enum Event {
-        OwnerAdded: OwnerAdded,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct OwnerAdded {
-        owner_id: u64,
-        #[key]
-        owner: ContractAddress,
-    }
-
 
     fn verifyName(ref self: ContractState, dao_id: u64, name_dao: ByteArray) -> bool {
         let mut i: u64 = 0;
@@ -171,8 +156,6 @@ pub mod DaoSphereFabric {
 
             self.owners.write(owner_count, owner);
             self.owner_count.write(owner_count + 1);
-
-            self.emit(OwnerAdded { owner_id: owner_count, owner });
         }
 
         fn withdraw(ref self: ContractState) {

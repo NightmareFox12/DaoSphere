@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     DaoSphereFabric: {
       address:
-        "0x14644373e7dce9b9e60df8e63b8810163fa0c02a8c8723a52f5cf27dd4893b6",
+        "0x20c334846d38abd865fc94df15f11f4a5de122647de5ba48b0d5357a7e71c2e",
       abi: [
         {
           type: "impl",
@@ -136,40 +136,17 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::DaoSphereFabric::DaoSphereFabric::OwnerAdded",
-          kind: "struct",
-          members: [
-            {
-              name: "owner_id",
-              type: "core::integer::u64",
-              kind: "data",
-            },
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
           name: "contracts::DaoSphereFabric::DaoSphereFabric::Event",
           kind: "enum",
-          variants: [
-            {
-              name: "OwnerAdded",
-              type: "contracts::DaoSphereFabric::DaoSphereFabric::OwnerAdded",
-              kind: "nested",
-            },
-          ],
+          variants: [],
         },
       ],
       classHash:
-        "0x55cf711f65a7c4ce84c11a60fcd0631fd8398edcd26aa716037db6508b08497",
+        "0x312afe858d506b645a95624cc97a83928b2e9470dbef40b16e25c438ca465a6",
     },
     DaoSphere: {
       address:
-        "0x3200d50065cc8feae9906f1785561c6ad4fba62ba29abf8b7bcbfdd049c3720",
+        "0x7a8efadf5bfe823158ef01269a94f057692b94796f62cba6ceeb04698b663be",
       abi: [
         {
           type: "impl",

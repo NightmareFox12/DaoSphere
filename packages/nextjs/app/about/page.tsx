@@ -168,6 +168,7 @@ const About = () => {
             </p>
             <a
               href='https://github.com/NightmareFox12'
+              target='_blank'
               className='inline-block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out'
             >
               GitHub Profile
@@ -205,6 +206,7 @@ const About = () => {
             </p>
             <a
               href='https://github.com/Echizen512'
+              target='_blank'
               className='inline-block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out'
             >
               GitHub Profile
