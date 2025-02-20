@@ -1,5 +1,8 @@
 'use client';
+
+import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
+import Image from 'next/image';
 import { useState } from 'react';
 
 type WalletButtonCopyProps = {
@@ -26,13 +29,21 @@ const WalletButtonCopy: NextPage<WalletButtonCopyProps> = ({
   };
 
   return (
-    <button
-      onClick={handleClick}
-      className='flex items-center space-x-2 p-2 bg-blue-500 text-white rounded-full'
-    >
-      <img src={icon} alt={text} className='h-6 w-6 rounded-full' />
+    <button onClick={handleClick} className='btn btn-base-300 w-2/6 hover:scale-110'>
+      <Image src={icon} alt={text} width={30} height={30}  className='h-6 w-6 rounded-full' />
       <span>{text}</span>
-      {copied && <span className='text-sm text-success'>copied!</span>}
+      <AnimatePresence>
+        {copied && (
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className='text-sm text-info font-bold'
+          >
+            copied!
+          </motion.span>
+        )}
+      </AnimatePresence>
     </button>
   );
 };

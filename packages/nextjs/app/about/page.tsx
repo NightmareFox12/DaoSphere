@@ -8,14 +8,17 @@ import {
   ClipboardIcon,
 } from '@heroicons/react/24/outline';
 import WalletButtonCopy from './_components/WalletButtonCopy';
+import Image from 'next/image';
 
 const About = () => {
   return (
     <div className='container mx-auto px-4 py-12'>
       <div className='text-center mb-12'>
-        <img
-          src='https://i.postimg.cc/HLS6pKXw/Logo.png'
+        <Image
+          src='/logo.png'
           alt='DAOSPHERE Logo'
+          width={300}
+          height={300}
           className='mx-auto mb-4 w-40 h-auto'
         />
         <p className='text-lg w-9/12 mx-auto'>
@@ -27,14 +30,14 @@ const About = () => {
         </p>
       </div>
 
-      <div className='grid gap-8 lg:grid-cols-2'>
-        <div className='bg-primary shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500'>
+      <section className='grid gap-8 lg:grid-cols-2'>
+        <div className='bg-base-300 shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500 outline outline-1 outline-secondary'>
           <div className='flex items-center mb-4'>
             <CheckCircleIcon className='h-8 w-8 mr-2 text-green-600' />
             <h2 className='text-2xl font-semibold'>Justification 📋</h2>
           </div>
           <p className='mt-2'>
-            🌐 The need to create a "Voting System" that is completely
+            🌐 The need to create a &quot Voting System&quot that is completely
             decentralized arises from the constant pursuit of increasing
             transparency and trust in decision-making processes. A DAO
             represents an evolution in organizational governance, as it promotes
@@ -50,7 +53,7 @@ const About = () => {
           </p>
         </div>
 
-        <div className='bg-primary shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500'>
+        <div className='bg-base-300 shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500  outline outline-1 outline-secondary'>
           <div className='flex items-center mb-4'>
             <ClipboardDocumentListIcon className='h-8 w-8 mr-2 text-red-600' />
             <h2 className='text-2xl font-semibold'>Functionality 📋</h2>
@@ -75,7 +78,7 @@ const About = () => {
           </ul>
         </div>
 
-        <div className='bg-primary shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500'>
+        <div className='bg-base-300 shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500  outline outline-1 outline-secondary'>
           <div className='flex items-center mb-4'>
             <UserGroupIcon className='h-8 w-8 mr-2 text-blue-700' />
             <h2 className='text-2xl font-semibold'>
@@ -109,7 +112,7 @@ const About = () => {
           </ul>
         </div>
 
-        <div className='bg-primary shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500'>
+        <div className='bg-base-300 shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500  outline outline-1 outline-secondary'>
           <div className='flex items-center mb-4'>
             <InformationCircleIcon className='h-8 w-8 mr-2 text-yellow-700' />
             <h2 className='text-2xl font-semibold'>
@@ -149,12 +152,12 @@ const About = () => {
             </li>
           </ul>
         </div>
-      </div>
+      </section>
 
       <div className='mt-12 text-center'>
         <h2 className='text-3xl font-bold mb-6'>Developers 👨‍💻</h2>
-        <div className='grid gap-8 lg:grid-cols-2'>
-          <div className='bg-primary shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500'>
+        <section className='grid gap-8 lg:grid-cols-2'>
+          <div className='bg-base-300 shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500 outline outline-1 outline-secondary'>
             <div className='flex items-center mb-4'>
               <CodeBracketIcon className='h-8 w-8 mr-2 text-secondary' />
               <h3 className='text-xl font-semibold'>Lead Developer 👨‍💻</h3>
@@ -189,7 +192,7 @@ const About = () => {
             </div>
           </div>
 
-          <div className='bg-primary shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500'>
+          <div className='bg-base-300 shadow-lg rounded-lg p-6 hover:shadow-2xl transform hover:-translate-y-2 transition duration-500 outline outline-1 outline-secondary'>
             <div className='flex items-center mb-4'>
               <DocumentTextIcon className='h-8 w-8 mr-2 text-secondary' />
               <h3 className='text-xl font-semibold'>
@@ -225,7 +228,7 @@ const About = () => {
               />
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
