@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { NextPage } from 'next';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -10,11 +11,14 @@ type WalletButtonCopyProps = {
   text: string;
   walletName: string;
 };
+
 const WalletButtonCopy: NextPage<WalletButtonCopyProps> = ({
   icon,
   text,
   walletName,
 }) => {
+  const { theme } = useTheme();
+
   //states
   const [copied, setCopied] = useState(false);
 
@@ -29,8 +33,17 @@ const WalletButtonCopy: NextPage<WalletButtonCopyProps> = ({
   };
 
   return (
-    <button onClick={handleClick} className='btn btn-base-300 w-2/6 hover:scale-110'>
-      <Image src={icon} alt={text} width={30} height={30}  className='h-6 w-6 rounded-full' />
+    <button
+      onClick={handleClick}
+      className={`${theme === 'light' ? 'btn-primary' : 'btn-base-100'} btn w-2/6 hover:scale-110 outline outline-2 outline-secondary`}
+    >
+      <Image
+        src={icon}
+        alt={text}
+        width={30}
+        height={30}
+        className='h-6 w-6 rounded-full'
+      />
       <span>{text}</span>
       <AnimatePresence>
         {copied && (
