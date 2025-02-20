@@ -1,234 +1,63 @@
-# 🏗 Scaffold-Stark
+# DAOSPHERE 🌐
 
-<h4 align="center">
-  <a href="https://docs.scaffoldstark.com/">Documentation</a> |
-  <a href="https://scaffoldstark.com/">Website</a> |
-  <a href="https://scaffold-stark-demo.vercel.app/debug">Demo</a>
-</h4>
+**DaoSphere** is a Decentralized Application (dApp) that is designed to make it easier for DAOs to make decisions to resolve problems or cases that affect them 🗳️. To do this, a voting system is used that is transparent, effective, and secure, which eliminates the need to depend on some central body to solve the problem. Instead, each member has a say within the DAO.
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+## Justification 📋
 
-⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry and Typescript.
+The need to create a "Voting System" that is completely decentralized arises from the constant pursuit of increasing transparency and trust in decision-making processes 🔍. A DAO represents an evolution in organizational governance, as it promotes member participation, which minimizes the possibility of corruption by a central authority.
 
-- ✅ **Contract Fast Reload**: Your frontend auto-adapts to your smart contracts as you deploy them.
-- 🪝 [**Custom hooks**](https://docs.scaffoldstark.com/hooks/): Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldstark.com/components): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
+Therefore, DaoSphere is part of this important trend, offering its users a platform that integrates the opportunity to influence the important decisions of the DAO to which they belong, guaranteeing fair resolutions and reflecting the collective consensus 🤝.
 
-![Debug Contracts tab](./packages/nextjs/public/debug-image.png)
+## Functionality 🔧
 
-## Requirements
+At a general level, DaoSphere is divided into three key steps, which must be followed so that the effective participation of all DAO members can be ensured. 👥.
 
-Before you begin, you need to install the following tools:
+1. **DAO Registration**: This step will be carried out by the DAO Administrator. When registration is completed successfully, the DAO is recognized within the dApp 📝.
+2. **Adding Members**: Once the DAO is registered, the administrator can add the members of the organization. Members will be able to actively participate in voting 🗳️.
+3. **Registration of Problems**: The problems or cases to be resolved can be registered on the platform. This allows them to be subject to the Voting System 📜.
 
-- [Node (>= v18.17)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
-- [Rust](https://rust-lang.org/tools/install)
-- [asdf](https://asdf-vm.com/guide/getting-started.html)
-- [Cairo 1.0 extension for VSCode](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1)
+## Functional Requirements ⚙️
 
-### Starknet-devnet version
+- **User Authentication by Wallet**: Through a Wallet like Braavos, DaoSphere Users will be able to log in to our dApp, guaranteeing the security and protection of their data 🔐..
+- **Registration of DAOs**: DAOs may be registered in the dApp by their respective Administrator. This process grants the DAO access to all available functionality 🛠️.
+- **Member Registration**: DAO members must register in order to obtain the right to vote during discussions 🗳️.
+- **Issue Registration**: Any issue that needs to be submitted for discussion among DAO members can be registered in the dApp, always guaranteeing transparency in each of these extremely important processes 💡.
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.3`. To accomplish this, first check your local starknet-devnet version:
+## Non-Functional Requirements 🌟
 
-```sh
-starknet-devnet --version
-```
+1. **Scalability** 📈: The system must handle the growing number of DAOs, members, and voting activities without performance degradation.
 
-If your local starknet-devnet version is not `0.2.3`, you need to install it.
+2. **Security** 🔒: Data must be protected using encryption and secure authentication mechanisms to prevent unauthorized access and ensure user data privacy.
 
-- Install Starknet-devnet `0.2.3` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+3. **Performance** ⚡: The application should provide a seamless user experience with fast response times, even under peak loads.
 
-### Scarb version
+4. **Reliability** 🛠️: The system must ensure high availability and uptime, minimizing downtime to maintain trust among users.
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.9.2`. To accomplish this, first check your local Scarb version:
+5. **Usability** 🖥️: The user interface must be intuitive and user-friendly, allowing users to easily navigate and perform tasks within the dApp.
 
-```sh
-scarb --version
-```
+6. **Maintainability** 🔧: The codebase should be modular and well-documented to facilitate easy maintenance, updates, and debugging.
 
-If your local Scarb version is not `2.9.2`, you need to install it.
+## Business Model
 
-- Install Scarb `2.9.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+![Business Model](https://i.postimg.cc/MK52jxCV/Modelo-d-App.png)
 
-### Starknet Foundry version
+# Analysis and Summary of Smart Contracts 📝
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.31.0. To accomplish this, first check your Starknet Foundry version:
+## DaoSphere 🚀
 
-```sh
-snforge --version
-```
+This code defines a smart contract for a DAO system on Starknet, structured around managing users, advisors, proposals, and votes. Key functionalities include:
 
-If your Starknet Foundry version is not `0.35.1`, you need to install it.
+- **Roles Management** 🛡️: The contract manages roles like admin, advisor, and user, ensuring only authorized users can perform specific actions.
+- **User and Advisor Management** 👥: Functions to create, modify, and retrieve users and advisors.
+- **Proposal Creation and Voting** 🗳️: Users (depending on access permissions) can create proposals and vote on them. Proposals can have multiple options, and voting is tracked for each proposal.
+- **Access Control** 🔐: The contract integrates access control mechanisms to restrict actions based on roles.
 
-- Install Starknet Foundry `0.35.1` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+It also supports emitting events for user creation, advisor creation, proposal creation, and voting. The contract's state is stored using maps and arrays, and various checks ensure that actions are performed by authorized entities.
 
-## Compatible versions
+## DaoSphereFabric 🏗️
 
-- Starknet-devnet - v0.2.3
-- Scarb - v2.9.2
-- Snforge - v0.35.1
-- Cairo - v2.9.2
-- Rpc - v0.7.1
+The DaoSphereFabric contract in StarkNet is designed to facilitate the creation and management of Decentralized Autonomous Organizations (DAOs) 🌐. It includes functionalities for DAO creation, managing DAO IDs, recording deployment blocks, adding owners, and managing fund withdrawals. The contract handles user authentication, enforces security measures, and ensures reliable DAO management. Key events like DAO creation and owner addition are emitted for transparency 🛠️.
 
-## Requirements (Alternative Option with Docker)
+The contract uses several StarkNet features including event emission 📡, storage maps 🗺️, and syscalls for deploying new contracts ⚙️. Constants like DAO_SPHERE_CLASS_HASH and STRK_CONTRACT_ADDRESS are defined for reference. The `verifyName` function checks if a DAO name already exists. The `PrivateDaoSphereFabricTrait` trait provides internal functions for owner verification and token dispatcher retrieval 🔄.
 
-As an alternative to installing the tools locally, you can use Docker. Here's what you need to do:
 
-1. Install [Docker](https://www.docker.com/get-started/)
-2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-3. Use the provided `devcontainer.json` file to set up the environment:
-   - The configuration uses the `starknetfoundation/starknet-dev:2.9.2` image.
-   - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
-
-### Getting Started with Docker Setup
-
-To start using the Docker-based setup:
-
-1. Open the project in **Visual Studio Code**.
-2. Select **"Reopen in Container"**.
-3. If you need to rebuild the container, open the Command Palette (**View -> Command Palette**) and choose:
-   - **Dev Containers: Rebuild and Reopen in Container**
-
-> Once inside the container, you can start working with all the tools and dependencies pre-configured.
-
-## Quickstart with Starknet-Devnet
-
-To get started with Scaffold-Stark, follow the steps below:
-
-1. Clone this repo and install dependencies
-
-```bash
-git clone https://github.com/Scaffold-Stark/scaffold-stark-2.git
-cd scaffold-stark-2
-yarn install
-```
-
-2. Run a local network in the first terminal.
-
-```bash
-yarn chain
-```
-
-> To run a fork : `yarn chain --fork-network <URL> [--fork-block <BLOCK_NUMBER>]`
-
-This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
-
-3. On a second terminal, deploy the sample contract:
-
-```bash
-yarn deploy
-```
-
-This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
-
-By default `Scaffold-Stark` takes the first prefunded account from `starknet-devnet` as a deployer address,
-
-4. On a third terminal, start your NextJS app:
-
-```bash
-yarn start
-```
-
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
-
-5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
-
-## Quickstart with Sepolia Testnet
-
-<details>
-
-1. Make sure you alredy cloned this repo and installed dependencies.
-
-2. Prepare your environment variables.
-
-Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key.
-
-3. Change your default network to Sepolia testnet.
-
-Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetworks` to `[chains.sepolia]`.
-
-![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
-
-4. Get some testnet tokens.
-
-You will need to get some `ETH` or `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
-
-> Some popular faucets are [Starknet Faucet](https://starknet-faucet.vercel.app/) and [Blastapi Starknet Sepolia Eth](https://blastapi.io/faucets/starknet-sepolia-eth)
-
-4. Open a terminal, deploy the sample contract to Sepolia testnet:
-
-```bash
-yarn deploy --network sepolia
-```
-
-5. On a second terminal, start your NextJS app:
-
-```bash
-yarn start
-```
-
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
-
-### RPC specific version
-
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.1` by calling a `POST` request in an API platform like `Postman` or `Insommia` . Your API endpoint should be `https://starknet-sepolia.public.blastapi.io/rpc/v0_7` and the body should be:
-
-```json
-{
- "jsonrpc":"2.0",
- "method":"starknet_specVersion",
- "id":1
-}
-```
-
-You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
-
-![rpc-version](./packages/nextjs/public/rpc-version.png)
-</details>
-
-## **What's next**
-
-- Edit your smart contract `YourContract.cairo` in `packages/snfoundry/contracts/src`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.ts`
-- Edit your smart contract tests in `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`
-- You can write unit tests for your Next.js app! Run them with one the following scripts below.
-  - `yarn test:nextjs` to run regular tests with watch mode
-  - `yarn test:nextjs run` to run regular tests without watch mode
-  - `yarn test:nextjs run --coverage` to run regular tests without watch mode with coverage
-
-## Documentation
-
-Visit our [docs](https://docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark.
-
-To know more about its features, check out our [website](https://scaffoldstark.com)
-
-#### External Image Source Configuration
-
-In the `next.config.mjs`, we've set up external image sources using `remotePatterns` to allow fetching assets from specific domains. This is particularly useful for loading images or assets from external servers or services.
-
-```javascript
-remotePatterns: [
-  // External image source for StarkNet ID identicons
-  {
-    protocol: "https",
-    hostname: "identicon.starknet.id",
-    pathname: "/**", // Allows all paths under this domain
-  },
-  // External image source for images hosted on Starkurabu
-  {
-    protocol: "https",
-    hostname: "img.starkurabu.com",
-    pathname: "/**",
-  },
-],
-```
-
-## Contributing to Scaffold-Stark
-
-We welcome contributions to Scaffold-Stark!
-
-Please see [CONTRIBUTING.MD](https://github.com/Scaffold-Stark/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.

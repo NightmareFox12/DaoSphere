@@ -11,6 +11,7 @@ import {
   Cog8ToothIcon,
   HomeIcon,
   PencilSquareIcon,
+  ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline';
 import { useOutsideClick } from '~~/hooks/scaffold-stark';
 import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
@@ -42,9 +43,19 @@ export const menuLinks: HeaderMenuLink[] = [
     icon: <Cog8ToothIcon className='h-4 w-4' />,
   },
   {
+    label: 'About',
+    href: '/about',
+    icon: <ClipboardDocumentListIcon className='h-4 w-4' />,
+  },
+  {
     label: 'Close sesion',
     href: '/close-session',
     icon: <ArrowLeftStartOnRectangleIcon className='h-4 w-4' />,
+  },
+  {
+    label: 'Advisor Configuration',
+    href: '/configuration/advisor',
+    icon: <Cog8ToothIcon className='h-4 w-4' />,
   },
   {
     label: 'Debug Contracts',
