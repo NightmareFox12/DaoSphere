@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { NextPage } from 'next';
 import { motion } from 'motion/react';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/20/solid';

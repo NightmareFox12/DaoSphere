@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { AddressInput } from '~~/components/scaffold-stark';
