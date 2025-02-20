@@ -1,11 +1,19 @@
 use starknet::ContractAddress;
+use super::models::DaoSphereFabricModel;
+
 #[starknet::interface]
 pub trait IDaoSphereFabric<TContractState> {
+    //handle dao
     fn create_dao(ref self: TContractState, name_dao: ByteArray);
-    fn dao_id(self: @TContractState) -> u64;
+    fn get_daos(self: @TContractState) -> Array<DaoSphereFabricModel::Dao>;
+
+    //handle data
     fn get_deploy_block(self: @TContractState) -> u64;
     fn add_owner(ref self: TContractState, owner: ContractAddress);
     fn withdraw(ref self: TContractState);
+
+    //vars
+    fn dao_id(self: @TContractState) -> u64;
 }
 
 
@@ -21,6 +29,7 @@ pub mod DaoSphereFabric {
     use starknet::class_hash::{class_hash_const, ClassHash};
     use core::num::traits::Zero;
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use super::DaoSphereFabricModel::{Dao};
 
     //constants
     const DAO_SPHERE_CLASS_HASH: felt252 =
@@ -41,22 +50,14 @@ pub mod DaoSphereFabric {
         owners: Map<u64, ContractAddress>,
         dao_id: u64,
         dao_name: Map<u64, ByteArray>,
+        daos: Map<u64, Dao>,
         deploy_block: u64,
     }
 
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
-        DaoCreated: DaoCreated,
         OwnerAdded: OwnerAdded,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct DaoCreated {
-        dao_id: u64,
-        name_dao: ByteArray,
-        dao_address: ContractAddress,
-        deploy_block: u64,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -85,6 +86,7 @@ pub mod DaoSphereFabric {
 
     #[abi(embed_v0)]
     pub impl DaoSphereFabric of super::IDaoSphereFabric<ContractState> {
+        //handle dao
         fn create_dao(ref self: ContractState, name_dao: ByteArray) {
             let caller: ContractAddress = get_caller_address();
             let this: ContractAddress = get_contract_address();
@@ -113,8 +115,10 @@ pub mod DaoSphereFabric {
             let stored_dao = self.dao_name.read(dao_id);
 
             self
-                .emit(
-                    DaoCreated {
+                .daos
+                .write(
+                    dao_id,
+                    Dao {
                         dao_id, name_dao: stored_dao, dao_address, deploy_block: get_block_number(),
                     },
                 );
@@ -122,10 +126,25 @@ pub mod DaoSphereFabric {
             self.dao_id.write(dao_id + 1);
         }
 
-        fn dao_id(self: @ContractState) -> u64 {
-            self.dao_id.read()
+        fn get_daos(self: @ContractState) -> Array<Dao> {
+            let mut dao_arr: Array<Dao> = ArrayTrait::<Dao>::new();
+
+            let mut i = 0;
+            let limit = self.dao_id.read();
+
+            loop {
+                if i == limit {
+                    break;
+                }
+
+                dao_arr.append(self.daos.read(i));
+                i += 1;
+            };
+
+            dao_arr
         }
 
+        //handle data
         fn get_deploy_block(self: @ContractState) -> u64 {
             self.deploy_block.read()
         }
@@ -168,6 +187,11 @@ pub mod DaoSphereFabric {
 
             assert(strk_dispatcher.balance_of(this) > 0, 'no STRK');
             strk_dispatcher.transfer(caller, strk_dispatcher.balance_of(this));
+        }
+
+        //vars
+        fn dao_id(self: @ContractState) -> u64 {
+            self.dao_id.read()
         }
     }
 
