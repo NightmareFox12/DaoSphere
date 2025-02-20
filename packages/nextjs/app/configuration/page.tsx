@@ -7,9 +7,9 @@ import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldRead
 import CardOptions from './_components/CardOptions';
 import UserConfig from './userConfig/page';
 import ModalAdminOrSupervisor from './_components/ModalAdminOrSupervisor';
-import SupervisorConfig from './advisorConfig/page';
 import DataConfig from './dataConfig/page';
 import ToastConfiguration from './_components/ToastConfiguration';
+import AdvisorConfig from './advisorConfig/page';
 
 const Configuration: NextPage = () => {
   const { account } = useAccount();
@@ -66,7 +66,7 @@ const Configuration: NextPage = () => {
         )}
 
         {option === 2 && (
-          <SupervisorConfig
+          <AdvisorConfig
             contractAddress={contractAddress}
             setOption={setOption}
           />

@@ -28,8 +28,8 @@ const AdvisorConfig: NextPage<AdvisorConfigProps> = ({
   //smart contract
   const { data: advisors } = useScaffoldReadContract({
     contractName: 'DaoSphere',
-    contractAddress: contractAddress,
     functionName: 'get_advisors',
+    contractAddress: contractAddress,
   });
 
   return (
