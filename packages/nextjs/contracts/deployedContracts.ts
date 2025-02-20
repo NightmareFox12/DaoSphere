@@ -4,10 +4,10 @@
  */
 
 const deployedContracts = {
-  devnet: {
+  sepolia: {
     DaoSphereFabric: {
       address:
-        "0x20c334846d38abd865fc94df15f11f4a5de122647de5ba48b0d5357a7e71c2e",
+        "0x5b4a4e268a5df153253581dab4ad81fb89fbd149cbd31a512ce6e147ef4652c",
       abi: [
         {
           type: "impl",
@@ -146,7 +146,7 @@ const deployedContracts = {
     },
     DaoSphere: {
       address:
-        "0x7a8efadf5bfe823158ef01269a94f057692b94796f62cba6ceeb04698b663be",
+        "0x3896f43015f840bb72bd0c87ed481dcd0306c36c490888a528f991368ebf299",
       abi: [
         {
           type: "impl",
