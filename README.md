@@ -60,4 +60,11 @@ The DaoSphereFabric contract in StarkNet is designed to facilitate the creation 
 
 The contract uses several StarkNet features including event emission 📡, storage maps 🗺️, and syscalls for deploying new contracts ⚙️. Constants like DAO_SPHERE_CLASS_HASH and STRK_CONTRACT_ADDRESS are defined for reference. The `verifyName` function checks if a DAO name already exists. The `PrivateDaoSphereFabricTrait` trait provides internal functions for owner verification and token dispatcher retrieval 🔄.
 
+## Info
+
+**Project in Vercel**: https://dao-sphere.vercel.app
+**Repository**: https://github.com/NightmareFox12/DaoSphere
+**Video**: https://www.youtube.com/watch?v=jv4CbdQcyUE&feature=youtu.be
+
+
 
