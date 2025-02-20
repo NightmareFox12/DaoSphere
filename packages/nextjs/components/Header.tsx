@@ -53,11 +53,6 @@ export const menuLinks: HeaderMenuLink[] = [
     icon: <ArrowLeftStartOnRectangleIcon className='h-4 w-4' />,
   },
   {
-    label: 'Advisor Configuration',
-    href: '/configuration/advisor',
-    icon: <Cog8ToothIcon className='h-4 w-4' />,
-  },
-  {
     label: 'Debug Contracts',
     href: '/debug',
     icon: <BugAntIcon className='h-4 w-4' />,
