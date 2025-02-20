@@ -9,7 +9,7 @@ import UserConfig from './userConfig/page';
 import ModalAdminOrSupervisor from './_components/ModalAdminOrSupervisor';
 import DataConfig from './dataConfig/page';
 import ToastConfiguration from './_components/ToastConfiguration';
-import AdvisorConfig from './advisorConfig/page';
+// import AdvisorConfig from './advisorConfig/page';
 
 const Configuration: NextPage = () => {
   const { account } = useAccount();
