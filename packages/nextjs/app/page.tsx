@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Typewriter from './_components/Typewriter';
 import { useAccount } from '~~/hooks/useAccount';
 import HomeLogin from './_components/HomeLogin/HomeLogin';
+import { UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 
 const Home: NextPage = () => {
   const { address, isConnected } = useAccount();
@@ -48,7 +49,7 @@ const Home: NextPage = () => {
             }}
           >
             <Image
-              alt='DS logo'
+              alt='DaoSphere logo'
               className='object-fill w-4/2 h-4/2'
               width={300}
               height={300}
@@ -70,8 +71,12 @@ const Home: NextPage = () => {
                 className='card-body cursor-pointer  '
                 onClick={() => router.push('/register')}
               >
-                <h2 className='card-title text-center'>Register</h2>
-                <p>Create new DAO</p>
+                <div className='flex items-center justify-center w-full gap-2'>
+                  <UserPlusIcon className='w-8 h-8' />
+                  <span className='m-0 font-bold text-xl'>Register</span>
+                </div>
+
+                <p className='text-center'>Create new DAO</p>
               </div>
             </article>
 
@@ -80,8 +85,12 @@ const Home: NextPage = () => {
                 className='card-body cursor-pointer  '
                 onClick={() => router.push('/login')}
               >
-                <h2 className='card-title'>Login</h2>
-                <p>Enter a DAO</p>
+                <div className='flex items-center justify-center w-full gap-2'>
+                  <UserIcon className='w-8 h-8' />
+                  <span className='m-0 font-bold text-xl'>Login</span>
+                </div>
+
+                <p className='text-center'>Enter a DAO</p>
               </div>
             </article>
           </section>

@@ -1,5 +1,6 @@
 export interface Dao {
-  dao_address: bigint;
+  dao_id: bigint;
   name_dao: string;
+  dao_address: bigint;
   deploy_block: bigint;
 }
