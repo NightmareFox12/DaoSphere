@@ -18,6 +18,11 @@ const nextConfig = {
         hostname: "img.starkurabu.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "i.postimg.cc",
+        pathname: "/**",
+      },
     ],
   },
   typescript: {

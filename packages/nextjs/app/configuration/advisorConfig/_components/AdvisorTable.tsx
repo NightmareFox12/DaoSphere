@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { NoSymbolIcon } from '@heroicons/react/24/solid';
 import { NextPage } from 'next';

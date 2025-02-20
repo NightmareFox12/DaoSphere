@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Dispatch, SetStateAction } from 'react';
 import { NextPage } from 'next';
