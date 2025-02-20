@@ -11,7 +11,7 @@ const TableDaoPublic: NextPage<TableDaoPublicProps> = ({
   handleEnterDao,
 }) => {
   return (
-    <table className='table w-full'>
+    <table className='table'>
       <thead>
         <tr>
           <th></th>
@@ -23,12 +23,12 @@ const TableDaoPublic: NextPage<TableDaoPublicProps> = ({
         {daoData.slice(0, 20).map((x, y) => (
           <tr key={y}>
             <th>{y + 1}</th>
-            <td className='text-center'>{x.args.name_dao}</td>
+            <td className='text-center break-words text-ellipsis'>{x.name_dao}</td>
             <td className='text-center'>
               <button
-                className='btn btn-base px-10'
+                className='btn btn-outline btn-md px-8'
                 onClick={() => {
-                  handleEnterDao(x.args.dao_address, x.args.deploy_block);
+                  handleEnterDao(x.dao_address, x.deploy_block);
                 }}
               >
                 Enter

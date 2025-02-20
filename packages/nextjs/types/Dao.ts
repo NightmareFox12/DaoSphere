@@ -1,10 +1,6 @@
 export interface Dao {
-  args: DaoArgs;
-}
-
-interface DaoArgs {
-  dao_address: bigint;
+  dao_id: bigint;
   name_dao: string;
+  dao_address: bigint;
   deploy_block: bigint;
 }
-

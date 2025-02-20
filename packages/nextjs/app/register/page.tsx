@@ -3,7 +3,6 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useScaffoldEventHistory } from '~~/hooks/scaffold-stark/useScaffoldEventHistory';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
 import { DAO_ADDRESS_LOCALSTORAGE_KEY } from '~~/utils/Constants';
 import { InputBase } from '~~/components/scaffold-stark';
@@ -12,6 +11,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
 import { useScaffoldReadContract } from '~~/hooks/scaffold-stark/useScaffoldReadContract';
+import { Dao } from '~~/types/Dao';
 
 const Register: NextPage = () => {
   const router = useRouter();
@@ -23,15 +23,9 @@ const Register: NextPage = () => {
   const [loaderCreateDao, setLoaderCreateDao] = useState<boolean>(false);
 
   //smart contract
-  const { data: deployBlock } = useScaffoldReadContract({
+  const { data: daos } = useScaffoldReadContract({
     contractName: 'DaoSphereFabric',
-    functionName: 'get_deploy_block',
-  });
-
-  const { data } = useScaffoldEventHistory({
-    contractName: 'DaoSphereFabric',
-    eventName: 'contracts::DaoSphereFabric::DaoSphereFabric::DaoCreated',
-    fromBlock: BigInt(deployBlock?.toString() || 0),
+    functionName: 'get_daos',
   });
 
   useEffect(() => {
@@ -40,11 +34,15 @@ const Register: NextPage = () => {
   });
 
   useEffect(() => {
-    const isMatch = data.some(
-      (x) => x.args.name_dao.toLowerCase() === nameDao.toLowerCase()
-    );
-    setEnableButton(!isMatch);
-  }, [nameDao, data]);
+    if (daos !== undefined) {
+      const daoParsed = daos as unknown as Dao[];
+
+      const isMatch = daoParsed.some(
+        (x) => x.name_dao.toLowerCase() === nameDao.toLowerCase()
+      );
+      setEnableButton(!isMatch);
+    }
+  }, [nameDao, daos]);
 
   const { sendAsync } = useScaffoldWriteContract({
     contractName: 'DaoSphereFabric',
@@ -86,7 +84,9 @@ const Register: NextPage = () => {
 
       <article className='flex flex-col gap-5 mx-10 w-7/12 lg:w-5/12'>
         <div>
-          <label className='ps-2 font-bold'>Name Dao*</label>
+          <label className='ps-2 font-bold'>
+            Name Dao <span className='font-bold text-error'>*</span>
+          </label>
           <InputBase
             value={nameDao}
             onChange={(e) => {

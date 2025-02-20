@@ -41,7 +41,7 @@ At a general level, DaoSphere is divided into three key steps, which must be fol
 
 ![Business Model](https://i.postimg.cc/MK52jxCV/Modelo-d-App.png)
 
-# Analysis and Summary of Smart Contracts 📝
+## Analysis and Summary of Smart Contracts 📝
 
 ## DaoSphere 🚀
 
@@ -62,12 +62,7 @@ The contract uses several StarkNet features including event emission 📡, stora
 
 ## Info
 
-**Project in Vercel**: https://dao-sphere.vercel.app
-
-**Repository**: https://github.com/NightmareFox12/DaoSphere
-
-**Video**: https://www.youtube.com/watch?v=jv4CbdQcyUE&feature=youtu.be
-
-
-
+**Project in Vercel**: <https://dao-sphere.vercel.app>  
+**Repository**: <https://github.com/NightmareFox12/DaoSphere>  
+**Video**: <https://www.youtube.com/watch?v=jv4CbdQcyUE&feature=youtu.be>
 
